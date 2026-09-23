@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Singapore Hawker Centre Rating Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#E3EDE8;--paper:#FFFFFF;--paper2:#F1F7F4;--ink:#0F2E29;--muted:#57706A;--line:#D3E2DB;--line2:#B7CEC4;--grid:rgba(15,46,41,.045);
+  --red:#C8232C;--red2:#A21A22;--kaya:#F2B01E;--onred:#FFFFFF;
+  --c0:#D8453C;--c1:#12836A;--c2:#D9960E;--c3:#2A7DB4;--c4:#8757C6;
+  --tS:#8757C6;--tA:#12836A;--tB:#2A7DB4;--tC:#D9960E;--tD:#D8453C;--tF:#7B8A86;
+  --tile:#FFFFFF;--tileLine:#C3D7CE;
+  --fd:'Big Shoulders Display','Arial Narrow',Impact,sans-serif;
+  --fb:'Instrument Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
+    --red:#D42F39;--red2:#AE222B;--kaya:#FFC53D;
+    --c0:#FF6F61;--c1:#34C997;--c2:#FFC53D;--c3:#5AAEE6;--c4:#B28CF2;
+    --tS:#B28CF2;--tA:#34C997;--tB:#5AAEE6;--tC:#FFC53D;--tD:#FF6F61;--tF:#6E807B;
+    --tile:#0F2622;--tileLine:#24463E;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
+  --red:#D42F39;--red2:#AE222B;--kaya:#FFC53D;
+  --c0:#FF6F61;--c1:#34C997;--c2:#FFC53D;--c3:#5AAEE6;--c4:#B28CF2;
+  --tS:#B28CF2;--tA:#34C997;--tB:#5AAEE6;--tC:#FFC53D;--tD:#FF6F61;--tF:#6E807B;
+  --tile:#0F2622;--tileLine:#24463E;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;font-family:var(--fb);color:var(--ink);background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:44px 44px;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--kaya);outline-offset:2px;border-radius:6px}
+.num{font-family:var(--fd);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
+/* ---------- signboard header ---------- */
+.board{position:sticky;top:0;z-index:30;background:var(--red);color:var(--onred);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) clamp(14px,3vw,32px) 0;
+  box-shadow:0 3px 0 var(--kaya),0 10px 30px -18px rgba(0,0,0,.5)}
+.board-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand h1{margin:0;font-family:var(--fd);font-weight:900;font-size:clamp(26px,3.6vw,44px);line-height:.92;text-transform:uppercase;letter-spacing:.01em}
+.brand p{margin:6px 0 0;font-size:13px;opacity:.88}
+#fresh{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:2px 9px;border-radius:99px;background:rgba(0,0,0,.2);font-size:12px}
+#fresh i{width:7px;height:7px;border-radius:50%;background:#7CF0B8;box-shadow:0 0 0 3px rgba(124,240,184,.25)}
+#fresh.snap i{background:var(--kaya);box-shadow:none}
+#newData{display:none;border:0;background:var(--kaya);color:#1b1b1b;font-weight:700;font-size:13px;border-radius:99px;padding:7px 14px}
+#newData.on{display:inline-block}
+.modes{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-bottom:4px}
+.seg{display:inline-flex;background:rgba(0,0,0,.18);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;color:inherit;opacity:.8}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--red2);opacity:1}
+.tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
+.tab:hover{opacity:1}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
+.fmt-only{display:none}
+body[data-tab="slides"] .fmt-only,body[data-tab="pitch"] .fmt-only{display:inline-flex}
+
+main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
+.view{display:none}.view.on{display:block}
+
+/* ---------- panels ---------- */
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.panel h2{margin:0;font-family:var(--fd);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.panel .sub{margin:5px 0 14px;color:var(--muted);font-size:13px}
+.grid{display:grid;gap:16px}
+.g-hero{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+.g-main{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px;align-items:start}
+.g-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
+.g-two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:16px}
+@media (max-width:1080px){.g-hero,.g-main,.g-two{grid-template-columns:1fr}.g-three{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){.g-three{grid-template-columns:1fr}}
+
+/* hero */
+.hero{position:relative;overflow:hidden}
+.hero-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.hero-big{font-family:var(--fd);font-weight:900;font-size:clamp(64px,9vw,120px);line-height:.8;color:var(--red)}
+.hero-big small{font-size:.42em;color:var(--ink);font-weight:800}
+.hero-txt{font-size:17px;max-width:30ch;line-height:1.3}
+.hero-txt b{font-weight:700}
+.mosaic{display:grid;grid-template-columns:repeat(21,minmax(0,1fr));gap:4px;margin-top:18px}
+@media (max-width:720px){.mosaic{grid-template-columns:repeat(12,minmax(0,1fr))}}
+.tile{aspect-ratio:1;border-radius:5px;background:var(--tile);box-shadow:inset 0 0 0 1px var(--tileLine);display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:clamp(11px,1.2vw,16px);color:#fff;transition:transform .15s,opacity .2s,box-shadow .15s}
+.tile.r{box-shadow:none;cursor:pointer}
+.tile.x{background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 6px)}
+.tile:hover{transform:scale(1.18);z-index:2}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.kpi .v{font-family:var(--fd);font-weight:900;font-size:46px;line-height:.9}
+.kpi .v small{font-size:.5em;color:var(--muted);font-weight:700}
+.kpi .l{font-size:13px;color:var(--muted);margin-top:6px}
+.kpi.wide{grid-column:1/-1}
+.tierbar{display:flex;height:34px;border-radius:9px;overflow:hidden;margin-top:10px;gap:2px}
+.tierbar div{display:grid;place-items:center;color:#fff;font-family:var(--fd);font-weight:900;font-size:17px;min-width:0}
+
+/* stickers (inspired by stall hygiene grade stickers) */
+.st{--c:var(--tF);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--c);color:#fff;
+  font-family:var(--fd);font-weight:900;font-size:17px;line-height:1;box-shadow:inset 0 0 0 2px var(--paper),inset 0 0 0 3.5px var(--c);flex:none}
+.st.big{width:92px;height:92px;border-radius:18px;font-size:64px;box-shadow:inset 0 0 0 5px var(--paper),inset 0 0 0 8px var(--c)}
+.tS{--c:var(--tS)}.tA{--c:var(--tA)}.tB{--c:var(--tB)}.tC{--c:var(--tC)}.tD{--c:var(--tD)}.tF{--c:var(--tF)}
+
+/* chips */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{border:1px solid var(--line2);background:var(--paper);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;transition:background .15s,color .15s}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+/* leaderboard */
+.lb{position:relative}
+.lbr{position:absolute;left:0;right:0;height:32px;display:grid;grid-template-columns:30px minmax(96px,1fr) minmax(120px,1.7fr) 46px 26px;
+  gap:10px;align-items:center;transition:top .55s cubic-bezier(.2,.8,.2,1),opacity .2s;cursor:pointer;border-radius:8px;padding:0 4px}
+.lbr:hover,.lbr.sel{background:var(--paper2)}
+.lbr .pos{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--muted);text-align:right}
+.lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbr .bar{display:flex;gap:2px;height:16px}
+.lbr .bar span{height:100%;border-radius:3px;transition:opacity .3s,flex-basis .5s}
+.lbr .tot{font-family:var(--fd);font-weight:800;font-size:21px;text-align:right}
+.lb.crit .bar span{opacity:.18}
+.lb.crit .bar span.k{opacity:1}
+@media (max-width:560px){.lbr{grid-template-columns:22px minmax(80px,1fr) 1fr 38px 24px;gap:6px}}
+
+/* detail */
+.detail .top{display:flex;gap:16px;align-items:flex-start}
+.detail h3{margin:0;font-family:var(--fd);font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase}
+.detail .addr{color:var(--muted);font-size:13px;margin-top:6px}
+.detail .score{font-family:var(--fd);font-weight:900;font-size:58px;line-height:.85;margin-top:10px}
+.detail .score small{font-size:.42em;color:var(--muted)}
+.quote{margin:14px 0 0;padding:14px 16px;background:var(--paper2);border-radius:12px;border-left:4px solid var(--kaya);font-size:15.5px;font-style:italic}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;font-size:13px}
+.facts div{border-top:1px solid var(--line);padding-top:8px}
+.facts b{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.radar-wrap{display:flex;justify-content:center;margin-top:6px}
+.critrows{display:grid;gap:7px;margin-top:6px}
+.cr{display:grid;grid-template-columns:24px 88px 1fr 36px;align-items:center;gap:8px;font-size:13px}
+.cr .trk{height:10px;background:var(--paper2);border-radius:99px;overflow:hidden;position:relative}
+.cr .trk i{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.cr .trk em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.5}
+.cr .val{font-family:var(--fd);font-weight:800;font-size:18px;text-align:right}
+
+/* charts */
+svg text{font-family:var(--fb);fill:var(--muted)}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.dot{transition:opacity .2s,r .2s,stroke-width .2s;cursor:pointer}
+.dim-scope.hl [data-n]:not(.on){opacity:.16}
+.dim-scope.hl .lbr[data-n]:not(.on){opacity:.35}
+.dim-scope.hl .tile:not(.r){opacity:1}
+.dim-scope.hl .tile.r:not(.on){opacity:.3}
+.on.dot{stroke:var(--ink);stroke-width:2.5}
+.unit{width:18px;height:18px;border-radius:4px;transition:opacity .2s,transform .2s;cursor:pointer}
+.unit.on{transform:scale(1.25);box-shadow:0 0 0 2px var(--ink)}
+.tiercols{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;align-items:end;height:210px}
+.tiercol{display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.tiercol .units{display:flex;flex-direction:column-reverse;gap:3px;align-items:center}
+.tiercol .cnt{font-family:var(--fd);font-weight:800;font-size:20px}
+.tiercol .rng{font-size:11px;color:var(--muted)}
+.supers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sup{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--paper2)}
+.sup .e{font-size:26px;line-height:1}
+.sup .t{font-size:12.5px;color:var(--muted);margin-top:8px}
+.sup .w{font-weight:700;font-size:15px;line-height:1.25;margin-top:2px}
+.sup .s{font-family:var(--fd);font-weight:800;font-size:22px;margin-top:4px}
+
+/* friendly meters */
+.meter{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;height:14px}
+.meter span{position:relative;border-radius:4px;background:var(--paper2);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.meter span i{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.verdict{margin:14px 0 4px;font-size:15px;line-height:1.4}
+.krow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.krow .em{font-size:24px;grid-row:span 2;text-align:center}
+.krow .kn{font-weight:700;font-size:14.5px}
+.krow .kv{font-family:var(--fd);font-weight:900;font-size:26px;line-height:1;text-align:right;grid-row:span 2}
+.krow .kv small{font-size:.5em;color:var(--muted);font-weight:700}
+.tag{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:1px}
+.tag.up{background:color-mix(in srgb,var(--tA) 18%,var(--paper));color:var(--tA)}
+.tag.mid{background:var(--paper2);color:var(--muted)}
+.tag.down{background:color-mix(in srgb,var(--tD) 14%,var(--paper));color:var(--tD)}
+/* finder */
+.picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.picks{grid-template-columns:1fr}}
+.pick{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--paper2);cursor:pointer;transition:transform .15s,border-color .15s;display:flex;flex-direction:column;gap:8px}
+.pick:hover{transform:translateY(-2px);border-color:var(--ink)}
+.pick .md{font-size:30px;line-height:1}
+.pick .pn{font-family:var(--fd);font-weight:900;font-size:24px;line-height:.95;text-transform:uppercase}
+.pick .pills{display:flex;flex-wrap:wrap;gap:5px}
+.pick .pills span{background:var(--paper);border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-size:12.5px;font-weight:600}
+.pick .pb{font-size:12.5px;color:var(--muted);margin-top:auto}
+.also{margin-top:12px;font-size:13.5px;color:var(--muted)}
+.also button{border:0;background:none;padding:0;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+/* report */
+.rrow{display:grid;grid-template-columns:34px minmax(0,1fr) 56px;gap:4px 12px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.rrow:first-child{border-top:0}
+.rrow .em{font-size:24px;grid-row:span 3;text-align:center;align-self:start;padding-top:2px}
+.rrow .kn{font-weight:700;font-size:14.5px}
+.rrow .kd{font-size:12.5px;color:var(--muted)}
+.rrow .kv{font-family:var(--fd);font-weight:900;font-size:26px;text-align:right;grid-row:span 3;align-self:start;line-height:1}
+.rrow .kv small{display:block;font-family:var(--fb);font-size:11px;color:var(--muted);font-weight:500}
+.rrow .top{font-size:12.5px;margin-top:4px}
+/* trail */
+.trailpanel #trail svg{width:100%;height:auto;display:block}
+.days{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 8px;margin-top:6px;scroll-snap-type:x proximity}
+.day{flex:0 0 210px;scroll-snap-align:start;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--paper2)}
+.day .dh{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;color:var(--muted)}
+.day .dh b{font-family:var(--fd);font-size:19px;color:var(--ink)}
+.day .dc{display:flex;align-items:center;gap:8px;margin-top:7px;font-size:13px;font-weight:600;cursor:pointer}
+.day .dc span:nth-child(2){flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day .dc em{font-style:normal;font-family:var(--fd);font-weight:800;font-size:17px}
+
+/* tooltip */
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--paper);padding:8px 11px;border-radius:10px;font-size:12.5px;
+  max-width:240px;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;box-shadow:0 10px 26px -12px rgba(0,0,0,.6)}
+#tip.on{opacity:1;transform:none}
+#tip b{display:block;font-size:13.5px}
+
+/* ---------- sheet ---------- */
+.sheet-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.search{flex:1 1 220px;max-width:340px;border:1px solid var(--line2);background:var(--paper);color:var(--ink);border-radius:999px;padding:9px 16px;font:inherit}
+.tbl-wrap{overflow:auto;max-height:calc(100vh - 250px);border-radius:16px;border:1px solid var(--line);background:var(--paper)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13.5px;min-width:980px}
+th{position:sticky;top:0;z-index:2;background:var(--ink);color:var(--paper);text-align:left;font-weight:600;padding:9px 8px;white-space:nowrap;vertical-align:bottom;font-size:12.5px;cursor:pointer;user-select:none}
+th.nosort{cursor:default}
+th .arr{opacity:.5;margin-left:4px}
+th.sorted .arr{opacity:1;color:var(--kaya)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.rt td{background:var(--paper)}
+tr.un td{color:var(--muted)}
+tr.cl td{color:var(--muted);font-style:italic}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:var(--paper2)}
+tbody tr.sel td{background:color-mix(in srgb,var(--kaya) 22%,var(--paper))}
+td.sc{text-align:center;font-family:var(--fd);font-weight:800;font-size:17px;width:56px}
+td.tt{font-family:var(--fd);font-weight:900;font-size:20px;text-align:center}
+td.nm{font-weight:600;color:var(--ink);min-width:190px;max-width:260px}
+td.nm .ad{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
+td.nt{min-width:200px}
+td.vd{white-space:nowrap}
+td.bt{min-width:110px;max-width:160px}
+th.ctr{text-align:center}
+th .hd{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15}
+th .hd em{font-style:normal;font-size:16px}
+td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
+.count{font-size:13px;color:var(--muted)}
+
+/* ---------- slides ---------- */
+.deck{display:grid;grid-template-rows:auto 1fr auto;gap:12px}
+.deck-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.deck-bar .ttl{font-family:var(--fd);font-weight:800;font-size:24px;text-transform:uppercase;margin-right:auto}
+.btn{border:1px solid var(--line2);background:var(--paper);border-radius:999px;padding:8px 14px;font-weight:600;font-size:13px}
+.btn:hover{border-color:var(--ink)}
+.btn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.stage{position:relative;height:max(340px,min(calc(100vh - 300px),860px));display:grid;place-items:center;background:transparent;border-radius:18px}
+.stage:fullscreen{background:#000;height:100vh;border-radius:0}
+.canvas-holder{position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);border-radius:10px;overflow:hidden}
+.canvas{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden}
+.rail{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.rail button{flex:none;border:1px solid var(--line2);background:var(--paper);border-radius:10px;padding:6px 10px;font-size:12px;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.rail button b{font-family:var(--fd);font-size:15px;margin-right:6px}
+.rail button[aria-current="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.navbtn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);font-size:20px;opacity:.75;z-index:3}
+.navbtn:hover{opacity:1}
+.navbtn.p{left:6px}.navbtn.n{right:6px}
+.counter{font-family:var(--fd);font-weight:800;font-size:18px}
+
+/* slide internals: all px in virtual canvas units */
+.sl{position:absolute;inset:0;background:var(--bg);color:var(--ink);font-family:var(--fb);overflow:hidden;
+  background-image:linear-gradient(var(--grid) 2px,transparent 2px),linear-gradient(90deg,var(--grid) 2px,transparent 2px);background-size:90px 90px}
+.sl .pad{position:absolute;inset:90px 110px 120px}
+.v .sl .pad{inset:110px 80px}
+.sq .sl .pad{inset:70px 70px}
+.sl .strip{position:absolute;left:0;right:0;top:0;height:26px;background:var(--red);box-shadow:0 6px 0 var(--kaya)}
+.sl .foot{position:absolute;left:110px;right:110px;bottom:44px;display:flex;justify-content:space-between;font-size:24px;color:var(--muted)}
+.v .sl .foot{left:80px;right:80px;bottom:60px}
+.sq .sl .foot{left:70px;right:70px;bottom:26px;font-size:20px}
+.sl .h{font-family:var(--fd);font-weight:900;text-transform:uppercase;line-height:.88;margin:0}
+.sl .lead{font-size:40px;line-height:1.25;color:var(--muted);margin:0}
+.sl .kick{display:inline-block;background:var(--red);color:#fff;font-family:var(--fd);font-weight:800;font-size:34px;padding:8px 22px 6px;border-radius:12px;text-transform:uppercase;letter-spacing:.02em}
+.sl .card{background:var(--paper);border:2px solid var(--line);border-radius:28px;padding:34px 36px}
+.sl .st{width:auto;height:auto}
+.slmosaic{display:grid;gap:8px}
+.slmosaic i{aspect-ratio:1;border-radius:8px;background:var(--tile);box-shadow:inset 0 0 0 2px var(--tileLine);display:grid;place-items:center;color:#fff;font-style:normal;font-family:var(--fd);font-weight:900}
+.slbar{height:40px;background:var(--paper2);border-radius:99px;overflow:hidden;position:relative;border:2px solid var(--line)}
+.slbar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
+.pitch .sl{background:var(--ink);color:var(--paper);background-image:none}
+.pitch .sl .lead{color:color-mix(in srgb,var(--paper) 72%,var(--ink))}
+.pitch .sl .card{background:color-mix(in srgb,var(--paper) 7%,var(--ink));border-color:color-mix(in srgb,var(--paper) 16%,var(--ink));color:var(--paper)}
+.pitch .sl .foot{color:color-mix(in srgb,var(--paper) 55%,var(--ink))}
+.pitch .sl .h em{font-style:normal;color:var(--kaya)}
+
+@media (max-width:720px){.board{position:static}.brand h1{font-size:26px}.modes{padding-bottom:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{.board{position:static}}
+</style>
+</head>
+<body data-tab="dashboard">
+<header class="board">
+  <div class="board-top">
+    <div class="brand">
+      <h1>Singapore Hawker Centre<br>Rating Tracker</h1>
+      <p>Zumi's 2026 quest through all <span id="totalN">123</span> official hawker centres <span id="fresh"></span></p>
+    </div>
+    <div class="modes">
+      <button id="newData" type="button">New ratings are in. Refresh</button>
+      <div class="seg fmt-only" role="group" aria-label="Slide format">
+        <button data-fmt="w" aria-pressed="true" title="YouTube / stream">16:9</button>
+        <button data-fmt="v" aria-pressed="false" title="TikTok / Shorts / Reels">9:16</button>
+        <button data-fmt="sq" aria-pressed="false" title="X / Instagram">1:1</button>
+      </div>
+      <div class="seg" role="group" aria-label="Colour mode">
+        <button data-theme-btn="light" aria-pressed="false">☀️ Day market</button>
+        <button data-theme-btn="dark" aria-pressed="false">🌙 Night market</button>
+      </div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">Dashboard</button>
+    <button class="tab" role="tab" data-tab="sheet" aria-selected="false">Sheet</button>
+    <button class="tab" role="tab" data-tab="slides" aria-selected="false">Slides</button>
+    <button class="tab" role="tab" data-tab="pitch" aria-selected="false">Pitch deck</button>
+  </nav>
+</header>
+
+<main>
+  <!-- DASHBOARD -->
+  <section class="view on dim-scope" id="v-dashboard">
+    <div class="grid g-hero">
+      <div class="panel hero">
+        <div class="hero-head">
+          <div class="hero-big" id="heroNum"></div>
+          <div class="hero-txt" id="heroTxt"></div>
+        </div>
+        <div class="mosaic" id="mosaic" aria-label="All 123 hawker centres"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+
+    <div class="grid g-main">
+      <div class="panel">
+        <h2>Leaderboard</h2>
+        <p class="sub">Pick a criterion to re-rank and spotlight it. Hover a centre to trace it across every chart; click to open its scorecard.</p>
+        <div class="chips" id="critChips"></div>
+        <div class="legend" id="lbLegend" style="margin:-4px 0 12px"></div>
+        <div class="lb" id="lb"></div>
+      </div>
+      <div class="panel detail" id="detail"></div>
+    </div>
+
+    <div class="grid g-two">
+      <div class="panel">
+        <h2>Find your hawker</h2>
+        <p class="sub">What matters most to you? Tap one or more, and Zumi's scores pick the best matches.</p>
+        <div class="chips" id="wantChips"></div>
+        <div class="picks" id="picks"></div>
+      </div>
+      <div class="panel">
+        <h2>Report card</h2>
+        <p class="sub">How the rated centres do on each of Zumi's five scores, and who tops each one.</p>
+        <div id="report"></div>
+      </div>
+    </div>
+
+    <div class="panel trailpanel" style="margin-top:16px">
+      <h2>The journey so far</h2>
+      <p class="sub">Every hawker day leaves a footprint on the trail, like the footprints in the Charlie walking app. 👣</p>
+      <div id="trail"></div>
+      <div class="days" id="days"></div>
+    </div>
+
+    <div class="grid g-two">
+      <div class="panel">
+        <h2>Zumi's highlights</h2>
+        <p class="sub">Straight from her scores and notes.</p>
+        <div class="supers" id="supers"></div>
+      </div>
+      <div class="panel">
+        <h2>Tier count</h2>
+        <p class="sub">One square per rated centre.</p>
+        <div class="tiercols" id="tiers"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHEET -->
+  <section class="view" id="v-sheet">
+    <div class="sheet-tools">
+      <input class="search" id="q" type="search" placeholder="Search centre, address or notes" aria-label="Search">
+      <div class="chips" id="sheetChips" style="margin:0"></div>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="tbl-wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
+  </section>
+
+  <!-- SLIDES -->
+  <section class="view" id="v-slides">
+    <div class="deck" data-deck="slides"></div>
+  </section>
+  <!-- PITCH -->
+  <section class="view" id="v-pitch">
+    <div class="deck pitch" data-deck="pitch"></div>
+  </section>
+</main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const SNAPSHOT = {"updated":"2026-09-23T12:45:20+00:00","centres":[{"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)"},{"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},{"n":4,"name":"Beo Crescent Market","addr":"38A, Beo Crescent, S(169982)","s":[6,7.5,10,9,5],"t":37.5,"rk":"B","best":"AM to 5pm","note":"DYSON DRYER IN TOILET - WOW","d":"2026-04-20"},{"n":5,"name":"Berseh Food Centre","addr":"166, Jalan Besar, S(208877)"},{"n":6,"name":"Bukit Timah Market","addr":"Closed for redevelopment till 2029 (tentative)"},{"n":7,"name":"Chomp Chomp Food Centre","addr":"20, Kensington Park Road, S(557269)"},{"n":8,"name":"Commonwealth Crescent Market","addr":"31, Commonwealth Crescent, S(149644)"},{"n":9,"name":"Dunman Food Centre","addr":"271, Onan Road, S(424768)"},{"n":10,"name":"East Coast Lagoon Food Village","addr":"1220, East Coast Parkway, S(468960)"},{"n":11,"name":"Geylang Serai Market","addr":"Geylang Serai, S(402001)"},{"n":12,"name":"Golden Mile Food Centre","addr":"505, Beach Road, S(199583)","s":[10,8,7.5,8,8],"t":41.5,"rk":"A","best":"morning + lunch","note":"huge variety! highly recommend to visit","d":"2026-07-23"},{"n":13,"name":"Holland Village Market & Food Centre","addr":"1, Lorong Mambong, S(277700)"},{"n":14,"name":"Old Airport Road Food Centre","addr":"17, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42.0,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},{"n":15,"name":"Margaret Drive Hawker Centre","addr":"38A, Margaret Drive, S(142038)"},{"n":16,"name":"Market Street Hawker Centre","addr":"86, Market Street, CapitaSpring Building, S(048947)"},{"n":17,"name":"Marsiling Mall Hawker Centre","addr":"4, Woodlands Street 12, S(738623)"},{"n":18,"name":"Maxwell Food Centre","addr":"1, Kadayanallur Street, S(069184)","s":[9,9,6,6,6.5],"t":36.5,"rk":"B","best":"All Day","note":"Great for people visiting Singapore","d":"2026-04-20"},{"n":19,"name":"Newton Food Centre","addr":"500, Clemenceau Ave North, S(229495)","s":[5,8,4.5,8,8],"t":33.5,"rk":"C","best":"6 pm onwards","note":"Expensive but food quality is good and nice night vibe","d":"2026-07-16"},{"n":20,"name":"North Bridge Road Market & Food Centre","addr":"861, North Bridge Road, S(198783)","s":[6,5.5,5.5,9,6.5],"t":32.5,"rk":"C","best":"Open 24/7 but best in morning till lunch","note":"Great toilet. Food was mid but it might be cuz i went at 3 pm, lots of stalls were closed","d":"2026-08-06"},{"n":21,"name":"Pasir Panjang Food Centre","addr":"121, Pasir Panjang Road, S(118543)"},{"n":22,"name":"Sembawang Hills Food Centre","addr":"590, Upper Thomson Road, S(574419)"},{"n":23,"name":"Serangoon Garden Market","addr":"49A, Serangoon Garden Way, S(555945)"},{"n":24,"name":"Taman Jurong Market & Food Centre","addr":"3, Yung Sheng Road, S(618499)"},{"n":25,"name":"Tanglin Halt Market","addr":"48A, Tanglin Halt Road, S(148813)","s":[6.5,7,8,7.5,5],"t":34.0,"rk":"C","best":"Morning (6 am onwards)","note":"very neighbourhood hawker, food is average BUT the laksa man has aura and super friendly","d":"2026-09-09"},{"n":26,"name":"Tiong Bahru Market","addr":"30, Seng Poh Road, S(168898)","s":[6.5,9,7.5,9,8],"t":40.0,"rk":"A","best":"Morning","note":"My fav hawker :D","d":"2026-06-03"},{"n":27,"name":"Zion Riverside Food Centre","addr":"70, Zion Road, S(247792)"},{"n":28,"name":"ABC Brickworks Market & Food Centre","addr":"Blk 6, Jalan Bukit Merah, S(150006)"},{"n":29,"name":"Albert Centre Market & Food Centre","addr":"Blk 270, Queen Street, S(180270)"},{"n":30,"name":"Alexandra Village Food Centre","addr":"Blk 120, Bukit Merah Lane 1, S(150120)"},{"n":31,"name":"Blk 117 Aljunied Ave 2","addr":"Blk 117, Aljunied Ave 2, S(380117)"},{"n":32,"name":"Blk 226D Ang Mo Kio Ave 1","addr":"Blk 226D, Ang Mo Kio Ave 1, S(564226)"},{"n":33,"name":"Blk 341 Ang Mo Kio Ave 1","addr":"Blk 341, Ang Mo Kio Ave 1, S(560341)"},{"n":34,"name":"Mayflower Market & Food Centre","addr":"Blks 160/162, Ang Mo Kio Ave 4, S(560160/560162)"},{"n":35,"name":"Ang Mo Kio 628","addr":"Blk 628, Ang Mo Kio Ave 4, S(560628)","s":[4.5,9.5,7.5,7.5,5.5],"t":34.5,"rk":"C","best":"Morning till 2 pm","note":"BEST Peanut Pancake, i regret giving 4.5 for variation - should be 6.5 :c","d":"2026-06-09"},{"n":36,"name":"Ang Mo Kio Central Market & Food Center","addr":"Blk 724, Ang Mo Kio Ave 6, S(560724)"},{"n":37,"name":"Blk 409 Ang Mo Kio Ave 10","addr":"Blk 409, Ang Mo Kio Ave 10, S(560409)"},{"n":38,"name":"Chong Boon Market & Food Centre","addr":"Blk 453A, Ang Mo Kio Ave 10, S(561453)","s":[5.5,7.5,7,6.5,5],"t":31.5,"rk":"C","best":"Best to go for lunch - Stalls open till 7 pm","note":"Good Mee Rebeus","d":"2026-06-09"},{"n":39,"name":"Blk 527 Ang Mo Kio Ave 10","addr":"Blk 527, Ang Mo Kio Ave 10, S(560527)"},{"n":40,"name":"Blk 226H Ang Mo Kio Street 22","addr":"Blk 226H, Ang Mo Kio Street 22, S(568226)"},{"n":41,"name":"Blk 216 Bedok North Street 1","addr":"Blk 216, Bedok North Street 1, S(460216)"},{"n":42,"name":"Blk 511 Bedok North Street 3","addr":"Blk 511, Bedok North Street 3, S(460511)"},{"n":43,"name":"Blk 538 Bedok North Street 3","addr":"Blk 538, Bedok North Street 3, S(460538)"},{"n":44,"name":"Blk 85 Bedok North Street 4","addr":"Blk 85, Bedok North Street 4, S(460085)"},{"n":45,"name":"Blk 630 Bedok Reservoir Road","addr":"Blk 630, Bedok Reservoir Road, S(470630)"},{"n":46,"name":"Blk 16 Bedok South Road","addr":"Blk 16, Bedok South Road, S(460016)"},{"n":47,"name":"Bendemeer Market & Food Centre","addr":"Blk 29, Bendemeer Road, S(330029)","s":[6,8.5,7,7,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"generation coffee was good","d":"2026-05-26"},{"n":48,"name":"Blks 221A/B Boon Lay Place","addr":"Blks 221A/B, Boon Lay Place, S(641221/642221)"},{"n":49,"name":"Blk 163 Bukit Merah Central","addr":"Blk 163, Bukit Merah Central, S(150163)"},{"n":50,"name":"Blk 115 Bukit Merah View","addr":"Blk 115, Bukit Merah View, S(151115)"},{"n":51,"name":"Changi Village Hawker Centre","addr":"Blks 2/3, Changi Village Road, S(500002/500003)","s":[6,5.5,8,6,7.5],"t":33.0,"rk":"C","best":"Everything closes by 9 pm weekdays","note":"cool secluded place but the food quality wasnt worth the distance required to travel","d":"2026-07-30"},{"n":52,"name":"Chinatown Complex Market & Hawker Centre","addr":"Blk 335, Smith Street, S(050335)","s":[5.5,8,10,5,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"less stall available after 2 pm. mainly Chinese food","d":"2026-07-16"},{"n":53,"name":"Chong Pang Market & Food Centre","addr":"Blks 104/105, Yishun Ring Road, S(760104/760105)"},{"n":54,"name":"Blks 79/79A Circuit Road","addr":"Blks 79/79A, Circuit Road, S(370079/371079)"},{"n":55,"name":"Blk 80 Circuit Road","addr":"Blk 80, Circuit Road, S(370080)"},{"n":56,"name":"Blk 89 Circuit Road","addr":"Blk 89, Circuit Road, S(370089)"},{"n":57,"name":"Blk 353 Clementi Ave 2","addr":"Blk 353, Clementi Ave 2, S(120353)"},{"n":58,"name":"Blk 448 Clementi Ave 3","addr":"Blk 448, Clementi Ave 3, S(120448)"},{"n":59,"name":"Blk 726 Clementi West Street 2","addr":"Blk 726, Clementi West Street 2, S(120726)"},{"n":60,"name":"Blk 7 Empress Road","addr":"Blk 7, Empress Road, S(260007)"},{"n":61,"name":"Blk 4A Eunos Crescent","addr":"Blk 4A, Eunos Crescent, S(402004)"},{"n":62,"name":"Geylang Bahru Food Centre","addr":"Blk 69, Geylang Bahru, S(330069)","s":[8,9,9,7,5],"t":38.0,"rk":"B","best":"stalls still open after 3 pm","note":"THE FOOD WAS SO GOOD - THE MICHELLIN RECOMMENDED WORTH IT. BEST DUCK RICE!","d":"2026-09-14"},{"n":63,"name":"Ghim Moh Hawker Centre","addr":"Blk 20, Ghim Moh Road, S(270020)","s":[8,9.5,9,7,6.5],"t":40.0,"rk":"A","best":"Morning + Lunch","note":"Everything I ate was delicious!Not a touristy spot - highly recommend.","d":"2026-08-06"},{"n":64,"name":"Blks 13/14 Haig Road","addr":"Blks 13/14, Haig Road, S(430013/430014)"},{"n":65,"name":"Havelock Road Cooked Food Center","addr":"Blks 22A/B, Havelock Road, S(161022/162022)"},{"n":66,"name":"Blk 44 Holland Drive","addr":"Blk 44, Holland Drive, S(270044)"},{"n":67,"name":"Hong Lim Market & Food Centre","addr":"Blk 531A, Upper Cross Street, S(051531)"},{"n":68,"name":"Hougang Hainanese Village Center","addr":"Blk 105, Hougang Ave 1, S(530105)","s":[6.5,9,6.5,8.5,7],"t":37.5,"rk":"B","best":"best to go before 2 pm cuz everything close after that","note":"laksa was so good! mainly Chinese food","d":"2026-07-09"},{"n":69,"name":"Blk 4A Jalan Batu","addr":"Blk 4A, Jalan Batu, S(432004)"},{"n":70,"name":"Blk 112 Jalan Bukit Merah","addr":"Blk 112, Jalan Bukit Merah, S(160112)"},{"n":71,"name":"Blk 1 Jalan Kukoh","addr":"Blk 1, Jalan Kukoh, S(161001)"},{"n":72,"name":"Blk 347 Jurong East Ave 1","addr":"Blk 347, Jurong East Ave 1, S(600347)"},{"n":73,"name":"Blk 254 Jurong East Street 24","addr":"Blk 254, Jurong East Street 24, S(600254)"},{"n":74,"name":"Blk 505 Jurong West Street 52","addr":"Blk 505, Jurong West Street 52, S(640505)"},{"n":75,"name":"209 Kovan Market & Food Centre","addr":"Blk 209, Hougang Street 21, S(530209)","s":[6.5,8,9.5,7,6.5],"t":37.5,"rk":"B","best":"Ideal time: 10 am, everything closes by 2pm","note":"Dont eat the Indonesian Stall - was mid","d":"2026-08-13"},{"n":76,"name":"Blk 84 Marine Parade Central","addr":"Blk 84, Marine Parade Central, S(440084)"},{"n":77,"name":"Blk 50A Marine Terrace","addr":"Blk 50A, Marine Terrace, S(441050)"},{"n":78,"name":"Blks 20/21 Marsiling Lane","addr":"Blks 20/21, Marsiling Lane, S(730020/730021)"},{"n":79,"name":"Blk 159 Mei Chin Road","addr":"Blk 159, Mei Chin Road, S(140159)"},{"n":80,"name":"Blk 58 New Upper Changi Road","addr":"Blk 58, New Upper Changi Road, S(461058)"},{"n":81,"name":"Blk 208B New Upper Changi Road","addr":"Blk 208B, New Upper Changi Road, S(462208)"},{"n":82,"name":"Blk 51 Old Airport Road","addr":"Blk 51, Old Airport Road, S(390051)"},{"n":83,"name":"Pek Kio Market & Food Centre","addr":"Blk 41A, Cambridge Road, S(211041)"},{"n":84,"name":"People's Park Complex Food Centre","addr":"Blk 32, New Market Road, S(050032)","s":[6,8,9.5,7.5,7.5],"t":38.5,"rk":"B","best":"Lunch & Dinner","note":"Duck rice is famous (didnt try) very affordable place","d":"2026-07-23"},{"n":85,"name":"Redhill Market","addr":"Blk 79, Redhill Lane, S(150079)","s":[4,6.5,6.5,6,4],"t":27.0,"rk":"D","best":"AM to 2 pm","note":"Feels like a kopitiam rather than hawker","d":"2026-04-20"},{"n":86,"name":"Redhill Food Center","addr":"Blk 85, Redhill Lane, S(150085)","s":[9,9,8,8,6],"t":40.0,"rk":"A","best":"AM to 2 pm","note":"Great place overall","d":"2026-04-20"},{"n":87,"name":"Blk 320 Shunfu Road","addr":"Blk 320, Shunfu Road, S(570320)"},{"n":88,"name":"Blk 49 Sims Place","addr":"Blk 49, Sims Place, S(380049)"},{"n":89,"name":"Blk 137 Tampines Street 11","addr":"Blk 137, Tampines Street 11, S(521137)"},{"n":90,"name":"Blk 6 Tanjong Pagar Plaza","addr":"Blk 6, Tanjong Pagar Plaza, S(081006)"},{"n":91,"name":"Blk 37A Teban Gardens Road","addr":"Blk 37A, Teban Gardens Road, S(601037)"},{"n":92,"name":"Tekka Market","addr":"Blk 665, Buffalo Road, S(210665)"},{"n":93,"name":"Blk 11 Telok Blangah Crescent","addr":"Blk 11, Telok Blangah Crescent, S(090011)"},{"n":94,"name":"Blk 79 Telok Blangah Drive","addr":"Blk 79, Telok Blangah Drive, S(100079)"},{"n":95,"name":"Blk 82 Telok Blangah Drive","addr":"Blk 82, Telok Blangah Drive, S(100082)"},{"n":96,"name":"Blk 36 Telok Blangah Rise","addr":"Blk 36, Telok Blangah Rise, S(090036)"},{"n":97,"name":"Blk 127 Toa Payoh Lorong 1","addr":"Blk 127, Lorong 1 Toa Payoh, S(310127)"},{"n":98,"name":"Blk 74 Toa Payoh Lorong 4","addr":"Blk 74, Lorong 4 Toa Payoh, S(310074)"},{"n":99,"name":"Blk 93 Toa Payoh Lorong 4","addr":"Blk 93, Lorong 4 Toa Payoh, S(310093)"},{"n":100,"name":"Blk 75 Toa Payoh Lorong 5","addr":"Blk 75, Lorong 5 Toa Payoh, S(310075)"},{"n":101,"name":"Blk 22 Toa Payoh Lorong 7","addr":"Blk 22, Lorong 7 Toa Payoh, S(310022)"},{"n":102,"name":"Toa Payoh Lorong 8","addr":"Blk 210, Lorong 8 Toa Payoh, S(310210)","s":[7.5,9,8.5,7,6],"t":38.0,"rk":"B","best":"Morning + Lunch","note":"East Seafood White Meehoon #01-06 stall is worth it","d":"2026-07-30"},{"n":103,"name":"Blk 17 Upper Boon Keng Road","addr":"Blk 17, Upper Boon Keng Road, S(380017)"},{"n":104,"name":"Blk 502 West Coast Drive","addr":"Blk 502, West Coast Drive, S(120502)"},{"n":105,"name":"Blk 503 West Coast Drive","addr":"Blk 503, West Coast Drive, S(120503)"},{"n":106,"name":"Whampoa Food Centre","addr":"Blk 90, Whampoa Drive, S(320090)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Morning (although half the stall was closed when i went at 9 am)","note":"did both whampoa together","d":"2026-07-09"},{"n":107,"name":"Blks 91/92 Whampoa Drive","addr":"Blks 91/92, Whampoa Drive, S(320091/320092)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Afternoon","note":"was better in the past, nothing really impressed me","d":"2026-07-09"},{"n":108,"name":"Ci Yuan Hawker Centre","addr":"51, Hougang Ave 9, S(538776)"},{"n":109,"name":"Bukit Panjang Hawker Centre & Market","addr":"2, Bukit Panjang Ring Road, S(679947)"},{"n":110,"name":"Hawker Centre @ Our Tampines Hub","addr":"1 Tampines Walk, S(528523)"},{"n":111,"name":"Kampung Admiralty Hawker Centre","addr":"Blk 676, Woodlands Drive 71, #02-44, S(730676)"},{"n":112,"name":"Yishun Park Hawker Centre","addr":"51, Yishun Avenue 11, S(768867)"},{"n":113,"name":"Jurong West Hawker Centre","addr":"50, Jurong West Street 61, S(648202)"},{"n":114,"name":"Pasir Ris Central Hawker Centre","addr":"110, Pasir Ris Central, S(519641)"},{"n":115,"name":"Fernvale Hawker Centre and Market","addr":"21, Sengkang West Avenue, S(797650)"},{"n":116,"name":"One Punggol Hawker Centre","addr":"1, Punggol Drive, S(828629)"},{"n":117,"name":"Senja Hawker Centre","addr":"2, Senja Close, S(677632)"},{"n":118,"name":"Bukit Canberra Hawker Centre","addr":"21, Canberra Link, S(756973)"},{"n":119,"name":"Buangkok Hawker Centre","addr":"70, Compassvale Bow, S(544692)"},{"n":120,"name":"Anchorvale Village Hawker Centre","addr":"339, Anchorvale Road, S(540339)"},{"n":121,"name":"Woodleigh Village Hawker Centre","addr":"202C, Woodleigh Link, S(363202)"},{"n":122,"name":"Bukit Batok West Hawker Centre","addr":"Blk 469, Bukit Batok West Ave 9, S(650469)"},{"n":123,"name":"Punggol Coast Hawker Centre","addr":"84 Punggol Way, S(829911)"}]};
+(async function(){
+let DATA = SNAPSHOT.centres, META = {updated: SNAPSHOT.updated, live:false};
+if(false) try{
+  const r = await fetch('data.json?t='+Date.now(), {cache:'no-store'});
+  if(r.ok){ const j = await r.json(); if(j && Array.isArray(j.centres) && j.centres.length){ DATA=j.centres; META={updated:j.updated, live:true}; } }
+}catch(e){}
+const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
+const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
+DATA.forEach(d=>{ d.sh = SHORT[d.name] || autoShort(d.name); });
+const CRIT = [
+  {k:'Food Variation',s:'Variety',e:'🫦',d:'Range and diversity of good options.'},
+  {k:'Quality',s:'Quality',e:'👅',d:'Food quality and consistency.'},
+  {k:'Price',s:'Price',e:'💸',d:'Higher = more budget-friendly. Is it value for money?'},
+  {k:'Comfy',s:'Comfy',e:'🫶🏼',d:'Buzz, vibe, ambience, seating, cleanliness, accessibility.'},
+  {k:'Uniqueness',s:'Uniqueness',e:'🍽',d:'Distinctive identity or iconic draw.'}
+];
+const TIERS = [['S','45–50'],['A','40–44'],['B','35–39'],['C','30–34'],['D','21–29'],['F','≤20']];
+const CV = i => `var(--c${i})`;
+const TV = t => `var(--t${t})`;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtD = iso => { if(!iso) return 'Not recorded'; const [y,m,d]=iso.split('-').map(Number); return `${d} ${MON[m-1]} ${y}`; };
+const fmtDs = iso => { if(!iso) return '—'; const [,m,d]=iso.split('-').map(Number); return `${d} ${MON[m-1]}`; };
+const f1 = v => (Math.round(v*10)/10).toString();
+
+/* ---------- derived data ---------- */
+const BY = {}; DATA.forEach(d=>{BY[d.n]=d; d.closed = /^closed/i.test(d.addr);});
+const R = DATA.filter(d=>d.s);
+R.forEach(d=>{ d.pos = 1 + R.filter(o=>o.t>d.t).length; d.tied = R.filter(o=>o.t===d.t).length>1; });
+const ranked = [...R].sort((a,b)=>b.t-a.t || a.name.localeCompare(b.name));
+const AVG = CRIT.map((_,i)=>R.reduce((a,d)=>a+d.s[i],0)/R.length);
+const AVGT = R.reduce((a,d)=>a+d.t,0)/R.length;
+const TC = {}; TIERS.forEach(([t])=>TC[t]=R.filter(d=>d.rk===t).length);
+const DATES = [...new Set(R.map(d=>d.d).filter(Boolean))].sort();
+const TOTAL = DATA.length, CLOSED = DATA.filter(d=>d.closed).length, LEFT = TOTAL - R.length - CLOSED;
+const TOP = ranked[0];
+const champs = CRIT.map((c,i)=>{ const m=Math.max(...R.map(d=>d.s[i])); return {i,m,w:R.filter(d=>d.s[i]===m)}; });
+const ALLS = R.flatMap(d=>d.s); const SMIN = Math.min(4, Math.floor(Math.min(...ALLS, 10)));
+const QMIN = Math.min(5, Math.floor(Math.min(...R.map(d=>d.s[1]), 10)));
+const range=(a,b)=>{const o=[];for(let v=a;v<=b;v++)o.push(v);return o;};
+const critOrder = [...CRIT.keys()].sort((a,b)=>AVG[b]-AVG[a]);
+
+const state = { sel: TOP.n, crit: -1, sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', idx:{slides:0,pitch:0} };
+
+/* ---------- theme / tabs ---------- */
+const root = document.documentElement;
+function store(k,v){ try{ localStorage.setItem(k,v);}catch(e){} }
+function load(k){ try{ return localStorage.getItem(k);}catch(e){ return null; } }
+function applyTheme(t){
+  if(t) root.setAttribute('data-theme',t);
+  const eff = root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  document.querySelectorAll('[data-theme-btn]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.themeBtn===eff));
+}
+document.querySelectorAll('[data-theme-btn]').forEach(b=>b.onclick=()=>{ applyTheme(b.dataset.themeBtn); store('hk-theme',b.dataset.themeBtn); });
+applyTheme(load('hk-theme'));
+
+function setTab(t){
+  if(!['dashboard','sheet','slides','pitch'].includes(t)) t='dashboard';
+  document.body.dataset.tab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
+  if(t==='slides'||t==='pitch') renderDeck(t);
+  try{ history.replaceState(null,'','#'+t); }catch(e){}
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+
+document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{
+  state.fmt=b.dataset.fmt;
+  document.querySelectorAll('[data-fmt]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') renderDeck(t);
+});
+
+/* ---------- tooltip + cross highlight ---------- */
+const tip = document.getElementById('tip');
+let hoverN = null;
+function tipHtml(d){
+  if(d.s) return `<b>${esc(d.name)}</b>${f1(d.t)}/50, ${d.rk} tier${d.d?`, visited ${fmtDs(d.d)}`:''}`;
+  if(d.closed) return `<b>${esc(d.name)}</b>Closed for redevelopment`;
+  return `<b>${esc(d.name)}</b>Not rated yet`;
+}
+function highlight(n){
+  if(n===hoverN) return;
+  document.querySelectorAll('[data-n].on').forEach(e=>e.classList.remove('on'));
+  hoverN = n;
+  const scope = document.getElementById('v-dashboard');
+  if(n==null || !BY[n] || !BY[n].s){ scope.classList.remove('hl'); return; }
+  scope.classList.add('hl');
+  document.querySelectorAll(`[data-n="${n}"]`).forEach(e=>e.classList.add('on'));
+}
+document.addEventListener('mouseover',e=>{
+  const el = e.target.closest('[data-n]');
+  if(!el || !el.closest('#v-dashboard')){ highlight(null); tip.classList.remove('on'); return; }
+  const n = +el.dataset.n; highlight(n);
+  tip.innerHTML = tipHtml(BY[n]); tip.classList.add('on');
+});
+document.addEventListener('mousemove',e=>{
+  if(!tip.classList.contains('on')) return;
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX+14, y = e.clientY+16;
+  if(x+w>innerWidth-8) x = e.clientX-w-14;
+  if(y+h>innerHeight-8) y = e.clientY-h-16;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+});
+document.addEventListener('click',e=>{
+  const el = e.target.closest('[data-n]');
+  if(!el) return;
+  const d = BY[+el.dataset.n];
+  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard') && innerWidth<1080) document.getElementById('detail').scrollIntoView({behavior:'smooth',block:'start'}); }
+});
+
+/* ---------- dashboard ---------- */
+function renderHero(){
+  document.getElementById('heroNum').innerHTML = `${R.length}<small>/${TOTAL}</small>`;
+  document.getElementById('heroTxt').innerHTML = `hawker centres rated so far. <b>${LEFT} still to eat through</b>${CLOSED?`, ${CLOSED} closed for redevelopment`:''}.`;
+  document.getElementById('mosaic').innerHTML = DATA.map(d=>{
+    if(d.s) return `<div class="tile r" data-n="${d.n}" style="background:${TV(d.rk)}" tabindex="0" aria-label="${esc(d.name)}, ${d.rk} tier">${d.rk}</div>`;
+    return `<div class="tile ${d.closed?'x':''}" data-n="${d.n}" aria-label="${esc(d.name)}"></div>`;
+  }).join('');
+  document.getElementById('legend').innerHTML =
+    TIERS.filter(([t])=>TC[t]).map(([t,r])=>`<span><i style="background:${TV(t)}"></i>${t} tier (${r})</span>`).join('') +
+    `<span><i style="box-shadow:inset 0 0 0 1px var(--tileLine);background:var(--tile)"></i>To visit</span>` +
+    `<span><i style="background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 5px)"></i>Closed</span>`;
+  const pct = Math.round(R.length/TOTAL*100);
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="v">${f1(AVGT)}<small>/50</small></div><div class="l">Average score across rated centres</div></div>
+    <div class="kpi"><div class="v">${f1(TOP.t)}<small>/50</small></div><div class="l">Top score, ${esc(TOP.sh)}</div></div>
+    <div class="kpi"><div class="v">${DATES.length}</div><div class="l">Hawker days since ${fmtDs(DATES[0])}</div></div>
+    <div class="kpi"><div class="v">${pct}<small>%</small></div><div class="l">Of the official list done</div></div>
+    <div class="kpi wide"><div class="l" style="margin:0">Tier split</div>
+      <div class="tierbar">${TIERS.filter(([t])=>TC[t]).map(([t])=>`<div style="flex:${TC[t]};background:${TV(t)}" title="${t}: ${TC[t]}">${TC[t]/R.length>.07?`${t} ${TC[t]}`:t}</div>`).join('')}</div>
+      <div class="l">${TC.S?`${TC.S} S-tier centre${TC.S>1?"s":""} found so far.`:"No S tier yet. The first 45+ is still out there."}</div></div>`;
+}
+
+function renderChips(){
+  const opts = [{i:-1,l:'Total'}].concat(CRIT.map((c,i)=>({i,l:`${c.e} ${c.s}`})));
+  document.getElementById('critChips').innerHTML = opts.map(o=>`<button class="chip" data-crit="${o.i}" aria-pressed="${state.crit===o.i}">${o.l}</button>`).join('');
+  document.querySelectorAll('[data-crit]').forEach(b=>b.onclick=()=>{ state.crit=+b.dataset.crit; renderChips(); renderLB(); });
+}
+
+function renderLB(){
+  document.getElementById('lbLegend').innerHTML = 'Bar colours: '+CRIT.map((c,i)=>`<span><i style="background:${CV(i)}"></i>${c.s}</span>`).join('');
+  const lb = document.getElementById('lb');
+  const c = state.crit;
+  lb.classList.toggle('crit', c>=0);
+  const order = c<0 ? ranked : [...R].sort((a,b)=>b.s[c]-a.s[c] || b.t-a.t || a.name.localeCompare(b.name));
+  const H = 34;
+  lb.style.height = (order.length*H)+'px';
+  if(!lb.children.length){
+    lb.innerHTML = R.map(d=>`<div class="lbr" data-n="${d.n}" tabindex="0">
+      <div class="pos"></div><div class="nm">${esc(d.sh)}</div>
+      <div class="bar">${d.s.map((v,i)=>`<span data-i="${i}" style="flex:0 0 calc(${v/50*100}% - 2px);background:${CV(i)}"></span>`).join('')}</div>
+      <div class="tot num"></div><span class="st t${d.rk}">${d.rk}</span></div>`).join('');
+  }
+  order.forEach((d,k)=>{
+    const el = lb.querySelector(`.lbr[data-n="${d.n}"]`);
+    el.style.top = (k*H)+'px';
+    el.querySelector('.pos').textContent = c<0 ? d.pos : k+1;
+    el.querySelector('.tot').textContent = c<0 ? f1(d.t) : f1(d.s[c]);
+    el.querySelectorAll('.bar span').forEach(s=>s.classList.toggle('k', +s.dataset.i===c));
+    el.classList.toggle('sel', d.n===state.sel);
+  });
+}
+
+function radarSVG(vals, avg, size, opts={}){
+  const cx=size/2, cy=size/2, rad=size/2-(opts.pad??34), n=5;
+  const pt=(i,v)=>{const a=-Math.PI/2+i*2*Math.PI/n; return [cx+Math.cos(a)*rad*v/10, cy+Math.sin(a)*rad*v/10];};
+  let g='';
+  [2,4,6,8,10].forEach(r=>{ g+=`<polygon points="${[...Array(n).keys()].map(i=>pt(i,r).join(',')).join(' ')}" fill="none" stroke="var(--line)" stroke-width="${opts.sw||1}"/>`; });
+  for(let i=0;i<n;i++){ const [x,y]=pt(i,10); g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)" stroke-width="${opts.sw||1}"/>`; }
+  if(avg) g+=`<polygon points="${avg.map((v,i)=>pt(i,v).join(',')).join(' ')}" fill="none" stroke="var(--muted)" stroke-width="${(opts.sw||1)*1.6}" stroke-dasharray="${(opts.sw||1)*4} ${(opts.sw||1)*3}"/>`;
+  g+=`<polygon points="${vals.map((v,i)=>pt(i,v).join(',')).join(' ')}" fill="var(--red)" fill-opacity=".18" stroke="var(--red)" stroke-width="${(opts.sw||1)*2.5}" stroke-linejoin="round"/>`;
+  vals.forEach((v,i)=>{ const [x,y]=pt(i,v); g+=`<circle cx="${x}" cy="${y}" r="${(opts.sw||1)*4}" fill="${CV(i)}" stroke="var(--paper)" stroke-width="${opts.sw||1.5}"/>`; });
+  CRIT.forEach((c,i)=>{ const [x,y]=pt(i,12.2); g+=`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="${opts.fs||18}">${c.e}</text>`; });
+  return `<svg viewBox="0 0 ${size} ${size}" width="${opts.w||size}" style="max-width:100%">${g}</svg>`;
+}
+
+function meter(v,color){
+  return `<div class="meter" role="img" aria-label="${f1(v)} out of 10">${[...Array(10).keys()].map(k=>`<span><i style="width:${Math.max(0,Math.min(1,v-k))*100}%;background:${color}"></i></span>`).join('')}</div>`;
+}
+function vsAvg(v,i){
+  const d=v-AVG[i];
+  if(d>=0.5) return '<span class="tag up">Above average</span>';
+  if(d<=-0.5) return '<span class="tag down">Below average</span>';
+  return '<span class="tag mid">About average</span>';
+}
+function listNames(a){ return a.length<3? a.join(' and ') : a.slice(0,-1).join(', ')+' and '+a[a.length-1]; }
+function select(n){
+  state.sel = n; const d = BY[n];
+  const hi=Math.max(...d.s), lo=Math.min(...d.s);
+  const hiN=CRIT.filter((c,i)=>d.s[i]===hi).map(c=>`${c.e} ${c.s}`), loN=CRIT.filter((c,i)=>d.s[i]===lo).map(c=>`${c.e} ${c.s}`);
+  const verdict = hi===lo ? `Scores ${f1(hi)}/10 across the board.` :
+    `Strongest on <b>${listNames(hiN)}</b> (${f1(hi)}/10). Weakest on <b>${listNames(loN)}</b> (${f1(lo)}/10).`;
+  document.getElementById('detail').innerHTML = `
+    <div class="top">
+      <span class="st big t${d.rk}">${d.rk}</span>
+      <div style="min-width:0">
+        <h3>${esc(d.name)}</h3>
+        <div class="addr">${esc(d.addr)}</div>
+        <div class="score">${f1(d.t)}<small>/50</small></div>
+      </div>
+    </div>
+    <p class="verdict">${verdict}</p>
+    <div>${CRIT.map((c,i)=>`<div class="krow"><span class="em">${c.e}</span>
+      <div class="kn">${c.s}${vsAvg(d.s[i],i)}</div>
+      <span class="kv">${f1(d.s[i])}<small>/10</small></span>
+      ${meter(d.s[i],CV(i))}</div>`).join('')}</div>
+    <p class="quote">“${esc(d.note)}”</p>
+    <div class="facts">
+      <div><b>Rank</b>#${d.pos}${d.tied?' (tied)':''} of ${R.length}</div>
+      <div><b>Visited</b>${fmtD(d.d)}</div>
+      <div style="grid-column:1/-1"><b>Best time to go</b>${esc(d.best)}</div>
+    </div>
+    <p class="sub" style="margin:10px 0 0">"Average" compares against all ${R.length} centres Zumi has rated. Click any centre on the page to see its scorecard.</p>`;
+  document.querySelectorAll('.lbr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
+  document.querySelectorAll('#tbl tbody tr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
+}
+
+const WANT = [
+  {i:1,l:'👅 Tastiest food'},{i:2,l:'💸 Best prices'},{i:0,l:'🫦 Lots of choice'},{i:3,l:'🫶🏼 Most comfortable'},{i:4,l:'🍽 Something unique'}
+];
+state.want = new Set([1,2]);
+function renderFinder(){
+  document.getElementById('wantChips').innerHTML = WANT.map(w=>`<button class="chip" data-want="${w.i}" aria-pressed="${state.want.has(w.i)}">${w.l}</button>`).join('');
+  document.querySelectorAll('[data-want]').forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.want;
+    if(state.want.has(i)){ if(state.want.size>1) state.want.delete(i); } else state.want.add(i);
+    renderFinder();
+  });
+  const ks=[...state.want].sort((a,b)=>a-b);
+  const sc=d=>ks.reduce((a,i)=>a+d.s[i],0)/ks.length;
+  const order=[...R].sort((a,b)=>sc(b)-sc(a) || b.t-a.t || a.name.localeCompare(b.name));
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('picks').innerHTML = order.slice(0,3).map((d,k)=>`<div class="pick" data-n="${d.n}" tabindex="0">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="md">${medals[k]}</span><span class="st t${d.rk}">${d.rk}</span></div>
+      <div class="pn">${esc(d.sh)}</div>
+      <div class="pills">${ks.map(i=>`<span>${CRIT[i].e} ${f1(d.s[i])}/10</span>`).join('')}</div>
+      <div class="pb">Overall ${f1(d.t)}/50. Best time: ${esc(d.best)}</div>
+    </div>`).join('');
+  const more=order.slice(3,6);
+  document.getElementById('picks').insertAdjacentHTML('afterend','');
+  let also=document.getElementById('also'); if(!also){ also=document.createElement('p'); also.id='also'; also.className='also'; document.getElementById('picks').after(also); }
+  also.innerHTML = `Also worth a look: ${more.map(d=>`<button data-n="${d.n}">${esc(d.sh)}</button>`).join(', ')}. Tap a pick to open its scorecard.`;
+}
+
+function renderReport(){
+  document.getElementById('report').innerHTML = CRIT.map((c,i)=>{
+    const ch=champs[i];
+    return `<div class="rrow"><span class="em">${c.e}</span>
+      <div><span class="kn">${c.k}</span> <span class="kd">${c.d}</span></div>
+      <span class="kv">${f1(AVG[i])}<small>average</small></span>
+      ${meter(AVG[i],CV(i))}
+      <div class="top">Top score ${f1(ch.m)}/10: ${ch.w.map(d=>`<b data-n="${d.n}" style="cursor:pointer">${esc(d.sh)}</b>`).join(', ')}</div></div>`;
+  }).join('');
+}
+
+function renderTrail(){
+  const RD=R.filter(d=>d.d);
+  if(!DATES.length){ document.getElementById('trail').innerHTML='<p class="sub">Visit dates will appear here once they are filled in.</p>'; document.getElementById('days').innerHTML=''; return; }
+  const W=1000,H=215, x0=50, x1=900, xF=960;
+  const n=DATES.length;
+  const px=k=> n===1? x0 : x0+(x1-x0)*k/(n-1);
+  const py=x=> 106+38*Math.sin((x-x0)/110);
+  let path=''; for(let x=x0;x<=xF;x+=6){ path+=(path?' L':'M')+x+','+py(x).toFixed(1); }
+  let done=''; for(let x=x0;x<=px(n-1);x+=6){ done+=(done?' L':'M')+x+','+py(x).toFixed(1); } done+=` L${px(n-1)},${py(px(n-1)).toFixed(1)}`;
+  let g=`<path d="${path}" fill="none" stroke="var(--line2)" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 12"/>`;
+  g+=`<path d="${done}" fill="none" stroke="var(--kaya)" stroke-width="8" stroke-linecap="round" opacity=".9"/>`;
+  // footprints between stops
+  for(let x=x0+30;x<px(n-1)-10;x+=58){ const nearStop=DATES.some((_,k)=>Math.abs(px(k)-x)<22); if(!nearStop) g+=`<text x="${x}" y="${py(x)+5}" text-anchor="middle" font-size="14">👣</text>`; }
+  let cum=0;
+  DATES.forEach((dt,k)=>{
+    const ds=RD.filter(d=>d.d===dt); cum+=ds.length;
+    const x=px(k), y=py(x), up=k%2===0;
+    const best=[...ds].sort((a,b)=>b.t-a.t)[0];
+    g+=`<g class="dot" data-n="${best.n}"><circle cx="${x}" cy="${y}" r="17" fill="var(--paper)" stroke="${TV(best.rk)}" stroke-width="4"/>
+      <text x="${x}" y="${y+5.5}" text-anchor="middle" font-size="15" font-weight="800" style="fill:var(--ink);font-family:var(--fd)">${ds.length}</text></g>`;
+    g+=`<text x="${x}" y="${up?y-28:y+40}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--ink)">${fmtDs(dt)}</text>`;
+    g+=`<text x="${x}" y="${up?y-43:y+55}" text-anchor="middle" font-size="11">${cum} done</text>`;
+  });
+  const lx=px(n-1), ly=py(lx);
+  g+=`<text x="${lx}" y="${ly+(n%2?-58:72)}" text-anchor="middle" font-size="22">🚶‍♀️</text>`;
+  g+=`<text x="${xF}" y="${py(xF)-18}" text-anchor="middle" font-size="26">🏁</text><text x="${xF}" y="${py(xF)+26}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--ink)">${TOTAL}</text>`;
+  g+=`<text x="${x0}" y="${py(x0)+ (DATES.length%2?44:-28)}" text-anchor="middle" font-size="11"></text>`;
+  document.getElementById('trail').innerHTML=`<div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="min-width:680px" role="img" aria-label="Trail of ${n} hawker days, ${RD.length} centres rated">${g}</svg></div>
+    <p class="sub" style="margin:0">Each circle is one hawker day and the number inside is how many centres Zumi rated that day. The trail ends at the flag: all ${TOTAL}.</p>`;
+  document.getElementById('days').innerHTML = DATES.map((dt,k)=>{
+    const ds=RD.filter(d=>d.d===dt).sort((a,b)=>b.t-a.t);
+    return `<div class="day"><div class="dh"><b>Day ${k+1}</b><span>${fmtD(dt)}</span></div>
+      ${ds.map(d=>`<div class="dc" data-n="${d.n}"><span class="st t${d.rk}">${d.rk}</span><span>${esc(d.sh)}</span><em>${f1(d.t)}</em></div>`).join('')}</div>`;
+  }).join('') + (R.length>RD.length? `<div class="day"><div class="dh"><b>Date not recorded</b></div>${R.filter(d=>!d.d).map(d=>`<div class="dc" data-n="${d.n}"><span class="st t${d.rk}">${d.rk}</span><span>${esc(d.sh)}</span><em>${f1(d.t)}</em></div>`).join('')}</div>`:'');
+}
+
+function renderScatter(){
+  const W=420,H=330,p={l:40,r:14,t:14,b:40};
+  const x=v=>p.l+(v-SMIN)/(10-SMIN)*(W-p.l-p.r), y=v=>H-p.b-(v-QMIN)/(10-QMIN)*(H-p.t-p.b);
+  let g='';
+  // quadrants
+  g+=`<rect x="${x(7.5)}" y="${p.t}" width="${x(10)-x(7.5)}" height="${y(7.5)-p.t}" fill="var(--c1)" opacity=".08" rx="6"/>`;
+  [[SMIN+.15,9.85,'start','Splurge-worthy'],[9.85,9.85,'end','Cheap & great'],[SMIN+.15,QMIN+.2,'start','Skippable'],[9.85,QMIN+.2,'end','Cheap eats']].forEach(([a,b,an,t])=>{
+    g+=`<text x="${x(a)}" y="${y(b)+ (b>9?10:-4)}" text-anchor="${an}" font-size="11.5" font-weight="600">${t}</text>`;});
+  range(QMIN,10).forEach(v=>{ g+=`<line x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${p.l-8}" y="${y(v)+4}" text-anchor="end" font-size="11">${v}</text>`;});
+  range(SMIN,10).forEach(v=>{ g+=`<text x="${x(v)}" y="${H-p.b+18}" text-anchor="middle" font-size="11">${v}</text>`;});
+  g+=`<line x1="${x(7.5)}" x2="${x(7.5)}" y1="${p.t}" y2="${H-p.b}" stroke="var(--line2)" stroke-dasharray="4 4"/><line x1="${p.l}" x2="${W-p.r}" y1="${y(7.5)}" y2="${y(7.5)}" stroke="var(--line2)" stroke-dasharray="4 4"/>`;
+  g+=`<text x="${(W+p.l)/2}" y="${H-4}" text-anchor="middle" font-size="12">💸 Price score (cheaper →)</text>`;
+  g+=`<text transform="translate(12 ${(H-p.b+p.t)/2}) rotate(-90)" text-anchor="middle" font-size="12">👅 Quality</text>`;
+  const seen={};
+  [...R].sort((a,b)=>b.t-a.t).forEach(d=>{
+    const key=d.s[2]+'_'+d.s[1]; const k=seen[key]=(seen[key]||0)+1;
+    const off=(k-1)*9;
+    const r = 5+ (d.t-25)/17*9;
+    g+=`<circle class="dot" data-n="${d.n}" cx="${x(d.s[2])+off}" cy="${y(d.s[1])-off*.4}" r="${r}" fill="${TV(d.rk)}" fill-opacity=".85" stroke="var(--paper)" stroke-width="1.5"/>`;
+  });
+  document.getElementById('scatter').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+}
+
+function renderStrips(){
+  const W=420,rowH=54,p={l:92,r:14},H=rowH*5+26;
+  const x=v=>p.l+(v-SMIN)/(10-SMIN)*(W-p.l-p.r);
+  let g='';
+  range(SMIN,10).filter(v=>v%2===0).forEach(v=>{ g+=`<line x1="${x(v)}" x2="${x(v)}" y1="4" y2="${H-24}" stroke="var(--line)"/><text x="${x(v)}" y="${H-6}" text-anchor="middle" font-size="11">${v}</text>`;});
+  CRIT.forEach((c,i)=>{
+    const cy = 12+i*rowH+rowH/2;
+    const act = state.crit===i;
+    g+=`<g opacity="${state.crit<0||act?1:.35}"><text x="0" y="${cy+5}" font-size="13" font-weight="${act?700:500}" style="fill:var(--ink)">${c.e} ${c.s}</text>`;
+    g+=`<line x1="${x(AVG[i])}" x2="${x(AVG[i])}" y1="${cy-18}" y2="${cy+18}" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>`;
+    const cnt={};
+    R.forEach(d=>{ const v=d.s[i]; const k=cnt[v]=(cnt[v]||0)+1; const dy = (k%2? -1:1)*Math.floor(k/2)*6;
+      const s = d.n===state.sel;
+      g+=`<circle class="dot" data-n="${d.n}" cx="${x(v)}" cy="${cy+dy}" r="${s?7:4.5}" fill="${CV(i)}" fill-opacity="${s?1:.75}" stroke="${s?'var(--ink)':'var(--paper)'}" stroke-width="${s?2.5:1}"/>`; });
+    g+=`</g>`;
+  });
+  document.getElementById('strips').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+  
+}
+
+function renderTiers(){
+  document.getElementById('tiers').innerHTML = TIERS.map(([t,r])=>{
+    const ds = ranked.filter(d=>d.rk===t);
+    return `<div class="tiercol"><div class="cnt">${ds.length}</div>
+      <div class="units">${ds.map(d=>`<div class="unit" data-n="${d.n}" style="background:${TV(t)}"></div>`).join('') || `<div class="unit" style="box-shadow:inset 0 0 0 1.5px var(--line2)"></div>`}</div>
+      <span class="st t${t}">${t}</span><div class="rng">${r}</div></div>`;
+  }).join('');
+}
+
+function renderTimeline(){
+  const W=720,H=250,p={l:30,r:40,t:18,b:34};
+  if(!DATES.length){ document.getElementById('timeline').innerHTML='<p class="sub">Visit dates will appear here once they are filled in.</p>'; return; }
+  const DAY=864e5, iso=ms=>new Date(ms).toISOString().slice(0,10);
+  const s0=iso(Date.parse(DATES[0])-10*DAY), s1=iso(Math.max(Date.parse(DATES[DATES.length-1]),Date.now())+6*DAY);
+  const t0=Date.parse(s0), t1=Date.parse(s1);
+  const months=[]; { let dt=new Date(t0); dt.setUTCDate(1); dt.setUTCMonth(dt.getUTCMonth()+1); while(dt.getTime()<t1){ months.push(dt.toISOString().slice(0,10)); dt.setUTCMonth(dt.getUTCMonth()+1);} }
+  const RD=R.filter(d=>d.d);
+  const x=iso=>p.l+(Date.parse(iso)-t0)/(t1-t0)*(W-p.l-p.r);
+  const yc=c=>H-p.b-c/Math.max(1,R.filter(d=>d.d).length)*(H-p.t-p.b);
+  let g='';
+  months.forEach(m=>{ g+=`<line x1="${x(m)}" x2="${x(m)}" y1="${p.t}" y2="${H-p.b}" stroke="var(--line)"/>`;});
+  [s0,...months].forEach((m,k,a)=>{ const nx = k+1<a.length? Date.parse(a[k+1]) : t1; const mid=iso((Math.max(Date.parse(m),t0)+nx)/2); if(nx-Date.parse(m)>12*DAY) g+=`<text x="${x(mid)}" y="${H-p.b+20}" text-anchor="middle" font-size="12">${MON[+m.slice(5,7)-1]}</text>`;});
+  let cum=0, path=`M${x(s0)},${yc(0)}`;
+  DATES.forEach(dt=>{ path+=` H${x(dt)}`; cum+=RD.filter(d=>d.d===dt).length; path+=` V${yc(cum)}`; });
+  path+=` H${x(s1)}`;
+  g+=`<path d="${path} V${yc(0)} Z" fill="var(--kaya)" opacity=".16"/><path d="${path}" fill="none" stroke="var(--kaya)" stroke-width="3" stroke-linejoin="round"/>`;
+  g+=`<text x="${W-p.r+6}" y="${yc(RD.length)+4}" font-size="13" font-weight="700" style="fill:var(--ink)">${RD.length}</text>`;
+  DATES.forEach(dt=>{
+    const ds = R.filter(d=>d.d===dt).sort((a,b)=>b.t-a.t);
+    ds.forEach((d,k)=>{ g+=`<circle class="dot" data-n="${d.n}" cx="${x(dt)}" cy="${H-p.b-10-k*17}" r="7" fill="${TV(d.rk)}" stroke="var(--paper)" stroke-width="1.5"/>`; });
+  });
+  document.getElementById('timeline').innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+}
+
+function renderSupers(){
+  const fav = R.find(d=>/fav/i.test(d.note));
+  const last = [...R].filter(d=>d.d).sort((a,b)=>b.d.localeCompare(a.d) || b.t-a.t)[0];
+  const card=(e,t,d,s,bg)=>`<div class="sup" data-n="${d.n}" style="cursor:pointer;${bg||''}"><div class="e">${e}</div><div class="t">${t}</div><div class="w">${esc(d.sh)}</div><div class="s">${s}</div></div>`;
+  let h='';
+  if(fav) h+=card('💛',"Zumi's own favourite",fav,`${f1(fav.t)}/50`,'background:color-mix(in srgb,var(--kaya) 20%,var(--paper))');
+  h+=card('🏆','Highest score so far',TOP,`${f1(TOP.t)}/50`);
+  if(last) h+=card('🆕','Most recent visit',last,fmtD(last.d));
+  const val=[...R].sort((a,b)=>(b.s[1]+b.s[2])-(a.s[1]+a.s[2]) || b.t-a.t)[0];
+  h+=card('🍜','Tastiest for the price',val,`👅 ${f1(val.s[1])} 💸 ${f1(val.s[2])}`);
+  document.getElementById('supers').innerHTML=h;
+}
+
+/* ---------- sheet ---------- */
+const COLS = [
+  {k:'n',l:'S/N'},{k:'name',l:'Hawker centre'},
+  ...CRIT.map((c,i)=>({k:'s'+i,l:`<span class="hd"><em>${c.e}</em>${c.s}</span>`,c:1})),
+  {k:'t',l:'<span class="hd"><em>Σ</em>Total</span>',c:1},{k:'rk',l:'Rank',c:1},{k:'d',l:'Visited'},{k:'best',l:'Best time to go',ns:1},{k:'note',l:'Notes',ns:1}
+];
+function sheetVal(d,k){ if(k[0]==='s'&&k.length===2) return d.s?d.s[+k[1]]:null; return d[k]??null; }
+function renderSheetHead(){
+  document.querySelector('#tbl thead').innerHTML = '<tr>'+COLS.map(c=>`<th data-k="${c.k}" class="${c.ns?'nosort':''} ${c.c?'ctr':''} ${state.sort.k===c.k?'sorted':''}">${c.l}${c.ns?'':`<span class="arr">${state.sort.k===c.k?(state.sort.dir>0?'▲':'▼'):'↕'}</span>`}</th>`).join('')+'</tr>';
+  document.querySelectorAll('#tbl th[data-k]:not(.nosort)').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k; if(state.sort.k===k) state.sort.dir*=-1; else { state.sort.k=k; state.sort.dir = (k==='n'||k==='name'||k==='addr')?1:-1; }
+    renderSheetHead(); renderSheet();
+  });
+}
+function renderSheetChips(){
+  const opts=[['all',`All ${TOTAL}`],['rated',`Rated ${R.length}`],['todo',`To visit ${LEFT}`]].concat(TIERS.filter(([t])=>TC[t]).map(([t])=>[t,`${t} tier`]));
+  const el=document.getElementById('sheetChips');
+  el.innerHTML=opts.map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${state.filter===k}">${l}</button>`).join('');
+  el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f; renderSheetChips(); renderSheet();});
+}
+function heat(v,i){ if(v==null) return ''; const a = Math.max(0,(v-4)/6); return `background:color-mix(in srgb,var(--c${i}) ${Math.round(8+a*42)}%,var(--paper))`; }
+function renderSheet(){
+  const q=state.q.trim().toLowerCase();
+  let rows = DATA.filter(d=>{
+    if(state.filter==='rated' && !d.s) return false;
+    if(state.filter==='todo' && (d.s||d.closed)) return false;
+    if(state.filter.length===1 && d.rk!==state.filter) return false;
+    if(q && !(`${d.name} ${d.addr} ${d.note||''} ${d.best||''}`.toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const {k,dir}=state.sort;
+  rows.sort((a,b)=>{ const va=sheetVal(a,k), vb=sheetVal(b,k);
+    if(va==null && vb==null) return a.n-b.n; if(va==null) return 1; if(vb==null) return -1;
+    return (typeof va==='number'? va-vb : String(va).localeCompare(String(vb)))*dir || a.n-b.n; });
+  document.getElementById('count').textContent = `${rows.length} shown`;
+  document.querySelector('#tbl tbody').innerHTML = rows.map(d=>{
+    const cls = d.s?'rt':(d.closed?'cl':'un');
+    return `<tr class="${cls} ${d.n===state.sel?'sel':''}" data-n="${d.n}">
+      <td class="sn">${d.n}</td><td class="nm">${esc(d.name)}<span class="ad">${esc(d.addr)}</span></td>
+      ${CRIT.map((c,i)=>`<td class="sc" style="${d.s?heat(d.s[i],i):''}">${d.s?f1(d.s[i]):''}</td>`).join('')}
+      <td class="tt">${d.s?f1(d.t):''}</td>
+      <td style="text-align:center">${d.s?`<span class="st t${d.rk}">${d.rk}</span>`:''}</td>
+      <td class="vd">${d.d?fmtD(d.d):''}</td><td class="bt">${esc(d.best||'')}</td><td class="nt">${esc(d.note||'')}</td></tr>`;
+  }).join('') || `<tr><td colspan="${COLS.length}" style="padding:30px;text-align:center;color:var(--muted)">No centres match that search. Clear it or pick another filter.</td></tr>`;
+}
+document.getElementById('q').addEventListener('input',e=>{ state.q=e.target.value; renderSheet(); });
+
+/* ---------- decks ---------- */
+const SIZES = {w:[1920,1080], v:[1080,1920], sq:[1080,1080]};
+function mosaicHTML(cols,gap,fs){
+  return `<div class="slmosaic" style="grid-template-columns:repeat(${cols},1fr);gap:${gap}px">${DATA.map(d=>d.s?`<i style="background:${TV(d.rk)};box-shadow:none;font-size:${fs}px">${d.rk}</i>`:`<i style="${d.closed?'background:repeating-linear-gradient(45deg,var(--tileLine) 0 4px,transparent 4px 12px)':''}"></i>`).join('')}</div>`;
+}
+function foot(l,r){ return `<div class="foot"><span>${l}</span><span>${r}</span></div>`; }
+function stk(t,px){ const r=Math.round(px*.2); return `<span class="st t${t}" style="width:${px}px;height:${px}px;font-size:${px*.7}px;border-radius:${r}px;box-shadow:inset 0 0 0 ${px*.055}px var(--paper),inset 0 0 0 ${px*.09}px var(--c)">${t}</span>`; }
+
+function centreSlide(d,f){
+  const v=f==='v', sq=f==='sq';
+  const bars = CRIT.map((c,i)=>`<div style="display:grid;grid-template-columns:${sq?'54px 190px 1fr 76px':'70px 240px 1fr 96px'};align-items:center;gap:${sq?16:22}px">
+      <span style="font-size:${sq?40:52}px">${c.e}</span><span style="font-size:${sq?28:34}px;font-weight:600">${c.s}</span>
+      <div class="slbar" style="height:${sq?30:40}px"><i style="width:${d.s[i]*10}%;background:${CV(i)}"></i></div>
+      <span class="num" style="font-size:${sq?50:64}px;font-weight:900;text-align:right">${f1(d.s[i])}</span></div>`).join('');
+  const rankTxt = `#${d.pos}${d.tied?' <span style="font-size:.35em;vertical-align:middle">TIED</span>':''}`;
+  if(v) return `<div class="sl"><div class="strip"></div><div class="pad" style="inset:100px 80px 80px;display:flex;flex-direction:column;gap:34px">
+      <div style="display:flex;justify-content:space-between;align-items:center"><div class="h num" style="font-size:200px;color:var(--red)">${rankTxt}</div>${stk(d.rk,190)}</div>
+      <div><h2 class="h" style="font-size:${d.name.length>24?86:104}px">${esc(d.name)}</h2><p class="lead" style="margin-top:14px;font-size:32px">${esc(d.addr)}</p></div>
+      <div class="card" style="display:grid;gap:22px;padding:30px 34px">${bars}</div>
+      <div style="display:flex;align-items:baseline;gap:18px"><div class="h num" style="font-size:190px">${f1(d.t)}</div><div class="h" style="font-size:72px;color:var(--muted)">/50</div></div>
+      <div class="card" style="font-size:${d.note.length>60?32:40}px;font-style:italic;line-height:1.3;border-left:14px solid var(--kaya);padding:26px 32px">“${esc(d.note)}”</div>
+      <div style="margin-top:auto;font-size:32px;color:var(--muted);line-height:1.4"><b style="color:var(--ink)">Best time:</b> ${esc(d.best)}<br><b style="color:var(--ink)">Visited:</b> ${fmtD(d.d)}</div>
+    </div></div>`;
+  if(sq) return `<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;grid-template-rows:auto auto 1fr auto;gap:26px">
+      <div style="display:flex;gap:28px;align-items:center">${stk(d.rk,150)}<div style="min-width:0"><div class="h num" style="font-size:64px;color:var(--red)">${rankTxt} <span style="color:var(--ink)">${f1(d.t)}/50</span></div><h2 class="h" style="font-size:${d.name.length>30?62:76}px;margin-top:6px">${esc(d.name)}</h2></div></div>
+      <div class="card" style="display:grid;gap:14px;padding:24px 30px">${bars}</div>
+      <div style="font-size:${d.note.length>80?30:36}px;font-style:italic;line-height:1.3;border-left:10px solid var(--kaya);padding-left:24px;align-self:center">“${esc(d.note)}”</div>
+      <div style="font-size:24px;color:var(--muted)"><b style="color:var(--ink)">Best time:</b> ${esc(d.best)}  <b style="color:var(--ink);margin-left:18px">Visited:</b> ${fmtD(d.d)}</div>
+    </div></div>`;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;grid-template-columns:760px 1fr;gap:80px">
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <div style="display:flex;align-items:center;gap:36px"><div class="h num" style="font-size:180px;color:var(--red)">${rankTxt}</div>${stk(d.rk,150)}</div>
+        <h2 class="h" style="font-size:${d.name.length>24?84:108}px">${esc(d.name)}</h2>
+        <p class="lead" style="font-size:30px">${esc(d.addr)}</p>
+        <div style="margin-top:auto;font-size:${d.note.length>70?34:42}px;font-style:italic;line-height:1.3;border-left:12px solid var(--kaya);padding-left:30px">“${esc(d.note)}”</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:30px">
+        <div class="card" style="display:grid;gap:22px">${bars}</div>
+        <div style="display:flex;align-items:flex-end;justify-content:space-between">
+          <div style="font-size:30px;color:var(--muted);line-height:1.5;max-width:560px"><b style="color:var(--ink)">Best time:</b> ${esc(d.best)}<br><b style="color:var(--ink)">Visited:</b> ${fmtD(d.d)}</div>
+          <div style="display:flex;align-items:baseline;gap:12px"><div class="h num" style="font-size:190px">${f1(d.t)}</div><div class="h" style="font-size:64px;color:var(--muted)">/50</div></div>
+        </div>
+      </div>
+    </div>${foot('Singapore Hawker Centre Rating Tracker',`${R.length-ranked.indexOf(d)} of ${R.length} in the countdown`)}</div>`;
+}
+
+function leaderboardSlide(f, n){
+  const v=f==='v', sq=f==='sq';
+  const list = ranked.slice(0,n);
+  const rh = v?108:sq?66:60, fs = v?40:sq?30:32;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:30}px">
+    <div><span class="kick">Leaderboard</span><h2 class="h" style="font-size:${v?150:sq?96:100}px;margin-top:22px">Top ${n} so far</h2></div>
+    <div style="display:grid;gap:${v?14:8}px">${list.map(d=>`<div style="display:grid;grid-template-columns:${v?'70px 1fr 110px 80px':'64px 520px 1fr 110px 64px'};gap:24px;align-items:center;height:${rh}px">
+      <span class="num" style="font-size:${fs*1.3}px;font-weight:800;color:var(--muted);text-align:right">${d.pos}</span>
+      <span style="font-size:${fs}px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.sh)}</span>
+      ${v?'':`<div style="display:flex;gap:4px;height:${rh*.42}px">${d.s.map((s,i)=>`<span style="flex:0 0 calc(${s/50*100}% - 4px);background:${CV(i)};border-radius:6px"></span>`).join('')}</div>`}
+      <span class="num" style="font-size:${fs*1.6}px;font-weight:900;text-align:right">${f1(d.t)}</span>${stk(d.rk,v?72:56)}</div>`).join('')}</div>
+    </div>${v||sq?'':foot('Stacked bars show the five criteria',CRIT.map((c,i)=>`<span style="color:${CV(i)}">■</span> ${c.s}`).join('  '))}</div>`;
+}
+
+function trackerSlides(f){
+  const v=f==='v', sq=f==='sq';
+  const S=[];
+  S.push({t:'Cover',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;${v?'grid-template-rows:auto 1fr auto':sq?'grid-template-rows:auto 1fr':'grid-template-columns:1fr 760px'};gap:${v?60:60}px;align-items:center">
+    <div><span class="kick">Zumi's hawker quest 2026</span>
+    <h1 class="h" style="font-size:${v?150:sq?104:158}px;margin-top:30px">Singapore<br>hawker centre<br><span style="color:var(--red)">rating tracker</span></h1>
+    ${sq?'':`<p class="lead" style="margin-top:36px;font-size:${v?46:42}px;max-width:900px">${R.length} rated. ${LEFT} to go. Every official hawker centre, scored out of 50.</p>`}</div>
+    ${sq?mosaicHTML(21,6,20):`<div>${mosaicHTML(v?14:14,v?10:9,v?34:30)}</div>`}
+    ${v?`<div style="font-size:34px;color:var(--muted)">One square per hawker centre. Coloured means eaten and rated.</div>`:''}
+    </div></div>`});
+  S.push({t:'How I score',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?60:44}px">
+    <div><span class="kick">The scorecard</span><h2 class="h" style="font-size:${v?140:sq?92:120}px;margin-top:22px">Five scores out of 10</h2></div>
+    <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(5,1fr)'};gap:${sq?14:26}px;flex:1">${CRIT.map((c,i)=>`<div class="card" style="border-top:${sq?0:14}px solid ${CV(i)};${sq?`border-left:14px solid ${CV(i)};padding:16px 26px;display:flex;gap:26px;align-items:center`:v?'display:flex;gap:40px;align-items:center':''}">
+      <div style="font-size:${v?84:sq?60:96}px;line-height:1">${c.e}</div><div><div class="h" style="font-size:${v?60:sq?46:56}px;margin-top:${v||sq?0:24}px">${c.k}</div>
+      <p style="font-size:${v?32:sq?24:30}px;line-height:1.3;margin:${sq?6:10}px 0 0;color:var(--muted)">${c.d}</p></div></div>`).join('')}</div>
+    </div>${v||sq?'':foot('Total out of 50 decides the tier','')}</div>`});
+  S.push({t:'Tier scale',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?60:40}px">
+    <div><span class="kick">Ranking system</span><h2 class="h" style="font-size:${v?140:sq?92:120}px;margin-top:22px">From S tier to don't go</h2></div>
+    <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr 1fr':'repeat(6,1fr)'};gap:${v?16:sq?18:26}px">${TIERS.map(([t,r])=>`<div class="card" style="display:flex;${v||sq?'align-items:center;gap:36px':'flex-direction:column;align-items:center;gap:20px;text-align:center'};padding:${sq?'18px 22px':''}">
+      ${stk(t,v?112:sq?96:170)}<div><div class="h num" style="font-size:${v?84:sq?52:64}px">${t==='F'?"Don't go":r}</div>
+      <div style="font-size:${v?34:sq?24:28}px;color:var(--muted);margin-top:8px">${t==='F'?'20 or under. KEKW':`${TC[t]} centre${TC[t]===1?'':'s'} so far`}</div></div></div>`).join('')}</div>
+    </div></div>`});
+  S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
+  [...ranked].reverse().forEach(d=>S.push({t:`#${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+  S.push({t:'Champions',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:sq?28:40}px">
+    <div><span class="kick">Category champions</span><h2 class="h" style="font-size:${v?130:sq?84:120}px;margin-top:22px">Best at each thing</h2></div>
+    <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'repeat(3,1fr)':'repeat(5,1fr)'};gap:${sq?14:24}px;flex:1;align-content:start">${champs.map(c=>`<div class="card" style="border-top:14px solid ${CV(c.i)};padding:${sq?'16px 20px':v?'26px 30px':''}">
+      <div style="font-size:${v?64:sq?40:80}px;line-height:1">${CRIT[c.i].e}</div>
+      <div style="font-size:${v?30:sq?20:28}px;color:var(--muted);margin-top:${sq?8:14}px">Best ${CRIT[c.i].s.toLowerCase()}</div>
+      <div style="font-size:${v?40:sq?22:38}px;font-weight:700;line-height:1.15;margin-top:8px">${c.w.map(d=>esc(d.sh)).join('<br>')}</div>
+      <div class="h num" style="font-size:${v?84:sq?44:80}px;margin-top:${sq?8:14}px;color:${CV(c.i)}">${f1(c.m)}</div></div>`).join('')}</div>
+    </div></div>`});
+  S.push({t:'Next up',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;${v?'grid-template-rows:auto auto':sq?'grid-template-rows:auto 1fr':'grid-template-columns:1fr 760px'};gap:60px;align-items:center">
+    <div><span class="kick">Still hungry</span><h2 class="h" style="font-size:${v?170:sq?120:160}px;margin-top:26px"><span style="color:var(--red)">${LEFT}</span> centres<br>to go</h2>
+    <p class="lead" style="margin-top:30px;font-size:${v?46:sq?32:42}px;max-width:860px">${TC.S?`${TC.S} S tier so far. Could the next one join them?`:'No S tier yet. The first 45 out of 50 could be the next one on the list.'}</p></div>
+    ${sq?'':mosaicHTML(14,v?10:9,v?34:30)}</div></div>`});
+  return S;
+}
+
+function pitchSlides(f){
+  const v=f==='v', sq=f==='sq';
+  const H=(a,b,c)=>v?a:sq?b:c;
+  const hi = critOrder[0], lo = critOrder[critOrder.length-1];
+  const famous = ['Maxwell Food Centre','Newton Food Centre'].map(n=>R.find(d=>d.name===n)).filter(Boolean);
+  const hidden = R.find(d=>/touristy/i.test(d.note));
+  const S=[];
+  const wrap=(inner,ft)=>`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(60,34,44)}px;${ft?'':''}">${inner}</div>${ft&&!v&&!sq?foot(ft,''):''}</div>`;
+  S.push({t:'Cover',h:wrap(`<div style="margin:auto 0"><span class="kick">Pitch</span>
+    <h1 class="h" style="font-size:${H(150,116,168)}px;margin-top:34px">Every hawker<br>centre in<br><em>Singapore.</em> Rated.</h1>
+    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1100px">A one-person, 123-centre food quest by Zumi, scored on the same five criteria every time.</p></div>`)});
+  S.push({t:'The problem',h:wrap(`<span class="kick" style="align-self:flex-start">The problem</span>
+    <h2 class="h" style="font-size:${H(130,84,120)}px">Most food guides stop at the <em>famous few</em></h2>
+    <div style="display:grid;grid-template-columns:${v||sq?'1fr':'1fr 1fr'};gap:30px;margin-top:auto">
+      <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">${TOTAL}</div><div style="font-size:${H(38,26,34)}px">hawker centres on the official NEA and operator-managed list</div></div>
+      <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">1</div><div style="font-size:${H(38,26,34)}px">question everyone actually asks: which ones are worth the trip?</div></div>
+    </div>`)});
+  S.push({t:'The project',h:wrap(`<span class="kick" style="align-self:flex-start">The project</span>
+    <h2 class="h" style="font-size:${H(130,84,120)}px">Visit them all.<br>Score them <em>the same way.</em></h2>
+    <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
+      ${[['🗺️','The full list','Every centre on the official list, from Adam Road to Punggol Coast.'],['📋','One scorecard','Five criteria out of 10, a total out of 50, and an S-to-D tier.'],['💬','Honest notes','Best time to go, the stall to hit, and the one to skip.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
+    </div>`)});
+  S.push({t:'Traction',h:wrap(`<span class="kick" style="align-self:flex-start">Progress</span>
+    <h2 class="h" style="font-size:${H(130,84,120)}px">${R.length} centres in <em>${DATES.length} hawker days</em></h2>
+    <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?16:26}px;margin-top:auto">
+      ${[[R.length,'centres rated'],[f1(AVGT),'average score /50'],[TC.A,'A-tier finds'],[fmtDs(DATES[0]),'first visit, 2026']].map(([a,b])=>`<div class="card"><div class="h num" style="font-size:${H(130,80,120)}px;color:var(--kaya)">${a}</div><div style="font-size:${H(34,24,30)}px;margin-top:10px">${b}</div></div>`).join('')}
+    </div>
+    ${sq?'':`<div style="margin-top:10px">${mosaicHTML(v?21:41,v?5:6,v?14:16)}</div>`}`)});
+  const big=(n,l,c)=>`<div style="display:flex;align-items:baseline;gap:${H(24,16,22)}px"><div class="h num" style="font-size:${H(104,54,130)}px;color:${c||'var(--kaya)'}">${n}</div><div style="font-size:${H(38,24,32)}px;font-weight:700;line-height:1.15">${l}</div></div>`;
+  S.push({t:'What the data says',h:wrap(`<span class="kick" style="align-self:flex-start">What the data says</span>
+    <h2 class="h" style="font-size:${H(110,76,110)}px">Famous doesn't mean <em>best</em></h2>
+    <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(3,1fr)'};gap:${sq?14:26}px;flex:1">
+      <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Tourist favourites</div>${famous.map(d=>big(f1(d.t),`${esc(d.sh)}<br><span style="opacity:.65;font-weight:500">${d.rk} tier</span>`,'var(--paper)')).join('')}</div>
+      ${hidden?`<div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border-color:var(--kaya);${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Local pick</div>${big(f1(hidden.t),`${esc(hidden.sh)}<br><span style="opacity:.65;font-weight:500">${hidden.rk} tier</span>`)}${sq?'':`<div style="font-size:${H(38,24,34)}px;font-style:italic;opacity:.85">“Not a touristy spot. Highly recommend.”</div>`}</div>`:''}
+      <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Average across all ${R.length}</div>${big(f1(AVG[hi]),`${CRIT[hi].e} ${CRIT[hi].s}<br><span style="opacity:.65;font-weight:500">strongest</span>`)}${big(f1(AVG[lo]),`${CRIT[lo].e} ${CRIT[lo].s}<br><span style="opacity:.65;font-weight:500">hardest to earn</span>`,'var(--paper)')}</div>
+    </div>`)});
+  S.push({t:'Built for content',h:wrap(`<span class="kick" style="align-self:flex-start">The format</span>
+    <h2 class="h" style="font-size:${H(130,84,120)}px">One visit,<br><em>three formats</em></h2>
+    <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
+      ${[['🎥','Live on stream','The visit, the tasting and the scoring, in real time.'],['📱','Short reveals','A 9:16 scorecard per centre, ready to post.'],['🏆','Ranking updates','The leaderboard shifts every time a new centre lands.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
+    </div>`)});
+  S.push({t:'Roadmap',h:wrap(`<span class="kick" style="align-self:flex-start">What's next</span>
+    <h2 class="h" style="font-size:${H(130,84,120)}px">The road to <em>${TOTAL}</em></h2>
+    <div style="position:relative;margin-top:auto;display:grid;grid-template-columns:${v?'1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?14:26}px">
+      ${[[R.length,'Now',`Leaderboard live, ${TC.A} A-tier finds`],[Math.max(50,R.length+1),'Halfway-ish','Mid-quest rankings shake-up'],[100,'Triple digits','Region-by-region best-of'],[TOTAL,'Every centre','The final definitive ranking']].map(([n,a,b],k)=>`<div class="card" style="${k===0?'border-color:var(--kaya);':''}${v||sq?'display:flex;gap:30px;align-items:center;padding:'+(sq?'14px 24px':'26px 34px'):''}">
+        <div class="h num" style="font-size:${H(110,60,110)}px;color:${k===0?'var(--kaya)':'inherit'}">${n}</div><div><div style="font-size:${H(40,26,34)}px;font-weight:700;margin-top:${v||sq?0:8}px">${a}</div><div style="font-size:${H(32,22,26)}px;opacity:.7;margin-top:6px">${b}</div></div></div>`).join('')}
+    </div>`)});
+  S.push({t:'Get involved',h:wrap(`<div style="margin:auto 0"><span class="kick">Get involved</span>
+    <h2 class="h" style="font-size:${H(170,110,170)}px;margin-top:34px">Where should<br>Zumi eat <em>next?</em></h2>
+    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1200px">Recommendations, stall tips and collabs welcome. Follow the quest on Twitch, TikTok, YouTube and X.</p></div>`)});
+  return S;
+}
+
+function renderDeck(kind){
+  const host = document.querySelector(`[data-deck="${kind}"]`);
+  const slides = kind==='slides' ? trackerSlides(state.fmt) : pitchSlides(state.fmt);
+  let i = Math.min(state.idx[kind], slides.length-1); state.idx[kind]=i;
+  const [W,H] = SIZES[state.fmt];
+  host.innerHTML = `
+    <div class="deck-bar">
+      <div class="ttl">${kind==='slides'?'Rating tracker deck':'Pitch deck'}</div>
+      <span class="counter">${i+1} / ${slides.length}</span>
+      <button class="btn" data-act="prev">← Prev</button>
+      <button class="btn" data-act="next">Next →</button>
+      <button class="btn solid" data-act="fs">Present full screen</button>
+    </div>
+    <div class="stage"><button class="navbtn p" data-act="prev" aria-label="Previous slide">‹</button>
+      <div class="canvas-holder"><div class="canvas ${state.fmt}" style="width:${W}px;height:${H}px">${slides[i].h}</div></div>
+      <button class="navbtn n" data-act="next" aria-label="Next slide">›</button></div>
+    <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"><b>${k+1}</b>${esc(s.t)}</button>`).join('')}</div>`;
+  const go = k=>{ state.idx[kind]=Math.max(0,Math.min(slides.length-1,k)); renderDeck(kind); };
+  host.querySelectorAll('[data-act="prev"]').forEach(b=>b.onclick=()=>go(i-1));
+  host.querySelectorAll('[data-act="next"]').forEach(b=>b.onclick=()=>go(i+1));
+  host.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
+  host.querySelector('[data-act="fs"]').onclick=()=>{ const st=host.querySelector('.stage'); (st.requestFullscreen||st.webkitRequestFullscreen||(()=>{})).call(st); };
+  const cur = host.querySelector(`.rail [aria-current="true"]`); if(cur) cur.scrollIntoView({block:'nearest',inline:'center'});
+  fitDeck(host);
+}
+function fitDeck(host){
+  const st = host.querySelector('.stage'); if(!st) return;
+  const holder = st.querySelector('.canvas-holder'), cv = st.querySelector('.canvas');
+  const [W,H] = SIZES[state.fmt];
+  const fs = document.fullscreenElement===st;
+  const aw = st.clientWidth - (fs?0:110), ah = st.clientHeight - (fs?0:10);
+  const s = Math.max(.05, Math.min(aw/W, ah/H));
+  holder.style.width = W*s+'px'; holder.style.height = H*s+'px';
+  cv.style.transform = `scale(${s})`;
+}
+addEventListener('resize',()=>{ const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') fitDeck(document.querySelector(`[data-deck="${t}"]`)); });
+document.addEventListener('fullscreenchange',()=>{ const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') setTimeout(()=>fitDeck(document.querySelector(`[data-deck="${t}"]`)),50); });
+document.addEventListener('keydown',e=>{
+  const t=document.body.dataset.tab; if(t!=='slides'&&t!=='pitch') return;
+  if(/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const host=document.querySelector(`[data-deck="${t}"]`);
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="next"]').click(); }
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="prev"]').click(); }
+});
+
+/* ---------- init ---------- */
+renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers();
+renderSheetHead(); renderSheetChips(); renderSheet();
+select(state.sel);
+setTab((location.hash||'').slice(1));
+
+/* ---------- freshness + update polling ---------- */
+function ago(iso){ if(!iso) return ''; const m=Math.round((Date.now()-Date.parse(iso))/60000);
+  if(m<2) return 'just now'; if(m<60) return m+' min ago'; const h=Math.round(m/60); if(h<48) return h+' h ago'; return Math.round(h/24)+' days ago'; }
+const fresh=document.getElementById('fresh');
+function paintFresh(){ fresh.className = META.live?'':'snap'; fresh.innerHTML = META.live ? `<i></i>Live from her sheet${META.updated?', updated '+ago(META.updated):''}` : `<i></i>Snapshot of her sheet${META.updated?', '+fmtD(META.updated.slice(0,10)):''}`; }
+paintFresh(); setInterval(paintFresh, 60000);
+document.getElementById('totalN').textContent = TOTAL;
+document.getElementById('newData').onclick=()=>location.reload();
+if(META.live) setInterval(async()=>{ try{ const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json();
+  if(j.updated && j.updated!==META.updated) document.getElementById('newData').classList.add('on'); }catch(e){} }, 3*60000);
+})();
+</script>
+</body>
+</html>
