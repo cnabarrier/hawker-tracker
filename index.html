@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Singapore Hawker Centre Rating Tracker</title>
+<title>Makan or Meh? Zumi's Singapore Hawker Centre Ratings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
@@ -53,7 +53,11 @@ button{font:inherit;color:inherit;cursor:pointer}
   padding:calc(env(safe-area-inset-top,0px) + 12px) clamp(14px,3vw,32px) 0;
   box-shadow:0 3px 0 var(--kaya),0 10px 30px -18px rgba(0,0,0,.5)}
 .board-top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.brand h1{margin:0;font-family:var(--fd);font-weight:900;font-size:clamp(26px,3.6vw,44px);line-height:.92;text-transform:uppercase;letter-spacing:.01em}
+.brand h1{margin:0;font-family:var(--fd);font-weight:900;font-size:clamp(34px,4.6vw,58px);line-height:.9;text-transform:uppercase;letter-spacing:.01em}
+.logo{display:flex;align-items:center;gap:.18em;flex-wrap:wrap}
+.logo .mk{color:var(--kaya);text-shadow:0 3px 0 var(--red2)}
+.logo .or{font-size:.36em;background:#fff;color:var(--red2);border-radius:99px;padding:.18em .5em .12em;transform:rotate(-8deg);letter-spacing:.04em}
+.logo .meh{color:#fff;text-shadow:0 3px 0 var(--red2)}
 .brand p{margin:6px 0 0;font-size:13px;opacity:.88}
 #fresh{display:inline-flex;align-items:center;gap:6px;margin-left:8px;padding:2px 9px;border-radius:99px;background:rgba(0,0,0,.2);font-size:12px}
 #fresh i{width:7px;height:7px;border-radius:50%;background:#7CF0B8;box-shadow:0 0 0 3px rgba(124,240,184,.25)}
@@ -101,6 +105,39 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .tile.r{box-shadow:none;cursor:pointer}
 .tile.x{background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 6px)}
 .tile:hover{transform:scale(1.18);z-index:2}
+.tile{animation:pop .45s cubic-bezier(.2,.9,.3,1.3) backwards;animation-delay:calc(var(--i,0)*5ms)}
+@keyframes pop{from{transform:scale(.3);opacity:0}}
+
+/* hawker stall unit plates on section headings */
+.stall{display:inline-block;font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:.06em;background:var(--red);color:#fff;
+  padding:3px 8px;border-radius:5px;margin-right:10px;vertical-align:6px;box-shadow:0 2px 0 var(--kaya)}
+
+/* pick-for-me */
+.lucky{border:2px dashed var(--line2);background:var(--paper2);border-radius:14px;padding:9px 14px;font-weight:700;font-size:14px;margin:-4px 0 14px;width:100%;text-align:left;transition:border-color .15s,background .15s}
+.lucky:hover{border-color:var(--kaya);background:color-mix(in srgb,var(--kaya) 14%,var(--paper))}
+.lucky span{font-weight:600;color:var(--muted)}
+.lucky.spin span{color:var(--ink)}
+
+/* Makan or Meh game */
+.duel{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
+@media (max-width:640px){.duel{grid-template-columns:1fr}.duel .vs{justify-self:center}}
+.dcard{border:2px solid var(--line);background:var(--paper2);border-radius:18px;padding:16px 18px;text-align:left;display:flex;flex-direction:column;gap:6px;
+  transition:transform .15s,border-color .15s,background .2s;min-height:150px}
+.dcard:not([disabled]):hover{transform:translateY(-3px);border-color:var(--kaya)}
+.dcard[disabled]{cursor:default}
+.dcard .dn{font-family:var(--fd);font-weight:900;font-size:28px;line-height:.95;text-transform:uppercase}
+.dcard .dh{font-size:12.5px;color:var(--muted)}
+.dcard .dr{margin-top:auto;display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:900;font-size:34px;line-height:1}
+.dcard .dr small{font-size:.5em;color:var(--muted)}
+.dcard .dr.q{color:var(--muted);font-size:40px}
+.dcard.win{border-color:var(--tA);background:color-mix(in srgb,var(--tA) 12%,var(--paper))}
+.dcard.lose{opacity:.75}
+.dcard.win .dr{animation:pop .4s cubic-bezier(.2,.9,.3,1.3)}
+.vs{align-self:center;font-family:var(--fd);font-weight:900;font-size:26px;background:var(--red);color:#fff;border-radius:99px;width:52px;height:52px;display:grid;place-items:center;box-shadow:0 3px 0 var(--kaya)}
+.gfoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.gmsg{font-weight:700;font-size:16px;margin-right:auto}
+.gscore{font-size:13px;color:var(--muted)}
+.gfoot .also{margin:0}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 
@@ -152,6 +189,9 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .detail .addr{color:var(--muted);font-size:13px;margin-top:6px}
 .detail .score{font-family:var(--fd);font-weight:900;font-size:58px;line-height:.85;margin-top:10px}
 .detail .score small{font-size:.42em;color:var(--muted)}
+.verdict-stamp{display:inline-block;margin-top:10px;font-family:var(--fd);font-weight:900;font-size:20px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--c);border:3px solid var(--c);border-radius:8px;padding:3px 10px 1px;transform:rotate(-4deg);animation:stamp .35s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes stamp{from{transform:rotate(-4deg) scale(1.8);opacity:0}}
 .quote{margin:14px 0 0;padding:14px 16px;background:var(--paper2);border-radius:12px;border-left:4px solid var(--kaya);font-size:15.5px;font-style:italic}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;font-size:13px}
 .facts div{border-top:1px solid var(--line);padding-top:8px}
@@ -268,14 +308,24 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .count{font-size:13px;color:var(--muted)}
 
 /* ---------- slides ---------- */
-.deck{display:grid;grid-template-rows:auto 1fr auto;gap:12px}
+.deck{display:grid;grid-template-rows:auto auto 1fr auto;gap:12px}
 .deck-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .deck-bar .ttl{font-family:var(--fd);font-weight:800;font-size:24px;text-transform:uppercase;margin-right:auto}
 .btn{border:1px solid var(--line2);background:var(--paper);border-radius:999px;padding:8px 14px;font-weight:600;font-size:13px}
 .btn:hover{border-color:var(--ink)}
 .btn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.stage{position:relative;height:max(340px,min(calc(100vh - 300px),860px));display:grid;place-items:center;background:transparent;border-radius:18px}
-.stage:fullscreen{background:#000;height:100vh;border-radius:0}
+.stage{position:relative;height:max(340px,min(calc(100vh - 370px),860px));display:grid;place-items:center;background:transparent;border-radius:18px}
+.deck:fullscreen{background:#000;display:block}
+.deck:fullscreen .deck-intro,.deck:fullscreen .deck-bar,.deck:fullscreen .rail{display:none}
+.deck:fullscreen .stage{height:100vh;border-radius:0}
+.fsx{display:none;position:absolute;top:12px;right:12px;z-index:4;border:0;border-radius:99px;padding:8px 14px;font-weight:700;font-size:13px;background:rgba(255,255,255,.14);color:#fff}
+.fsx:hover{background:rgba(255,255,255,.28)}
+.deck:fullscreen .fsx{display:block}
+.fscount{display:none;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);z-index:4;color:#fff;opacity:.6;font-family:var(--fd);font-weight:800;font-size:18px}
+.deck:fullscreen .fscount{display:block}
+.deck-intro{display:flex;gap:14px;align-items:flex-start;background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--kaya);border-radius:14px;padding:12px 16px;font-size:14px;line-height:1.45}
+.deck-intro .ie{font-size:28px;line-height:1}
+.deck-intro b{font-weight:700}
 .canvas-holder{position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);border-radius:10px;overflow:hidden}
 .canvas{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden}
 .rail{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
@@ -306,13 +356,20 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .slmosaic i{aspect-ratio:1;border-radius:8px;background:var(--tile);box-shadow:inset 0 0 0 2px var(--tileLine);display:grid;place-items:center;color:#fff;font-style:normal;font-family:var(--fd);font-weight:900}
 .slbar{height:40px;background:var(--paper2);border-radius:99px;overflow:hidden;position:relative;border:2px solid var(--line)}
 .slbar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
-.pitch .sl{background:var(--ink);color:var(--paper);background-image:none}
+.pitch .sl{background-color:var(--ink);color:var(--paper);
+  background-image:radial-gradient(circle at 88% 8%,color-mix(in srgb,var(--red) 38%,transparent),transparent 42%),
+    radial-gradient(circle at 5% 100%,color-mix(in srgb,var(--kaya) 22%,transparent),transparent 38%),
+    linear-gradient(color-mix(in srgb,var(--paper) 4%,transparent) 2px,transparent 2px),linear-gradient(90deg,color-mix(in srgb,var(--paper) 4%,transparent) 2px,transparent 2px);
+  background-size:auto,auto,90px 90px,90px 90px}
+.pitch .sl::after{content:"MAKAN OR MEH?";position:absolute;right:110px;bottom:40px;font-family:var(--fd);font-weight:900;font-size:30px;letter-spacing:.05em;color:var(--kaya)}
+.pitch .v .sl::after,.pitch .canvas.v .sl::after{right:80px;bottom:50px}
+.pitch .canvas.sq .sl::after{right:70px;bottom:22px;font-size:24px}
 .pitch .sl .lead{color:color-mix(in srgb,var(--paper) 72%,var(--ink))}
 .pitch .sl .card{background:color-mix(in srgb,var(--paper) 7%,var(--ink));border-color:color-mix(in srgb,var(--paper) 16%,var(--ink));color:var(--paper)}
 .pitch .sl .foot{color:color-mix(in srgb,var(--paper) 55%,var(--ink))}
 .pitch .sl .h em{font-style:normal;color:var(--kaya)}
 
-@media (max-width:720px){.board{position:static}.brand h1{font-size:26px}.modes{padding-bottom:0}}
+@media (max-width:720px){.board{position:static}.brand h1{font-size:36px}.modes{padding-bottom:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{.board{position:static}}
 </style>
@@ -321,15 +378,15 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 <header class="board">
   <div class="board-top">
     <div class="brand">
-      <h1>Singapore Hawker Centre<br>Rating Tracker</h1>
-      <p>Zumi's 2026 quest through all <span id="totalN">123</span> official hawker centres <span id="fresh"></span></p>
+      <h1 class="logo" aria-label="Makan or Meh?"><span class="mk">Makan</span><span class="or">or</span><span class="meh">Meh?</span></h1>
+      <p>Zumi rates every official hawker centre in Singapore, all <span id="totalN">123</span> of them <span id="fresh"></span></p>
     </div>
     <div class="modes">
       <button id="newData" type="button">New ratings are in. Refresh</button>
-      <div class="seg fmt-only" role="group" aria-label="Slide format">
-        <button data-fmt="w" aria-pressed="true" title="YouTube / stream">16:9</button>
-        <button data-fmt="v" aria-pressed="false" title="TikTok / Shorts / Reels">9:16</button>
-        <button data-fmt="sq" aria-pressed="false" title="X / Instagram">1:1</button>
+      <div class="seg fmt-only" role="group" aria-label="Slide shape">
+        <button data-fmt="w" aria-pressed="true" title="For YouTube or a stream">▭ Wide</button>
+        <button data-fmt="v" aria-pressed="false" title="For TikTok, Shorts or Reels">▯ Tall</button>
+        <button data-fmt="sq" aria-pressed="false" title="For Instagram or X">□ Square</button>
       </div>
       <div class="seg" role="group" aria-label="Colour mode">
         <button data-theme-btn="light" aria-pressed="false">☀️ Day market</button>
@@ -338,10 +395,10 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     </div>
   </div>
   <nav class="tabs" role="tablist">
-    <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">Dashboard</button>
-    <button class="tab" role="tab" data-tab="sheet" aria-selected="false">Sheet</button>
-    <button class="tab" role="tab" data-tab="slides" aria-selected="false">Slides</button>
-    <button class="tab" role="tab" data-tab="pitch" aria-selected="false">Pitch deck</button>
+    <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">🍜 Dashboard</button>
+    <button class="tab" role="tab" data-tab="sheet" aria-selected="false">📋 Full list</button>
+    <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown show</button>
+    <button class="tab" role="tab" data-tab="pitch" aria-selected="false">👋 About the quest</button>
   </nav>
 </header>
 
@@ -362,7 +419,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 
     <div class="grid g-main">
       <div class="panel">
-        <h2>Leaderboard</h2>
+        <h2><span class="stall">#01-01</span>Leaderboard</h2>
         <p class="sub">Pick a criterion to re-rank and spotlight it. Hover a centre to trace it across every chart; click to open its scorecard.</p>
         <div class="chips" id="critChips"></div>
         <div class="legend" id="lbLegend" style="margin:-4px 0 12px"></div>
@@ -373,33 +430,40 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 
     <div class="grid g-two">
       <div class="panel">
-        <h2>Find your hawker</h2>
+        <h2><span class="stall">#01-02</span>Find your hawker</h2>
         <p class="sub">What matters most to you? Tap one or more, and Zumi's scores pick the best matches.</p>
         <div class="chips" id="wantChips"></div>
+        <button class="lucky" id="lucky" type="button">🎲 Can't decide? <span id="luckyTxt">Pick one for me</span></button>
         <div class="picks" id="picks"></div>
       </div>
       <div class="panel">
-        <h2>Report card</h2>
+        <h2><span class="stall">#01-03</span>Report card</h2>
         <p class="sub">How the rated centres do on each of Zumi's five scores, and who tops each one.</p>
         <div id="report"></div>
       </div>
     </div>
 
     <div class="panel trailpanel" style="margin-top:16px">
-      <h2>The journey so far</h2>
-      <p class="sub">Every hawker day leaves a footprint on the trail, like the footprints in the Charlie walking app. 👣</p>
+      <h2><span class="stall">#01-04</span>The journey so far</h2>
+      <p class="sub">Each stop on the trail is one day Zumi went out rating, in date order. The 👣 are just decoration: they don't show steps or distance.</p>
       <div id="trail"></div>
       <div class="days" id="days"></div>
     </div>
 
+    <div class="panel gamepanel" id="gamePanel" style="margin-top:16px">
+      <h2><span class="stall">#01-05</span>Makan or Meh? The game</h2>
+      <p class="sub">Two hawker centres. Tap the one you think Zumi scored higher, then see if you were right.</p>
+      <div id="game"></div>
+    </div>
+
     <div class="grid g-two">
       <div class="panel">
-        <h2>Zumi's highlights</h2>
+        <h2><span class="stall">#01-06</span>Zumi's highlights</h2>
         <p class="sub">Straight from her scores and notes.</p>
         <div class="supers" id="supers"></div>
       </div>
       <div class="panel">
-        <h2>Tier count</h2>
+        <h2><span class="stall">#01-07</span>Tier count</h2>
         <p class="sub">One square per rated centre.</p>
         <div class="tiercols" id="tiers"></div>
       </div>
@@ -446,7 +510,7 @@ const CRIT = [
   {k:'Uniqueness',s:'Uniqueness',e:'🍽',d:'Distinctive identity or iconic draw.'}
 ];
 const TIERS = [['S','45–50'],['A','40–44'],['B','35–39'],['C','30–34'],['D','21–29'],['F','≤20']];
-const TIER_WORD = {S:'Legendary',A:'Great',B:'Good',C:'Decent',D:'Meh',F:"Don't go"};
+const TIER_WORD = {S:'Legendary',A:'Must makan',B:'Good makan',C:'Can lah',D:'Meh',F:"Don't go"};
 const CV = i => `var(--c${i})`;
 const TV = t => `var(--t${t})`;
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -506,7 +570,7 @@ document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{
 const tip = document.getElementById('tip');
 let hoverN = null;
 function tipHtml(d){
-  if(d.s) return `<b>${esc(d.name)}</b>${f1(d.t)}/50, ${d.rk} tier${d.d?`, visited ${fmtDs(d.d)}`:''}`;
+  if(d.s) return `<b>${esc(d.name)}</b>${f1(d.t)}/50, ${d.rk} tier (${TIER_WORD[d.rk]})${d.d?`, visited ${fmtDs(d.d)}`:''}`;
   if(d.closed) return `<b>${esc(d.name)}</b>Closed for redevelopment`;
   return `<b>${esc(d.name)}</b>Not rated yet`;
 }
@@ -537,30 +601,43 @@ document.addEventListener('click',e=>{
   const el = e.target.closest('[data-n]');
   if(!el) return;
   const d = BY[+el.dataset.n];
-  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard')){
-    // bring the scorecard into view (below the sticky header) unless its top is already on screen
-    const det=document.getElementById('detail'), top=det.getBoundingClientRect().top, hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
-    if(top<hb || top>innerHeight*0.6) scrollTo({top:scrollY+top-hb-12, behavior:'smooth'}); } }
+  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard')) scrollToDetail(); }
 });
+// bring the scorecard into view (below the sticky header) unless its top is already on screen
+function scrollToDetail(){
+  const det=document.getElementById('detail'), top=det.getBoundingClientRect().top, hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
+  if(top<hb || top>innerHeight*0.6) scrollTo({top:scrollY+top-hb-12, behavior:REDUCED?'auto':'smooth'});
+}
 
 /* ---------- dashboard ---------- */
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+// numbers that count up on load; the final text is always exactly f1(v)
+const cu = v => `<span data-cu="${v}">${f1(v)}</span>`;
+function countUps(scope){
+  if(REDUCED) return;
+  scope.querySelectorAll('[data-cu]').forEach(el=>{
+    const to=+el.dataset.cu, fin=f1(to), dec=fin.includes('.')?1:0, t0=performance.now();
+    const step=now=>{ const p=Math.min(1,(now-t0)/900); el.textContent = p<1 ? (to*(1-Math.pow(1-p,3))).toFixed(dec) : fin; if(p<1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  });
+}
 function renderHero(){
-  document.getElementById('heroNum').innerHTML = `${R.length}<small>/${TOTAL}</small>`;
+  document.getElementById('heroNum').innerHTML = `${cu(R.length)}<small>/${TOTAL}</small>`;
   document.getElementById('heroTxt').innerHTML = `hawker centres rated so far. <b>${LEFT} still to eat through</b>${CLOSED?`, ${CLOSED} closed for redevelopment`:''}.`;
-  document.getElementById('mosaic').innerHTML = DATA.map(d=>{
-    if(d.s) return `<div class="tile r" data-n="${d.n}" style="background:${TV(d.rk)}" tabindex="0" aria-label="${esc(d.name)}, ${d.rk} tier">${d.rk}</div>`;
-    return `<div class="tile ${d.closed?'x':''}" data-n="${d.n}" aria-label="${esc(d.name)}"></div>`;
+  document.getElementById('mosaic').innerHTML = DATA.map((d,k)=>{
+    if(d.s) return `<div class="tile r" data-n="${d.n}" style="background:${TV(d.rk)};--i:${k}" tabindex="0" aria-label="${esc(d.name)}, ${d.rk} tier">${d.rk}</div>`;
+    return `<div class="tile ${d.closed?'x':''}" data-n="${d.n}" style="--i:${k}" aria-label="${esc(d.name)}"></div>`;
   }).join('');
   document.getElementById('legend').innerHTML =
-    TIERS.filter(([t])=>TC[t]).map(([t,r])=>`<span><i style="background:${TV(t)}"></i>${t} tier (${r})</span>`).join('') +
+    TIERS.filter(([t])=>TC[t]).map(([t,r])=>`<span><i style="background:${TV(t)}"></i>${t}: ${TIER_WORD[t]} (${r})</span>`).join('') +
     `<span><i style="box-shadow:inset 0 0 0 1px var(--tileLine);background:var(--tile)"></i>To visit</span>` +
     `<span><i style="background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 5px)"></i>Closed</span>`;
   const pct = Math.round(R.length/TOTAL*100);
   document.getElementById('kpis').innerHTML = `
-    <div class="kpi"><div class="v">${f1(AVGT)}<small>/50</small></div><div class="l">Average score across rated centres</div></div>
-    <div class="kpi"><div class="v">${f1(TOP.t)}<small>/50</small></div><div class="l">Top score, ${esc(TOP.sh)}</div></div>
-    <div class="kpi"><div class="v">${DATES.length}</div><div class="l">Hawker days since ${fmtDs(DATES[0])}</div></div>
-    <div class="kpi"><div class="v">${pct}<small>%</small></div><div class="l">Of the official list done</div></div>
+    <div class="kpi"><div class="v">${cu(AVGT)}<small>/50</small></div><div class="l">Average score across rated centres</div></div>
+    <div class="kpi"><div class="v">${cu(TOP.t)}<small>/50</small></div><div class="l">Top score, ${esc(TOP.sh)}</div></div>
+    <div class="kpi"><div class="v">${cu(DATES.length)}</div><div class="l">Hawker days since ${fmtDs(DATES[0])}</div></div>
+    <div class="kpi"><div class="v">${cu(pct)}<small>%</small></div><div class="l">Of the official list done</div></div>
     <div class="kpi wide"><div class="tkh">How her ratings stack up</div>
       <div class="tiers2">${TIERS.map(([t,r])=>{ const n=TC[t], mx=Math.max(...TIERS.map(([k])=>TC[k]));
         return `<div class="trow${n?'':' zero'}" title="${n} centre${n===1?'':'s'} scored ${r} out of 50 (${t} tier)">
@@ -635,6 +712,7 @@ function select(n){
         <h3>${esc(d.name)}</h3>
         <div class="addr">${esc(d.addr)}</div>
         <div class="score">${f1(d.t)}<small>/50</small></div>
+        <span class="verdict-stamp t${d.rk}">${TIER_WORD[d.rk]}</span>
       </div>
     </div>
     <p class="verdict">${verdict}</p>
@@ -817,6 +895,49 @@ function renderSupers(){
   document.getElementById('supers').innerHTML=h;
 }
 
+/* ---------- Makan or Meh game: which did Zumi score higher? ---------- */
+const game = {pair:null, pick:null, right:0, played:0, streak:0, best:0};
+function newPair(){
+  if(R.length<2 || new Set(R.map(d=>d.t)).size<2){ document.getElementById('gamePanel').hidden=true; return; }
+  let a,b; do{ a=R[Math.random()*R.length|0]; b=R[Math.random()*R.length|0]; }while(a===b || a.t===b.t);
+  game.pair=[a,b]; game.pick=null; renderGame();
+}
+function renderGame(){
+  const [a,b]=game.pair, done=game.pick!=null, hi=a.t>b.t?a:b;
+  const card=(d,k)=>`<button class="dcard${done?(d===hi?' win':' lose'):''}" data-pick="${k}" ${done?'disabled':''}>
+      <div class="dh">${done&&game.pick===k?'Your pick':'Tap if it’s this one'}</div>
+      <div class="dn">${esc(d.sh)}</div>
+      <div class="dh">${esc(d.addr)}</div>
+      ${done?`<div class="dr"><span class="st t${d.rk}">${d.rk}</span>${f1(d.t)}<small>/50</small></div>`:`<div class="dr q">?</div>`}
+    </button>`;
+  const msg = !done ? 'Which one did Zumi score higher?' :
+    game.pair[game.pick]===hi ? '🎉 Makan! You got it.' : `😅 Meh… Zumi scored ${esc(hi.sh)} higher.`;
+  document.getElementById('game').innerHTML = `<div class="duel">${card(a,0)}<div class="vs">VS</div>${card(b,1)}</div>
+    <div class="gfoot"><span class="gmsg" aria-live="polite">${msg}</span>
+      <span class="gscore">${game.played?`${game.right} of ${game.played} right · best streak ${game.best}`:''}</span>
+      ${done?`<p class="also">Scorecards: <button data-n="${a.n}">${esc(a.sh)}</button>, <button data-n="${b.n}">${esc(b.sh)}</button></p>
+      <button class="btn solid" id="gameNext" type="button">Next pair →</button>`:''}</div>`;
+  document.querySelectorAll('#game [data-pick]').forEach(btn=>btn.onclick=()=>{
+    if(game.pick!=null) return;
+    game.pick=+btn.dataset.pick; game.played++;
+    if(game.pair[game.pick]===hi){ game.right++; game.streak++; game.best=Math.max(game.best,game.streak); } else game.streak=0;
+    renderGame();
+  });
+  const nx=document.getElementById('gameNext'); if(nx) nx.onclick=newPair;
+}
+
+/* ---------- pick one for me: a random Good makan (B tier) or better ---------- */
+document.getElementById('lucky').onclick=()=>{
+  const btn=document.getElementById('lucky'), txt=document.getElementById('luckyTxt');
+  if(btn.classList.contains('spin')) return;
+  const good=R.filter(d=>['S','A','B'].includes(d.rk)), P=good.length?good:R;
+  const pick=P[Math.random()*P.length|0];
+  const land=()=>{ btn.classList.remove('spin'); txt.textContent=`Go makan at ${pick.sh}! Tap to roll again.`; select(pick.n); scrollToDetail(); };
+  if(REDUCED) return land();
+  btn.classList.add('spin'); let k=0;
+  const iv=setInterval(()=>{ txt.textContent=P[k++%P.length].sh; if(k>14){ clearInterval(iv); land(); } },60);
+};
+
 /* ---------- sheet ---------- */
 const COLS = [
   {k:'n',l:'S/N'},{k:'name',l:'Hawker centre'},
@@ -907,7 +1028,7 @@ function centreSlide(d,f){
           <div style="display:flex;align-items:baseline;gap:12px"><div class="h num" style="font-size:190px">${f1(d.t)}</div><div class="h" style="font-size:64px;color:var(--muted)">/50</div></div>
         </div>
       </div>
-    </div>${foot('Singapore Hawker Centre Rating Tracker',`${R.length-ranked.indexOf(d)} of ${R.length} in the countdown`)}</div>`;
+    </div>${foot(`Makan or Meh? · ${TIER_WORD[d.rk]}`,`${R.length-ranked.indexOf(d)} of ${R.length} in the countdown`)}</div>`;
 }
 
 function leaderboardSlide(f, n){
@@ -929,8 +1050,8 @@ function trackerSlides(f){
   const S=[];
   S.push({t:'Cover',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;${v?'grid-template-rows:auto 1fr auto':sq?'grid-template-rows:auto 1fr':'grid-template-columns:1fr 760px'};gap:${v?60:60}px;align-items:center">
     <div><span class="kick">Zumi's hawker quest 2026</span>
-    <h1 class="h" style="font-size:${v?150:sq?104:158}px;margin-top:30px">Singapore<br>hawker centre<br><span style="color:var(--red)">rating tracker</span></h1>
-    ${sq?'':`<p class="lead" style="margin-top:36px;font-size:${v?46:42}px;max-width:900px">${R.length} rated. ${LEFT} to go. Every official hawker centre, scored out of 50.</p>`}</div>
+    <h1 class="h" style="font-size:${v?190:sq?128:200}px;margin-top:30px">Makan<br><span style="color:var(--red)">or meh?</span></h1>
+    <p class="lead" style="margin-top:${sq?14:36}px;font-size:${v?46:sq?30:42}px;max-width:900px">${sq?`Every official hawker centre in Singapore, rated. ${R.length} down, ${LEFT} to go.`:`Every official hawker centre in Singapore, scored out of 50. ${R.length} rated. ${LEFT} to go.`}</p></div>
     ${sq?mosaicHTML(21,6,20):`<div>${mosaicHTML(v?14:14,v?10:9,v?34:30)}</div>`}
     ${v?`<div style="font-size:34px;color:var(--muted)">One square per hawker centre. Coloured means eaten and rated.</div>`:''}
     </div></div>`});
@@ -944,6 +1065,7 @@ function trackerSlides(f){
     <div><span class="kick">Ranking system</span><h2 class="h" style="font-size:${v?140:sq?92:120}px;margin-top:22px">From S tier to don't go</h2></div>
     <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr 1fr':'repeat(6,1fr)'};gap:${v?16:sq?18:26}px">${TIERS.map(([t,r])=>`<div class="card" style="display:flex;${v||sq?'align-items:center;gap:36px':'flex-direction:column;align-items:center;gap:20px;text-align:center'};padding:${sq?'18px 22px':''}">
       ${stk(t,v?112:sq?96:170)}<div><div class="h num" style="font-size:${v?84:sq?52:64}px">${t==='F'?"Don't go":r}</div>
+      ${t==='F'?'':`<div style="font-size:${v?38:sq?26:32}px;font-weight:700;margin-top:6px">${TIER_WORD[t]}</div>`}
       <div style="font-size:${v?34:sq?24:28}px;color:var(--muted);margin-top:8px">${t==='F'?'20 or under. KEKW':`${TC[t]} centre${TC[t]===1?'':'s'} so far`}</div></div></div>`).join('')}</div>
     </div></div>`});
   S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
@@ -971,46 +1093,46 @@ function pitchSlides(f){
   const hidden = R.find(d=>/touristy/i.test(d.note));
   const S=[];
   const wrap=(inner,ft)=>`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(60,34,44)}px;${ft?'':''}">${inner}</div>${ft&&!v&&!sq?foot(ft,''):''}</div>`;
-  S.push({t:'Cover',h:wrap(`<div style="margin:auto 0"><span class="kick">Pitch</span>
+  S.push({t:'Welcome',h:wrap(`<div style="margin:auto 0"><span class="kick">Makan or Meh?</span>
     <h1 class="h" style="font-size:${H(150,116,168)}px;margin-top:34px">Every hawker<br>centre in<br><em>Singapore.</em> Rated.</h1>
-    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1100px">A one-person, 123-centre food quest by Zumi, scored on the same five criteria every time.</p></div>`)});
-  S.push({t:'The problem',h:wrap(`<span class="kick" style="align-self:flex-start">The problem</span>
+    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1100px">One person, ${TOTAL} hawker centres. Zumi eats her way through all of them and scores each one the same way.</p></div>`)});
+  S.push({t:'Why do this?',h:wrap(`<span class="kick" style="align-self:flex-start">Why do this?</span>
     <h2 class="h" style="font-size:${H(130,84,120)}px">Most food guides stop at the <em>famous few</em></h2>
     <div style="display:grid;grid-template-columns:${v||sq?'1fr':'1fr 1fr'};gap:30px;margin-top:auto">
       <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">${TOTAL}</div><div style="font-size:${H(38,26,34)}px">hawker centres on the official NEA and operator-managed list</div></div>
       <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">1</div><div style="font-size:${H(38,26,34)}px">question everyone actually asks: which ones are worth the trip?</div></div>
     </div>`)});
-  S.push({t:'The project',h:wrap(`<span class="kick" style="align-self:flex-start">The project</span>
+  S.push({t:'The plan',h:wrap(`<span class="kick" style="align-self:flex-start">The plan</span>
     <h2 class="h" style="font-size:${H(130,84,120)}px">Visit them all.<br>Score them <em>the same way.</em></h2>
     <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
-      ${[['🗺️','The full list','Every centre on the official list, from Adam Road to Punggol Coast.'],['📋','One scorecard','Five criteria out of 10, a total out of 50, and an S-to-D tier.'],['💬','Honest notes','Best time to go, the stall to hit, and the one to skip.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
+      ${[['🗺️','The full list','Every centre on the official list, from Adam Road to Punggol Coast.'],['📋','One scorecard','Five scores out of 10, a total out of 50, and a grade from S (legendary) to F (don’t go).'],['💬','Honest notes','Best time to go, the stall to hit, and the one to skip.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
     </div>`)});
-  S.push({t:'Traction',h:wrap(`<span class="kick" style="align-self:flex-start">Progress</span>
+  S.push({t:'So far',h:wrap(`<span class="kick" style="align-self:flex-start">So far</span>
     <h2 class="h" style="font-size:${H(130,84,120)}px">${R.length} centres in <em>${DATES.length} hawker days</em></h2>
     <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?16:26}px;margin-top:auto">
       ${[[R.length,'centres rated'],[f1(AVGT),'average score /50'],[TC.A,'A-tier finds'],[fmtDs(DATES[0]),'first visit, 2026']].map(([a,b])=>`<div class="card"><div class="h num" style="font-size:${H(130,80,120)}px;color:var(--kaya)">${a}</div><div style="font-size:${H(34,24,30)}px;margin-top:10px">${b}</div></div>`).join('')}
     </div>
     ${sq?'':`<div style="margin-top:10px">${mosaicHTML(v?21:41,v?5:6,v?14:16)}</div>`}`)});
   const big=(n,l,c)=>`<div style="display:flex;align-items:baseline;gap:${H(24,16,22)}px"><div class="h num" style="font-size:${H(104,54,130)}px;color:${c||'var(--kaya)'}">${n}</div><div style="font-size:${H(38,24,32)}px;font-weight:700;line-height:1.15">${l}</div></div>`;
-  S.push({t:'What the data says',h:wrap(`<span class="kick" style="align-self:flex-start">What the data says</span>
+  S.push({t:'Surprises',h:wrap(`<span class="kick" style="align-self:flex-start">Surprises so far</span>
     <h2 class="h" style="font-size:${H(110,76,110)}px">Famous doesn't mean <em>best</em></h2>
     <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(3,1fr)'};gap:${sq?14:26}px;flex:1">
       <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Tourist favourites</div>${famous.map(d=>big(f1(d.t),`${esc(d.sh)}<br><span style="opacity:.65;font-weight:500">${d.rk} tier</span>`,'var(--paper)')).join('')}</div>
       ${hidden?`<div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border-color:var(--kaya);${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Local pick</div>${big(f1(hidden.t),`${esc(hidden.sh)}<br><span style="opacity:.65;font-weight:500">${hidden.rk} tier</span>`)}${sq?'':`<div style="font-size:${H(38,24,34)}px;font-style:italic;opacity:.85">“Not a touristy spot. Highly recommend.”</div>`}</div>`:''}
       <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Average across all ${R.length}</div>${big(f1(AVG[hi]),`${CRIT[hi].e} ${CRIT[hi].s}<br><span style="opacity:.65;font-weight:500">strongest</span>`)}${big(f1(AVG[lo]),`${CRIT[lo].e} ${CRIT[lo].s}<br><span style="opacity:.65;font-weight:500">hardest to earn</span>`,'var(--paper)')}</div>
     </div>`)});
-  S.push({t:'Built for content',h:wrap(`<span class="kick" style="align-self:flex-start">The format</span>
+  S.push({t:'Where to watch',h:wrap(`<span class="kick" style="align-self:flex-start">Where to watch</span>
     <h2 class="h" style="font-size:${H(130,84,120)}px">One visit,<br><em>three formats</em></h2>
     <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
       ${[['🎥','Live on stream','The visit, the tasting and the scoring, in real time.'],['📱','Short reveals','A 9:16 scorecard per centre, ready to post.'],['🏆','Ranking updates','The leaderboard shifts every time a new centre lands.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
     </div>`)});
-  S.push({t:'Roadmap',h:wrap(`<span class="kick" style="align-self:flex-start">What's next</span>
+  S.push({t:"What's next",h:wrap(`<span class="kick" style="align-self:flex-start">What's next</span>
     <h2 class="h" style="font-size:${H(130,84,120)}px">The road to <em>${TOTAL}</em></h2>
     <div style="position:relative;margin-top:auto;display:grid;grid-template-columns:${v?'1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?14:26}px">
       ${[[R.length,'Now',`Leaderboard live, ${TC.A} A-tier finds`],[Math.max(50,R.length+1),'Halfway-ish','Mid-quest rankings shake-up'],[100,'Triple digits','Region-by-region best-of'],[TOTAL,'Every centre','The final definitive ranking']].map(([n,a,b],k)=>`<div class="card" style="${k===0?'border-color:var(--kaya);':''}${v||sq?'display:flex;gap:30px;align-items:center;padding:'+(sq?'14px 24px':'26px 34px'):''}">
         <div class="h num" style="font-size:${H(110,60,110)}px;color:${k===0?'var(--kaya)':'inherit'}">${n}</div><div><div style="font-size:${H(40,26,34)}px;font-weight:700;margin-top:${v||sq?0:8}px">${a}</div><div style="font-size:${H(32,22,26)}px;opacity:.7;margin-top:6px">${b}</div></div></div>`).join('')}
     </div>`)});
-  S.push({t:'Get involved',h:wrap(`<div style="margin:auto 0"><span class="kick">Get involved</span>
+  S.push({t:'Say hi',h:wrap(`<div style="margin:auto 0"><span class="kick">Get involved</span>
     <h2 class="h" style="font-size:${H(170,110,170)}px;margin-top:34px">Where should<br>Zumi eat <em>next?</em></h2>
     <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1200px">Recommendations, stall tips and collabs welcome. Follow the quest on Twitch, TikTok, YouTube and X.</p></div>`)});
   return S;
@@ -1021,31 +1143,41 @@ function renderDeck(kind){
   const slides = kind==='slides' ? trackerSlides(state.fmt) : pitchSlides(state.fmt);
   let i = Math.min(state.idx[kind], slides.length-1); state.idx[kind]=i;
   const [W,H] = SIZES[state.fmt];
+  const intro = kind==='slides'
+    ? `<span class="ie">🏆</span><div><b>The countdown show:</b> a ready-made slideshow that counts down every rated centre to Zumi's #1. Flip through with the arrows (or the ← → keys), choose a shape at the top (Wide for YouTube, Tall for TikTok, Square for Instagram), and press <b>Full screen</b> to present it.</div>`
+    : `<span class="ie">👋</span><div><b>About the quest:</b> a short slideshow explaining what Makan or Meh is, for friends, brands or anyone new to it. Flip through with the arrows (or the ← → keys) and press <b>Full screen</b> to present it.</div>`;
   host.innerHTML = `
+    <div class="deck-intro">${intro}</div>
     <div class="deck-bar">
-      <div class="ttl">${kind==='slides'?'Rating tracker deck':'Pitch deck'}</div>
+      <div class="ttl">${kind==='slides'?'Countdown show':'About the quest'}</div>
       <span class="counter">${i+1} / ${slides.length}</span>
-      <button class="btn" data-act="prev">← Prev</button>
+      <button class="btn" data-act="prev">← Back</button>
       <button class="btn" data-act="next">Next →</button>
-      <button class="btn solid" data-act="fs">Present full screen</button>
+      <button class="btn solid" data-act="fs">⛶ Full screen</button>
     </div>
     <div class="stage"><button class="navbtn p" data-act="prev" aria-label="Previous slide">‹</button>
       <div class="canvas-holder"><div class="canvas ${state.fmt}" style="width:${W}px;height:${H}px">${slides[i].h}</div></div>
-      <button class="navbtn n" data-act="next" aria-label="Next slide">›</button></div>
+      <button class="navbtn n" data-act="next" aria-label="Next slide">›</button>
+      <button class="fsx" data-act="exitfs" type="button">✕ Exit full screen</button>
+      <span class="fscount">${i+1} / ${slides.length}</span></div>
     <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"><b>${k+1}</b>${esc(s.t)}</button>`).join('')}</div>`;
   const go = k=>{ state.idx[kind]=Math.max(0,Math.min(slides.length-1,k)); renderDeck(kind); };
   host.querySelectorAll('[data-act="prev"]').forEach(b=>b.onclick=()=>go(i-1));
   host.querySelectorAll('[data-act="next"]').forEach(b=>b.onclick=()=>go(i+1));
   host.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
-  host.querySelector('[data-act="fs"]').onclick=()=>{ const st=host.querySelector('.stage'); (st.requestFullscreen||st.webkitRequestFullscreen||(()=>{})).call(st); };
-  const cur = host.querySelector(`.rail [aria-current="true"]`); if(cur) cur.scrollIntoView({block:'nearest',inline:'center'});
+  // full screen the whole deck (which survives re-renders), not the stage inside it
+  host.querySelector('[data-act="fs"]').onclick=()=>{ (host.requestFullscreen||host.webkitRequestFullscreen||(()=>{})).call(host); };
+  host.querySelector('[data-act="exitfs"]').onclick=()=>{ (document.exitFullscreen||document.webkitExitFullscreen||(()=>{})).call(document); };
+  // centre the current slide in the rail without scrolling the page
+  const rail = host.querySelector('.rail'), cur = rail.querySelector('[aria-current="true"]');
+  if(cur) rail.scrollLeft = cur.offsetLeft - rail.offsetLeft - (rail.clientWidth - cur.offsetWidth)/2;
   fitDeck(host);
 }
 function fitDeck(host){
   const st = host.querySelector('.stage'); if(!st) return;
   const holder = st.querySelector('.canvas-holder'), cv = st.querySelector('.canvas');
   const [W,H] = SIZES[state.fmt];
-  const fs = document.fullscreenElement===st;
+  const fs = document.fullscreenElement===host;
   const aw = st.clientWidth - (fs?0:110), ah = st.clientHeight - (fs?0:10);
   const s = Math.max(.05, Math.min(aw/W, ah/H));
   holder.style.width = W*s+'px'; holder.style.height = H*s+'px';
@@ -1062,7 +1194,8 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- init ---------- */
-renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers();
+renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); newPair();
+countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
 select(state.sel);
 setTab((location.hash||'').slice(1));
