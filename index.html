@@ -110,8 +110,15 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .kpi .v small{font-size:.5em;color:var(--muted);font-weight:700}
 .kpi .l{font-size:13px;color:var(--muted);margin-top:6px}
 .kpi.wide{grid-column:1/-1}
-.tierbar{display:flex;height:34px;border-radius:9px;overflow:hidden;margin-top:10px;gap:2px}
-.tierbar div{display:grid;place-items:center;color:#fff;font-family:var(--fd);font-weight:900;font-size:17px;min-width:0}
+.tkh{font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;line-height:1}
+.tiers2{display:grid;gap:7px;margin:12px 0 10px}
+.trow{display:grid;grid-template-columns:26px minmax(0,8.5em) 1fr 2em;align-items:center;gap:10px}
+.trow .tn{line-height:1.1;font-size:14px}
+.trow .tn small{display:block;color:var(--muted);font-size:11.5px;margin-top:1px}
+.trow .tbar{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.trow .tbar i{display:block;height:100%;border-radius:99px}
+.trow .tc{font-family:var(--fd);font-weight:900;font-size:22px;text-align:right}
+.trow.zero{opacity:.4}
 
 /* stickers (inspired by stall hygiene grade stickers) */
 .st{--c:var(--tF);display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:var(--c);color:#fff;
@@ -439,6 +446,7 @@ const CRIT = [
   {k:'Uniqueness',s:'Uniqueness',e:'🍽',d:'Distinctive identity or iconic draw.'}
 ];
 const TIERS = [['S','45–50'],['A','40–44'],['B','35–39'],['C','30–34'],['D','21–29'],['F','≤20']];
+const TIER_WORD = {S:'Legendary',A:'Great',B:'Good',C:'Decent',D:'Meh',F:"Don't go"};
 const CV = i => `var(--c${i})`;
 const TV = t => `var(--t${t})`;
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -553,9 +561,12 @@ function renderHero(){
     <div class="kpi"><div class="v">${f1(TOP.t)}<small>/50</small></div><div class="l">Top score, ${esc(TOP.sh)}</div></div>
     <div class="kpi"><div class="v">${DATES.length}</div><div class="l">Hawker days since ${fmtDs(DATES[0])}</div></div>
     <div class="kpi"><div class="v">${pct}<small>%</small></div><div class="l">Of the official list done</div></div>
-    <div class="kpi wide"><div class="l" style="margin:0">Tier split</div>
-      <div class="tierbar">${TIERS.filter(([t])=>TC[t]).map(([t])=>`<div style="flex:${TC[t]};background:${TV(t)}" title="${t}: ${TC[t]}">${TC[t]/R.length>.07?`${t} ${TC[t]}`:t}</div>`).join('')}</div>
-      <div class="l">${TC.S?`${TC.S} S-tier centre${TC.S>1?"s":""} found so far.`:"No S tier yet. The first 45+ is still out there."}</div></div>`;
+    <div class="kpi wide"><div class="tkh">How her ratings stack up</div>
+      <div class="tiers2">${TIERS.map(([t,r])=>{ const n=TC[t], mx=Math.max(...TIERS.map(([k])=>TC[k]));
+        return `<div class="trow${n?'':' zero'}" title="${n} centre${n===1?'':'s'} scored ${r} out of 50 (${t} tier)">
+          <span class="st t${t}">${t}</span><div class="tn"><b>${TIER_WORD[t]}</b><small>${t==='F'?'20 or less':r+' pts'}</small></div>
+          <div class="tbar"><i style="width:${n/mx*100}%;background:${TV(t)}"></i></div><div class="tc">${n}</div></div>`; }).join('')}</div>
+      <div class="l">Each centre gets a letter from its total score out of 50. ${TC.S?`${TC.S} S-tier centre${TC.S>1?"s":""} found so far.`:"No S tier yet. The first 45+ is still out there."}</div></div>`;
 }
 
 function renderChips(){
