@@ -529,7 +529,10 @@ document.addEventListener('click',e=>{
   const el = e.target.closest('[data-n]');
   if(!el) return;
   const d = BY[+el.dataset.n];
-  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard') && innerWidth<1080) document.getElementById('detail').scrollIntoView({behavior:'smooth',block:'start'}); }
+  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard')){
+    // bring the scorecard into view (below the sticky header) unless its top is already on screen
+    const det=document.getElementById('detail'), top=det.getBoundingClientRect().top, hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
+    if(top<hb || top>innerHeight*0.6) scrollTo({top:scrollY+top-hb-12, behavior:'smooth'}); } }
 });
 
 /* ---------- dashboard ---------- */
