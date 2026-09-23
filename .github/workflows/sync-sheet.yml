@@ -1,5 +1,5 @@
 # Keeps data.json in step with Zumi's Google sheet.
-# Each run polls the sheet every 45 s for 30 min; a new run is queued every 10 min, so polling is
+# Each run polls the sheet every 45 s for 30 min, then queues the next run, so polling is
 # continuous. A change is published once it has been seen on two polls in a row and passes every
 # check in scripts/build_data.py. If the sheet fails a check, nothing is published and an issue
 # titled "Ratings sync paused" explains why (closed automatically once fixed).
@@ -14,10 +14,15 @@ on:
         description: "Publish even if many ratings disappeared at once (only if that is intentional)"
         type: boolean
         default: false
+      minutes:
+        description: "How long this run keeps polling"
+        type: number
+        default: 30
 
 permissions:
   contents: write
   issues: write
+  actions: write # lets each run queue the next one
 
 concurrency:
   group: sheet-sync
@@ -43,7 +48,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           FORCE: ${{ inputs.force && '--force' || '' }}
+          MINUTES: ${{ inputs.minutes || 30 }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          python scripts/sync.py --minutes 30 --interval 45 $FORCE
+          python scripts/sync.py --minutes "$MINUTES" --interval 45 $FORCE
+
+      # GitHub's cron can be delayed or skipped under load, so each run queues the next one
+      # itself; the schedule above is only a backup that restarts the chain if it ever breaks.
+      # To stop syncing, disable this workflow in the repo's Actions tab.
+      - name: Queue the next run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run sync-sheet.yml --ref main
