@@ -1,0 +1,49 @@
+# Keeps data.json in step with Zumi's Google sheet.
+# Each run polls the sheet every 45 s for 30 min; a new run is queued every 10 min, so polling is
+# continuous. A change is published once it has been seen on two polls in a row and passes every
+# check in scripts/build_data.py. If the sheet fails a check, nothing is published and an issue
+# titled "Ratings sync paused" explains why (closed automatically once fixed).
+name: Sync ratings from Zumi's sheet
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Publish even if many ratings disappeared at once (only if that is intentional)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: sheet-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - run: pip install openpyxl==3.1.5
+
+      - name: Run converter tests
+        run: python -m unittest discover -s scripts
+
+      - name: Poll sheet and publish changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python scripts/sync.py --minutes 30 --interval 45 $FORCE
