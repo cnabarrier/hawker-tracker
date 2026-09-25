@@ -6,7 +6,7 @@
 <title>Makan or Meh? Zumi's Singapore Hawker Centre Ratings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Doto:wght@700;900&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
@@ -98,14 +98,19 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .hero-big small{font-size:.42em;color:var(--ink);font-weight:800}
 .hero-txt{font-size:17px;max-width:30ch;line-height:1.3}
 .hero-txt b{font-weight:700}
-.mosaic{display:grid;grid-template-columns:repeat(21,minmax(0,1fr));gap:4px;margin-top:18px}
-@media (max-width:720px){.mosaic{grid-template-columns:repeat(12,minmax(0,1fr))}}
-.tile{aspect-ratio:1;border-radius:5px;background:var(--tile);box-shadow:inset 0 0 0 1px var(--tileLine);display:grid;place-items:center;
-  font-family:var(--fd);font-weight:900;font-size:clamp(11px,1.2vw,16px);color:#fff;transition:transform .15s,opacity .2s,box-shadow .15s}
-.tile.r{box-shadow:none;cursor:pointer}
-.tile.x{background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 6px)}
-.tile:hover{transform:scale(1.18);z-index:2}
-.tile{animation:pop .45s cubic-bezier(.2,.9,.3,1.3) backwards;animation-delay:calc(var(--i,0)*5ms)}
+/* progress bar: the full width is every centre on the list; rated ones fill it from the left, grouped by tier */
+.pbar{display:flex;height:30px;margin-top:22px;border-radius:99px;overflow:hidden;background:var(--tile);box-shadow:inset 0 0 0 1px var(--tileLine)}
+@media (max-width:560px){.pbar{height:24px}}
+.herocol{display:grid;gap:16px;align-content:start}
+@media (min-width:1081px){.hero .pbar{height:36px;margin-top:26px}}
+.pfill{display:flex;min-width:0;transform-origin:left;animation:grow .9s cubic-bezier(.3,.8,.3,1) backwards}
+.pbar .pseg{flex:1 1 0;min-width:0;margin-left:1px;cursor:pointer;transition:opacity .2s,box-shadow .15s}
+.pbar .pseg:first-child{margin-left:0}
+.pbar .pseg.g{margin-left:3px}
+.pbar .pseg.on{box-shadow:inset 0 0 0 2px var(--ink)}
+.pbar .todo{min-width:0}
+.pbar .shut{min-width:4px;background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 6px);border-left:1px solid var(--tileLine)}
+@keyframes grow{from{transform:scaleX(0)}}
 @keyframes pop{from{transform:scale(.3);opacity:0}}
 
 /* hawker stall unit plates on section headings */
@@ -139,9 +144,12 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .gscore{font-size:13px;color:var(--muted)}
 .gfoot .also{margin:0}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
+.legend b{color:var(--ink)}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 
-.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-content:start}
+@media (max-width:720px){.kpis{grid-template-columns:1fr 1fr}}
+#tierbox .kpi{height:100%;box-sizing:border-box}
 .kpi{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
 .kpi .v{font-family:var(--fd);font-weight:900;font-size:46px;line-height:.9}
 .kpi .v small{font-size:.5em;color:var(--muted);font-weight:700}
@@ -176,6 +184,8 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .lbr:hover,.lbr.sel{background:var(--paper2)}
 .lbr .pos{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--muted);text-align:right}
 .lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tie{margin-left:6px;font-size:1.05em;cursor:help}
+.lb.crit .tie{display:none}  /* single-score views number rows 1, 2, 3 with no shared ranks */
 .lbr .bar{display:flex;gap:2px;height:16px}
 .lbr .bar span{height:100%;border-radius:3px;transition:opacity .3s,flex-basis .5s}
 .lbr .tot{font-family:var(--fd);font-weight:800;font-size:21px;text-align:right}
@@ -210,8 +220,7 @@ svg text{font-family:var(--fb);fill:var(--muted)}
 .dot{transition:opacity .2s,r .2s,stroke-width .2s;cursor:pointer}
 .dim-scope.hl [data-n]:not(.on){opacity:.16}
 .dim-scope.hl .lbr[data-n]:not(.on){opacity:.35}
-.dim-scope.hl .tile:not(.r){opacity:1}
-.dim-scope.hl .tile.r:not(.on){opacity:.3}
+.dim-scope.hl .pseg:not(.on){opacity:.3}
 .on.dot{stroke:var(--ink);stroke-width:2.5}
 .unit{width:18px;height:18px;border-radius:4px;transition:opacity .2s,transform .2s;cursor:pointer}
 .unit.on{transform:scale(1.25);box-shadow:0 0 0 2px var(--ink)}
@@ -265,7 +274,10 @@ svg text{font-family:var(--fb);fill:var(--muted)}
 /* trail */
 .trailpanel #trail svg{width:100%;height:auto;display:block}
 .jsum{margin:0 0 12px;font-size:16px;line-height:1.5;max-width:70ch}
-.jchips{margin-bottom:14px}
+.jnav{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.jnav select.btn{min-width:0;max-width:100%}
+.jnav button.btn{width:36px;height:36px;padding:0;font-size:20px;line-height:1}
+.jnav button.btn:disabled{opacity:.35;cursor:default}
 .jgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;align-items:start}
 @media (max-width:420px){.jgrid{grid-template-columns:1fr}}
 .jcard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;background:var(--paper2);border:1px solid var(--line);border-radius:18px;padding:14px;animation:pop .35s cubic-bezier(.2,.9,.3,1.2) backwards}
@@ -370,8 +382,29 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .sl .kick{display:inline-block;background:var(--red);color:#fff;font-family:var(--fd);font-weight:800;font-size:34px;padding:8px 22px 6px;border-radius:12px;text-transform:uppercase;letter-spacing:.02em}
 .sl .card{background:var(--paper);border:2px solid var(--line);border-radius:28px;padding:34px 36px}
 .sl .st{width:auto;height:auto}
-.slmosaic{display:grid;gap:8px}
-.slmosaic i{aspect-ratio:1;border-radius:8px;background:var(--tile);box-shadow:inset 0 0 0 2px var(--tileLine);display:grid;place-items:center;color:#fff;font-style:normal;font-family:var(--fd);font-weight:900}
+/* "Now Serving" queue board: a hawker stall's LED queue-number display. Always dark, like the real thing. */
+.qb{background:#0B0B0B;color:#FFB020;border-radius:26px;padding:24px 34px;position:relative;
+  box-shadow:inset 0 0 0 5px #2B2B2B,inset 0 0 0 7px #4A4A4A,0 24px 40px -24px rgba(0,0,0,.7)}
+.qb .lbl{font-family:'Doto',var(--fd);font-weight:900;text-transform:uppercase;letter-spacing:.06em;line-height:1;color:#FFB020;text-shadow:0 0 10px rgba(255,176,32,.55)}
+.led{font-family:'Doto',var(--fd);font-weight:900;line-height:1;color:#FF3B30;display:inline-flex;align-items:flex-start;
+  text-shadow:0 0 4px rgba(255,59,48,.9),0 0 22px rgba(255,59,48,.6)}
+.led .dg{display:inline-block;position:relative;height:1em;overflow:hidden}
+.led .dg::before{content:"8";position:absolute;left:0;top:0;opacity:.1;text-shadow:none}
+.led .col{display:flex;flex-direction:column;animation:roll 1.3s cubic-bezier(.2,.8,.2,1) backwards}
+.led .col span{height:1em}
+@keyframes roll{from{transform:translateY(0)}}
+.sl .pbar{margin:0;box-shadow:inset 0 0 0 2px var(--tileLine)}
+.sl .pbar .pseg{cursor:default}
+.sl .plg{display:flex;flex-wrap:wrap;gap:10px 30px;color:var(--muted)}
+.sl .plg i{display:inline-block;width:.8em;height:.8em;border-radius:.2em;margin-right:.35em;vertical-align:-.05em}
+.sl .plg b{color:var(--ink)}
+.pitch .sl .plg{color:color-mix(in srgb,var(--paper) 70%,var(--ink))}
+.pitch .sl .plg b{color:var(--paper)}
+.deck-bar .seg{background:var(--paper2);border:1px solid var(--line2)}
+.deck-bar .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.deck-bar select.btn{padding-right:10px}
+.rail button.ch{background:color-mix(in srgb,var(--kaya) 28%,var(--paper));border-color:var(--kaya);font-weight:700}
+.rail button.ch[aria-current="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .slbar{height:40px;background:var(--paper2);border-radius:99px;overflow:hidden;position:relative;border:2px solid var(--line)}
 .slbar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
 .pitch .sl{background-color:var(--ink);color:var(--paper);
@@ -424,15 +457,18 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   <!-- DASHBOARD -->
   <section class="view on dim-scope" id="v-dashboard">
     <div class="grid g-hero">
-      <div class="panel hero">
-        <div class="hero-head">
-          <div class="hero-big" id="heroNum"></div>
-          <div class="hero-txt" id="heroTxt"></div>
+      <div class="herocol">
+        <div class="panel hero">
+          <div class="hero-head">
+            <div class="hero-big" id="heroNum"></div>
+            <div class="hero-txt" id="heroTxt"></div>
+          </div>
+          <div class="pbar" id="pbar" role="img"></div>
+          <div class="legend" id="legend"></div>
         </div>
-        <div class="mosaic" id="mosaic" aria-label="All 123 hawker centres"></div>
-        <div class="legend" id="legend"></div>
+        <div class="kpis" id="kpis"></div>
       </div>
-      <div class="kpis" id="kpis"></div>
+      <div id="tierbox"></div>
     </div>
 
     <div class="grid g-main">
@@ -536,6 +572,7 @@ const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','
 const fmtD = iso => { if(!iso) return 'Not recorded'; const [y,m,d]=iso.split('-').map(Number); return `${d} ${MON[m-1]} ${y}`; };
 const fmtDs = iso => { if(!iso) return '—'; const [,m,d]=iso.split('-').map(Number); return `${d} ${MON[m-1]}`; };
 const f1 = v => (Math.round(v*10)/10).toString();
+const ordinal = n => n + (n%100>=11 && n%100<=13 ? 'th' : ({1:'st',2:'nd',3:'rd'}[n%10] || 'th'));
 
 /* ---------- derived data ---------- */
 const BY = {}; DATA.forEach(d=>{BY[d.n]=d; d.closed = /^closed/i.test(d.addr);});
@@ -548,13 +585,16 @@ const TC = {}; TIERS.forEach(([t])=>TC[t]=R.filter(d=>d.rk===t).length);
 const DATES = [...new Set(R.map(d=>d.d).filter(Boolean))].sort();
 const TOTAL = DATA.length, CLOSED = DATA.filter(d=>d.closed).length, LEFT = TOTAL - R.length - CLOSED;
 const TOP = ranked[0];
+// ties share a rank (1, 2, 3, 3, 3, 6) and are marked with a handshake
+const tieText = d => { const o = R.filter(x=>x.t===d.t).length-1; return `Tied ${ordinal(d.pos)} with ${o} other${o>1?'s':''} on ${f1(d.t)}/50`; };
+const tieIcon = d => d.tied ? `<span class="tie" title="${tieText(d)}" aria-label="${tieText(d)}">🤝</span>` : '';
 const champs = CRIT.map((c,i)=>{ const m=Math.max(...R.map(d=>d.s[i])); return {i,m,w:R.filter(d=>d.s[i]===m)}; });
 const ALLS = R.flatMap(d=>d.s); const SMIN = Math.min(4, Math.floor(Math.min(...ALLS, 10)));
 const QMIN = Math.min(5, Math.floor(Math.min(...R.map(d=>d.s[1]), 10)));
 const range=(a,b)=>{const o=[];for(let v=a;v<=b;v++)o.push(v);return o;};
 const critOrder = [...CRIT.keys()].sort((a,b)=>AVG[b]-AVG[a]);
 
-const state = { sel: TOP.n, crit: -1, sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', idx:{slides:0,pitch:0} };
+const state = { sel: TOP.n, crit: -1, sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', mode:'stream', idx:{slides:0,pitch:0} };
 
 /* ---------- theme / tabs ---------- */
 const root = document.documentElement;
@@ -567,6 +607,7 @@ function applyTheme(t){
 }
 document.querySelectorAll('[data-theme-btn]').forEach(b=>b.onclick=()=>{ applyTheme(b.dataset.themeBtn); store('hk-theme',b.dataset.themeBtn); });
 applyTheme(load('hk-theme'));
+if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 
 function setTab(t){
   if(!['dashboard','sheet','slides','pitch'].includes(t)) t='dashboard';
@@ -588,7 +629,7 @@ document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{
 const tip = document.getElementById('tip');
 let hoverN = null;
 function tipHtml(d){
-  if(d.s) return `<b>${esc(d.name)}</b>${f1(d.t)}/50, ${d.rk} tier (${TIER_WORD[d.rk]})${d.d?`, visited ${fmtDs(d.d)}`:''}`;
+  if(d.s) return `<b>${esc(d.name)}</b>${f1(d.t)}/50, ${d.rk} tier (${TIER_WORD[d.rk]})${d.d?`, visited ${fmtDs(d.d)}`:''}${d.tied?`<br>🤝 ${tieText(d)}`:''}`;
   if(d.closed) return `<b>${esc(d.name)}</b>Closed for redevelopment`;
   return `<b>${esc(d.name)}</b>Not rated yet`;
 }
@@ -639,23 +680,38 @@ function countUps(scope){
     requestAnimationFrame(step);
   });
 }
+// progress bar: 1 slot per centre on the list: rated centres (best tier first), then to-visit, then closed.
+// live=true tags each slice with data-n so hover/click work on the dashboard; slides pass false.
+const SHOWN_TIERS = TIERS.filter(([t])=>TC[t]);
+const BAR_LABEL = `${R.length} of ${TOTAL} rated: ${SHOWN_TIERS.map(([t])=>`${TC[t]} ${t}`).join(', ')}; ${LEFT} to visit${CLOSED?`; ${CLOSED} closed`:''}`;
+function barInner(live){
+  return `<span class="pfill" style="flex:${R.length} 1 0">${ranked.map((d,k)=>
+      `<i class="pseg${k&&d.rk!==ranked[k-1].rk?' g':''}"${live?` data-n="${d.n}"`:''} style="background:${TV(d.rk)}"></i>`).join('')}</span>` +
+    (LEFT?`<span class="todo" style="flex:${LEFT} 1 0"></span>`:'') +
+    (CLOSED?`<span class="shut" style="flex:${CLOSED} 1 0"></span>`:'');
+}
+function legendInner(){
+  return SHOWN_TIERS.map(([t])=>`<span><i style="background:${TV(t)}"></i>${t} ${TIER_WORD[t]} <b>${TC[t]}</b></span>`).join('') +
+    `<span><i style="box-shadow:inset 0 0 0 1px var(--tileLine);background:var(--tile)"></i>To visit <b>${LEFT}</b></span>` +
+    (CLOSED?`<span><i style="background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 5px)"></i>Closed <b>${CLOSED}</b></span>`:'');
+}
+// the same bar and legend at slide scale
+const slideBar = (h,fs) => `<div class="pbar" role="img" aria-label="${BAR_LABEL}" style="height:${h}px">${barInner(false)}</div>
+  <div class="plg" style="font-size:${fs}px;margin-top:${Math.round(h*.45)}px">${legendInner()}</div>`;
 function renderHero(){
   document.getElementById('heroNum').innerHTML = `${cu(R.length)}<small>/${TOTAL}</small>`;
   document.getElementById('heroTxt').innerHTML = `hawker centres rated so far. <b>${LEFT} still to eat through</b>${CLOSED?`, ${CLOSED} closed for redevelopment`:''}.`;
-  document.getElementById('mosaic').innerHTML = DATA.map((d,k)=>{
-    if(d.s) return `<div class="tile r" data-n="${d.n}" style="background:${TV(d.rk)};--i:${k}" tabindex="0" aria-label="${esc(d.name)}, ${d.rk} tier">${d.rk}</div>`;
-    return `<div class="tile ${d.closed?'x':''}" data-n="${d.n}" style="--i:${k}" aria-label="${esc(d.name)}"></div>`;
-  }).join('');
-  document.getElementById('legend').innerHTML =
-    TIERS.filter(([t])=>TC[t]).map(([t,r])=>`<span><i style="background:${TV(t)}"></i>${t}: ${TIER_WORD[t]} (${r})</span>`).join('') +
-    `<span><i style="box-shadow:inset 0 0 0 1px var(--tileLine);background:var(--tile)"></i>To visit</span>` +
-    `<span><i style="background:repeating-linear-gradient(45deg,var(--tileLine) 0 2px,transparent 2px 5px)"></i>Closed</span>`;
+  const bar = document.getElementById('pbar');
+  bar.setAttribute('aria-label', BAR_LABEL);
+  bar.innerHTML = barInner(true);
+  document.getElementById('legend').innerHTML = legendInner();
   const pct = Math.round(R.length/TOTAL*100);
   document.getElementById('kpis').innerHTML = `
     <div class="kpi"><div class="v">${cu(AVGT)}<small>/50</small></div><div class="l">Average score across rated centres</div></div>
     <div class="kpi"><div class="v">${cu(TOP.t)}<small>/50</small></div><div class="l">Top score, ${esc(TOP.sh)}</div></div>
     <div class="kpi"><div class="v">${cu(DATES.length)}</div><div class="l">Hawker days since ${fmtDs(DATES[0])}</div></div>
-    <div class="kpi"><div class="v">${cu(pct)}<small>%</small></div><div class="l">Of the official list done</div></div>
+    <div class="kpi"><div class="v">${cu(pct)}<small>%</small></div><div class="l">Of the official list done</div></div>`;
+  document.getElementById('tierbox').innerHTML = `
     <div class="kpi wide"><div class="tkh">How her ratings stack up</div>
       <div class="tiers2">${TIERS.map(([t,r])=>{ const n=TC[t], mx=Math.max(...TIERS.map(([k])=>TC[k]));
         return `<div class="trow${n?'':' zero'}" title="${n} centre${n===1?'':'s'} scored ${r} out of 50 (${t} tier)">
@@ -680,7 +736,7 @@ function renderLB(){
   lb.style.height = (order.length*H)+'px';
   if(!lb.children.length){
     lb.innerHTML = R.map(d=>`<div class="lbr" data-n="${d.n}" tabindex="0">
-      <div class="pos"></div><div class="nm">${esc(d.sh)}</div>
+      <div class="pos"></div><div class="nm">${esc(d.sh)}${tieIcon(d)}</div>
       <div class="bar">${d.s.map((v,i)=>`<span data-i="${i}" style="flex:0 0 calc(${v/50*100}% - 2px);background:${CV(i)}"></span>`).join('')}</div>
       <div class="tot num"></div><span class="st t${d.rk}">${d.rk}</span></div>`).join('');
   }
@@ -740,7 +796,7 @@ function select(n){
       ${meter(d.s[i],CV(i))}</div>`).join('')}</div>
     <p class="quote">“${esc(d.note)}”</p>
     <div class="facts">
-      <div><b>Rank</b>#${d.pos}${d.tied?' (tied)':''} of ${R.length}</div>
+      <div><b>Rank</b>#${d.pos} of ${R.length}${d.tied?` <span title="${tieText(d)}">🤝 tied</span>`:''}</div>
       <div><b>Visited</b>${fmtD(d.d)}</div>
       <div style="grid-column:1/-1"><b>Best time to go</b>${esc(d.best)}</div>
     </div>
@@ -788,14 +844,14 @@ function renderReport(){
 }
 
 /* Journey: Zumi's food diary. One card per day out (newest first), each listing the centres
-   rated that day with grade, score and leaderboard rank. Month chips filter; long lists collapse. */
+   rated that day with grade, score and leaderboard rank. Opens on the latest month; "All days" collapses long lists. */
 const DAYNAME = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const jState = {month:'all', all:false};
+const jState = {month:null, all:false};   // null = latest month
 function renderTrail(){
   const trail=document.getElementById('trail'), days=document.getElementById('days');
   const RD=R.filter(d=>d.d), ND=R.filter(d=>!d.d);
   const row=d=>`<div class="jrow" data-n="${d.n}" tabindex="0"><span class="st t${d.rk}">${d.rk}</span>
-      <div class="jn"><b>${esc(d.sh)}</b><small>${TIER_WORD[d.rk]} · Ranked #${d.pos}${d.tied?' (tied)':''} of ${R.length}</small></div>
+      <div class="jn"><b>${esc(d.sh)}</b><small>${TIER_WORD[d.rk]} · Ranked #${d.pos} of ${R.length}${d.tied?' 🤝 tied':''}</small></div>
       <em>${f1(d.t)}<small>/50</small></em></div>`;
   const noDate = ND.length ? `<div class="jnd"><b>No visit date yet</b><span>${ND.length===1?'This centre is':'These centres are'} rated but the date isn't in the sheet yet.</span>
       <div class="jlist">${ND.map(row).join('')}</div></div>` : '';
@@ -807,12 +863,18 @@ function renderTrail(){
   const plural=(n,w)=>`${n} ${w}${n===1?'':'s'}`;
   const newest=[...DATES].reverse();
   const months=[...new Set(newest.map(d=>d.slice(0,7)))];
-  if(jState.month!=='all' && !months.includes(jState.month)) jState.month='all';
-  const mLabel=m=>`${MON[+m.slice(5,7)-1]}${m.slice(0,4)!==today.slice(0,4)?' '+m.slice(0,4):''}`;
+  // opens on her latest month; one dropdown (plus older/newer arrows) keeps this tidy however many months there are
+  if(jState.month!=='all' && !months.includes(jState.month)) jState.month=months[0];
+  const mLabel=m=>`${['January','February','March','April','May','June','July','August','September','October','November','December'][+m.slice(5,7)-1]} ${m.slice(0,4)}`;
+  const mi = months.indexOf(jState.month);   // months are newest first; -1 means "All days"
 
   trail.innerHTML = `<p class="jsum">Zumi has been out eating on <b>${plural(DATES.length,'day')}</b> since <b>${fmtDs(DATES[0])}</b> and rated <b>${plural(RD.length,'centre')}</b> on those days. Her latest visit was <b>${fmtDs(DATES[DATES.length-1])}</b> (${ago}).</p>
-    <div class="chips jchips">${[['all',`All days (${DATES.length})`],...months.map(m=>[m,`${mLabel(m)} (${newest.filter(d=>d.startsWith(m)).length})`])]
-      .map(([k,l])=>`<button class="chip" type="button" data-jm="${k}" aria-pressed="${jState.month===k}">${l}</button>`).join('')}</div>`;
+    <div class="jnav">
+      <button class="btn" type="button" data-jstep="1" aria-label="Older month" ${mi<0||mi>=months.length-1?'disabled':''}>‹</button>
+      <select class="btn" data-jm aria-label="Show month">${months.map(m=>`<option value="${m}"${jState.month===m?' selected':''}>${mLabel(m)} · ${plural(newest.filter(d=>d.startsWith(m)).length,'day')} · ${plural(RD.filter(d=>d.d.startsWith(m)).length,'centre')}</option>`).join('')}
+        <option value="all"${jState.month==='all'?' selected':''}>All days · ${plural(DATES.length,'day')} · ${plural(RD.length,'centre')}</option></select>
+      <button class="btn" type="button" data-jstep="-1" aria-label="Newer month" ${mi<=0?'disabled':''}>›</button>
+    </div>`;
 
   const list = jState.month==='all' ? newest : newest.filter(d=>d.startsWith(jState.month));
   const SHOW=6, shown = (jState.month==='all' && !jState.all) ? list.slice(0,SHOW) : list;
@@ -825,7 +887,8 @@ function renderTrail(){
     ${list.length>shown.length?`<button class="btn jmore" type="button" data-jall="1">Show all ${list.length} days ↓</button>`:''}
     ${jState.month==='all' && jState.all && list.length>SHOW?`<button class="btn jmore" type="button" data-jall="0">Show fewer ↑</button>`:''}
     ${noDate}`;
-  trail.querySelectorAll('[data-jm]').forEach(b=>b.onclick=()=>{ jState.month=b.dataset.jm; jState.all=false; renderTrail(); });
+  trail.querySelector('[data-jm]').onchange=e=>{ jState.month=e.target.value; jState.all=false; renderTrail(); };
+  trail.querySelectorAll('[data-jstep]').forEach(b=>b.onclick=()=>{ jState.month=months[mi + +b.dataset.jstep]; jState.all=false; renderTrail(); });
   days.querySelectorAll('[data-jall]').forEach(b=>b.onclick=()=>{ jState.all=b.dataset.jall==='1'; renderTrail(); });
 }
 
@@ -1011,9 +1074,23 @@ document.getElementById('q').addEventListener('input',e=>{ state.q=e.target.valu
 
 /* ---------- decks ---------- */
 const SIZES = {w:[1920,1080], v:[1080,1920], sq:[1080,1080]};
-function mosaicHTML(cols,gap,fs){
-  return `<div class="slmosaic" style="grid-template-columns:repeat(${cols},1fr);gap:${gap}px">${DATA.map(d=>d.s?`<i style="background:${TV(d.rk)};box-shadow:none;font-size:${fs}px">${d.rk}</i>`:`<i style="${d.closed?'background:repeating-linear-gradient(45deg,var(--tileLine) 0 4px,transparent 4px 12px)':''}"></i>`).join('')}</div>`;
+// LED digits for the queue board. Each digit is a 0–9 column that rolls up to its value whenever the slide is drawn
+// (the deck re-renders on every move). Non-digits such as "." are drawn as-is.
+function ledNum(v, digits=0, size){
+  const s = String(v).padStart(digits,'0');
+  let k = 0;
+  return `<span class="led" style="font-size:${size}px">${[...s].map(ch=>/\d/.test(ch)
+    ? `<span class="dg"><span class="col" style="transform:translateY(-${ch}em);animation-delay:${(k++)*110}ms">${[...'0123456789'].map(x=>`<span>${x}</span>`).join('')}</span></span>`
+    : `<span>${ch}</span>`).join('')}</span>`;
 }
+// "NOW SERVING #07" badge used on each centre's reveal (the number is its leaderboard rank)
+function qcall(d, px){
+  return `<div class="qb" style="display:inline-flex;flex-direction:column;gap:${px*.12}px;padding:${px*.16}px ${px*.22}px">
+    <span class="lbl" style="font-size:${px*.17}px">Now serving${d.tied?' · tied':''}</span>${ledNum(d.pos, Math.max(2,String(R.length).length), px)}</div>`;
+}
+const daysAgo = iso => { const n=Math.round((Date.parse(new Date(Date.now()+8*36e5).toISOString().slice(0,10))-Date.parse(iso))/864e5);
+  return n<=0?'today':n===1?'yesterday':`${n} days ago`; };
+const LATEST = DATES.length ? R.filter(d=>d.d===DATES[DATES.length-1]).sort((a,b)=>a.t-b.t || b.name.localeCompare(a.name)) : [];
 function foot(l,r){ return `<div class="foot"><span>${l}</span><span>${r}</span></div>`; }
 function stk(t,px){ const r=Math.round(px*.2); return `<span class="st t${t}" style="width:${px}px;height:${px}px;font-size:${px*.7}px;border-radius:${r}px;box-shadow:inset 0 0 0 ${px*.055}px var(--paper),inset 0 0 0 ${px*.09}px var(--c)">${t}</span>`; }
 
@@ -1023,9 +1100,8 @@ function centreSlide(d,f){
       <span style="font-size:${sq?40:52}px">${c.e}</span><span style="font-size:${sq?28:34}px;font-weight:600">${c.s}</span>
       <div class="slbar" style="height:${sq?30:40}px"><i style="width:${d.s[i]*10}%;background:${CV(i)}"></i></div>
       <span class="num" style="font-size:${sq?50:64}px;font-weight:900;text-align:right">${f1(d.s[i])}</span></div>`).join('');
-  const rankTxt = `#${d.pos}${d.tied?' <span style="font-size:.35em;vertical-align:middle">TIED</span>':''}`;
   if(v) return `<div class="sl"><div class="strip"></div><div class="pad" style="inset:100px 80px 80px;display:flex;flex-direction:column;gap:34px">
-      <div style="display:flex;justify-content:space-between;align-items:center"><div class="h num" style="font-size:200px;color:var(--red)">${rankTxt}</div>${stk(d.rk,190)}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">${qcall(d,170)}${stk(d.rk,190)}</div>
       <div><h2 class="h" style="font-size:${d.name.length>24?86:104}px">${esc(d.name)}</h2><p class="lead" style="margin-top:14px;font-size:32px">${esc(d.addr)}</p></div>
       <div class="card" style="display:grid;gap:22px;padding:30px 34px">${bars}</div>
       <div style="display:flex;align-items:baseline;gap:18px"><div class="h num" style="font-size:190px">${f1(d.t)}</div><div class="h" style="font-size:72px;color:var(--muted)">/50</div></div>
@@ -1033,14 +1109,14 @@ function centreSlide(d,f){
       <div style="margin-top:auto;font-size:32px;color:var(--muted);line-height:1.4"><b style="color:var(--ink)">Best time:</b> ${esc(d.best)}<br><b style="color:var(--ink)">Visited:</b> ${fmtD(d.d)}</div>
     </div></div>`;
   if(sq) return `<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;grid-template-rows:auto auto 1fr auto;gap:26px">
-      <div style="display:flex;gap:28px;align-items:center">${stk(d.rk,150)}<div style="min-width:0"><div class="h num" style="font-size:64px;color:var(--red)">${rankTxt} <span style="color:var(--ink)">${f1(d.t)}/50</span></div><h2 class="h" style="font-size:${d.name.length>30?62:76}px;margin-top:6px">${esc(d.name)}</h2></div></div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center">${stk(d.rk,130)}<div style="min-width:0"><div class="h num" style="font-size:72px">${f1(d.t)}<span style="color:var(--muted);font-size:.6em">/50</span></div><h2 class="h" style="font-size:${d.name.length>30?50:d.name.length>20?58:68}px;margin-top:6px">${esc(d.name)}</h2></div>${qcall(d,96)}</div>
       <div class="card" style="display:grid;gap:14px;padding:24px 30px">${bars}</div>
       <div style="font-size:${d.note.length>80?30:36}px;font-style:italic;line-height:1.3;border-left:10px solid var(--kaya);padding-left:24px;align-self:center">“${esc(d.note)}”</div>
       <div style="font-size:24px;color:var(--muted)"><b style="color:var(--ink)">Best time:</b> ${esc(d.best)}  <b style="color:var(--ink);margin-left:18px">Visited:</b> ${fmtD(d.d)}</div>
     </div></div>`;
   return `<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;grid-template-columns:760px 1fr;gap:80px">
       <div style="display:flex;flex-direction:column;gap:26px">
-        <div style="display:flex;align-items:center;gap:36px"><div class="h num" style="font-size:180px;color:var(--red)">${rankTxt}</div>${stk(d.rk,150)}</div>
+        <div style="display:flex;align-items:center;gap:36px">${qcall(d,140)}${stk(d.rk,150)}</div>
         <h2 class="h" style="font-size:${d.name.length>24?84:108}px">${esc(d.name)}</h2>
         <p class="lead" style="font-size:30px">${esc(d.addr)}</p>
         <div style="margin-top:auto;font-size:${d.note.length>70?34:42}px;font-style:italic;line-height:1.3;border-left:12px solid var(--kaya);padding-left:30px">“${esc(d.note)}”</div>
@@ -1061,24 +1137,63 @@ function leaderboardSlide(f, n){
   const rh = v?108:sq?66:60, fs = v?40:sq?30:32;
   return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:30}px">
     <div><span class="kick">Leaderboard</span><h2 class="h" style="font-size:${v?150:sq?96:100}px;margin-top:22px">Top ${n} so far</h2></div>
-    <div style="display:grid;gap:${v?14:8}px">${list.map(d=>`<div style="display:grid;grid-template-columns:${v?'70px 1fr 110px 80px':'64px 520px 1fr 110px 64px'};gap:24px;align-items:center;height:${rh}px">
-      <span class="num" style="font-size:${fs*1.3}px;font-weight:800;color:var(--muted);text-align:right">${d.pos}</span>
-      <span style="font-size:${fs}px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.sh)}</span>
+    <div style="display:grid;gap:${v?14:8}px">${list.map(d=>`<div style="display:grid;grid-template-columns:${v?'120px 1fr 110px 80px':'100px 480px 1fr 110px 64px'};gap:24px;align-items:center;height:${rh}px">
+      <span class="qb" style="padding:${rh*.12}px ${rh*.2}px;border-radius:${rh*.2}px;justify-self:start;box-shadow:inset 0 0 0 3px #3A3A3A">${ledNum(d.pos,2,rh*.6)}</span>
+      <span style="font-size:${fs}px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.sh)}${d.tied?' <span style="font-size:.85em">🤝</span>':''}</span>
       ${v?'':`<div style="display:flex;gap:4px;height:${rh*.42}px">${d.s.map((s,i)=>`<span style="flex:0 0 calc(${s/50*100}% - 4px);background:${CV(i)};border-radius:6px"></span>`).join('')}</div>`}
       <span class="num" style="font-size:${fs*1.6}px;font-weight:900;text-align:right">${f1(d.t)}</span>${stk(d.rk,v?72:56)}</div>`).join('')}</div>
     </div>${v||sq?'':foot('Stacked bars show the five criteria',CRIT.map((c,i)=>`<span style="color:${CV(i)}">■</span> ${c.s}`).join('  '))}</div>`;
 }
 
-function trackerSlides(f){
+// the show's opening board: a hawker queue display counting the centres served so far
+function servingSlide(f){
+  const v=f==='v', sq=f==='sq', H=(a,b,c)=>v?a:sq?b:c;
+  const dg = String(TOTAL).length;
+  const stat = (l,val,d) => `<div style="display:flex;flex-direction:column;gap:${H(14,10,14)}px"><span class="lbl" style="font-size:${H(38,22,28)}px">${l}</span>${ledNum(val,d,H(132,64,92))}</div>`;
+  const last = LATEST[LATEST.length-1];
+  const board = `<div class="qb" style="padding:${H('44px 50px','30px 36px','44px 56px')};display:grid;grid-template-columns:minmax(0,1fr);gap:${H(40,24,34)}px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:${H(20,12,18)}px"><span class="lbl" style="font-size:${H(60,34,44)}px">Now serving</span>
+          <div style="display:flex;align-items:flex-end;gap:${H(22,16,22)}px">${ledNum(R.length,dg,H(320,190,280))}<span class="lbl" style="font-size:${H(92,60,84)}px;padding-bottom:.12em">/${TOTAL}</span></div></div>
+        <div style="display:grid;grid-template-columns:repeat(2,auto);gap:${H('40px 80px','18px 40px','26px 60px')}">
+          ${stat('To go',LEFT,dg)}${stat('Hawker days',DATES.length,2)}${stat('Average',f1(AVGT),0)}${stat('Top score',f1(TOP.t),0)}</div>
+      </div>
+      ${last?`<div class="lbl" style="font-size:${H(42,24,32)}px;line-height:1.25;border-top:3px dashed #3A3A3A;padding-top:${H(28,18,24)}px">Last called ▸ ${esc(last.sh)} · ${fmtDs(last.d)} · ${daysAgo(last.d)}</div>`:''}
+    </div>`;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(80,26,40)}px;justify-content:center">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap"><span class="kick">Zumi's hawker quest 2026</span>
+      <h1 class="h" style="font-size:${H(130,64,96)}px">Makan <span style="color:var(--red)">or meh?</span></h1></div>
+    ${board}
+    <div>${slideBar(H(72,44,56),H(34,22,28))}</div>
+  </div></div>`;
+}
+// chapter card in the full countdown: the queue board calls the next tier
+function chapterSlide(t,f){
+  const v=f==='v', sq=f==='sq', H=(a,b,c)=>v?a:sq?b:c;
+  const ds = ranked.filter(d=>d.rk===t).reverse(), r = TIERS.find(([k])=>k===t)[1];
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;justify-content:center;gap:${H(50,30,44)}px">
+    <div class="qb" style="padding:${H('50px 56px','34px 40px','50px 64px')};display:flex;align-items:center;gap:${H(50,36,64)}px;${v?'flex-direction:column;text-align:center':''}">
+      ${stk(t,H(260,170,240))}
+      <div style="display:flex;flex-direction:column;gap:${H(24,16,22)}px">
+        <span class="lbl" style="font-size:${H(46,32,44)}px">Now calling</span>
+        <span class="lbl" style="font-size:${H(120,78,120)}px;color:#FF3B30;text-shadow:0 0 22px rgba(255,59,48,.6)">${t} tier · ${TIER_WORD[t]}</span>
+        <span class="lbl" style="font-size:${H(38,26,36)}px">${ds.length} centre${ds.length===1?'':'s'} · ${r} pts</span></div>
+    </div>
+    <div style="font-size:${H(38,26,36)}px;color:var(--muted);line-height:1.4;${v?'text-align:center':''}">Up next, from lowest to highest: <b style="color:var(--ink)">${ds.map(d=>esc(d.sh)).join(' · ')}</b></div>
+  </div></div>`;
+}
+const TIER_ORDER = TIERS.map(([t])=>t).reverse().filter(t=>TC[t]);   // worst to best, only tiers with centres
+
+function trackerSlides(f, mode){
   const v=f==='v', sq=f==='sq';
   const S=[];
-  S.push({t:'Cover',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;${v?'grid-template-rows:auto 1fr auto':sq?'grid-template-rows:auto 1fr':'grid-template-columns:1fr 760px'};gap:${v?60:60}px;align-items:center">
-    <div><span class="kick">Zumi's hawker quest 2026</span>
-    <h1 class="h" style="font-size:${v?190:sq?128:200}px;margin-top:30px">Makan<br><span style="color:var(--red)">or meh?</span></h1>
-    <p class="lead" style="margin-top:${sq?14:36}px;font-size:${v?46:sq?30:42}px;max-width:900px">${sq?`Every official hawker centre in Singapore, rated. ${R.length} down, ${LEFT} to go.`:`Every official hawker centre in Singapore, scored out of 50. ${R.length} rated. ${LEFT} to go.`}</p></div>
-    ${sq?mosaicHTML(21,6,20):`<div>${mosaicHTML(v?14:14,v?10:9,v?34:30)}</div>`}
-    ${v?`<div style="font-size:34px;color:var(--muted)">One square per hawker centre. Coloured means eaten and rated.</div>`:''}
-    </div></div>`});
+  S.push({t:'Now serving',ch:1,h:servingSlide(f)});
+  if(mode==='stream'){
+    LATEST.forEach(d=>S.push({t:`New: #${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+    S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
+    S.push({t:'Next up',h:nextUpSlide(f)});
+    return S;
+  }
   S.push({t:'How I score',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?60:44}px">
     <div><span class="kick">The scorecard</span><h2 class="h" style="font-size:${v?140:sq?92:120}px;margin-top:22px">Five scores out of 10</h2></div>
     <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(5,1fr)'};gap:${sq?14:26}px;flex:1">${CRIT.map((c,i)=>`<div class="card" style="border-top:${sq?0:14}px solid ${CV(i)};${sq?`border-left:14px solid ${CV(i)};padding:16px 26px;display:flex;gap:26px;align-items:center`:v?'display:flex;gap:40px;align-items:center':''}">
@@ -1092,8 +1207,10 @@ function trackerSlides(f){
       ${t==='F'?'':`<div style="font-size:${v?38:sq?26:32}px;font-weight:700;margin-top:6px">${TIER_WORD[t]}</div>`}
       <div style="font-size:${v?34:sq?24:28}px;color:var(--muted);margin-top:8px">${t==='F'?'20 or under. KEKW':`${TC[t]} centre${TC[t]===1?'':'s'} so far`}</div></div></div>`).join('')}</div>
     </div></div>`});
-  S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
-  [...ranked].reverse().forEach(d=>S.push({t:`#${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+  TIER_ORDER.forEach(t=>{
+    S.push({t:`${t} tier · ${TIER_WORD[t]}`,ch:1,h:chapterSlide(t,f)});
+    ranked.filter(d=>d.rk===t).reverse().forEach(d=>S.push({t:`#${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+  });
   S.push({t:'Champions',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:sq?28:40}px">
     <div><span class="kick">Category champions</span><h2 class="h" style="font-size:${v?130:sq?84:120}px;margin-top:22px">Best at each thing</h2></div>
     <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'repeat(3,1fr)':'repeat(5,1fr)'};gap:${sq?14:24}px;flex:1;align-content:start">${champs.map(c=>`<div class="card" style="border-top:14px solid ${CV(c.i)};padding:${sq?'16px 20px':v?'26px 30px':''}">
@@ -1102,11 +1219,15 @@ function trackerSlides(f){
       <div style="font-size:${v?40:sq?22:38}px;font-weight:700;line-height:1.15;margin-top:8px">${c.w.map(d=>esc(d.sh)).join('<br>')}</div>
       <div class="h num" style="font-size:${v?84:sq?44:80}px;margin-top:${sq?8:14}px;color:${CV(c.i)}">${f1(c.m)}</div></div>`).join('')}</div>
     </div></div>`});
-  S.push({t:'Next up',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:grid;${v?'grid-template-rows:auto auto':sq?'grid-template-rows:auto 1fr':'grid-template-columns:1fr 760px'};gap:60px;align-items:center">
-    <div><span class="kick">Still hungry</span><h2 class="h" style="font-size:${v?170:sq?120:160}px;margin-top:26px"><span style="color:var(--red)">${LEFT}</span> centres<br>to go</h2>
-    <p class="lead" style="margin-top:30px;font-size:${v?46:sq?32:42}px;max-width:860px">${TC.S?`${TC.S} S tier so far. Could the next one join them?`:'No S tier yet. The first 45 out of 50 could be the next one on the list.'}</p></div>
-    ${sq?'':mosaicHTML(14,v?10:9,v?34:30)}</div></div>`});
+  S.push({t:'Next up',h:nextUpSlide(f)});
   return S;
+}
+function nextUpSlide(f){
+  const v=f==='v', sq=f==='sq';
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;justify-content:center;gap:${v?70:sq?40:60}px">
+    <div><span class="kick">Still hungry</span><h2 class="h" style="font-size:${v?170:sq?120:160}px;margin-top:26px"><span style="color:var(--red)">${LEFT}</span> centres<br>to go</h2>
+    <p class="lead" style="margin-top:30px;font-size:${v?46:sq?32:42}px;max-width:1100px">${TC.S?`${TC.S} S tier so far. Could the next one join them?`:'No S tier yet. The first 45 out of 50 could be the next one on the list.'}</p></div>
+    <div>${slideBar(v?64:sq?44:56,v?30:sq?22:28)}</div></div></div>`;
 }
 
 function pitchSlides(f){
@@ -1136,7 +1257,7 @@ function pitchSlides(f){
     <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?16:26}px;margin-top:auto">
       ${[[R.length,'centres rated'],[f1(AVGT),'average score /50'],[TC.A,'A-tier finds'],[fmtDs(DATES[0]),'first visit, 2026']].map(([a,b])=>`<div class="card"><div class="h num" style="font-size:${H(130,80,120)}px;color:var(--kaya)">${a}</div><div style="font-size:${H(34,24,30)}px;margin-top:10px">${b}</div></div>`).join('')}
     </div>
-    ${sq?'':`<div style="margin-top:10px">${mosaicHTML(v?21:41,v?5:6,v?14:16)}</div>`}`)});
+    ${sq?'':`<div style="margin-top:10px">${slideBar(v?56:48,v?28:26)}</div>`}`)});
   const big=(n,l,c)=>`<div style="display:flex;align-items:baseline;gap:${H(24,16,22)}px"><div class="h num" style="font-size:${H(104,54,130)}px;color:${c||'var(--kaya)'}">${n}</div><div style="font-size:${H(38,24,32)}px;font-weight:700;line-height:1.15">${l}</div></div>`;
   S.push({t:'Surprises',h:wrap(`<span class="kick" style="align-self:flex-start">Surprises so far</span>
     <h2 class="h" style="font-size:${H(110,76,110)}px">Famous doesn't mean <em>best</em></h2>
@@ -1164,16 +1285,22 @@ function pitchSlides(f){
 
 function renderDeck(kind){
   const host = document.querySelector(`[data-deck="${kind}"]`);
-  const slides = kind==='slides' ? trackerSlides(state.fmt) : pitchSlides(state.fmt);
+  const slides = kind==='slides' ? trackerSlides(state.fmt, state.mode) : pitchSlides(state.fmt);
   let i = Math.min(state.idx[kind], slides.length-1); state.idx[kind]=i;
   const [W,H] = SIZES[state.fmt];
+  const chapters = slides.map((s,k)=>[s,k]).filter(([s])=>s.ch);
+  const modeCtl = kind!=='slides' ? '' : `<div class="seg" role="group" aria-label="Show length">
+      <button type="button" data-mode="stream" aria-pressed="${state.mode==='stream'}" title="Short: the board, the latest reveals and the Top 10">📺 Stream mode</button>
+      <button type="button" data-mode="full" aria-pressed="${state.mode==='full'}" title="Every rated centre, from last place to #1, in tier chapters">📜 Full countdown</button></div>
+    ${state.mode==='full'?`<select class="btn" data-jump aria-label="Jump to a chapter"><option value="">Jump to…</option>${chapters.map(([s,k])=>`<option value="${k}">${esc(s.t)}</option>`).join('')}</select>`:''}`;
   const intro = kind==='slides'
-    ? `<span class="ie">🏆</span><div><b>The countdown show:</b> a ready-made slideshow that counts down every rated centre to Zumi's #1. Flip through with the arrows (or the ← → keys), choose a shape at the top (Wide for YouTube, Tall for TikTok, Square for Instagram), and press <b>Full screen</b> to present it.</div>`
+    ? `<span class="ie">🔔</span><div><b>The countdown show:</b> the hawker queue board calls out Zumi's centres. <b>📺 Stream mode</b> is short for live episodes: the board, her latest hawker day's reveals and the Top 10. <b>📜 Full countdown</b> calls every rated centre from last place to #1, tier by tier. Flip through with the arrows (or the ← → keys), choose a shape at the top (Wide for YouTube, Tall for TikTok, Square for Instagram), and press <b>Full screen</b> to present it.</div>`
     : `<span class="ie">👋</span><div><b>About the quest:</b> a short slideshow explaining what Makan or Meh is, for friends, brands or anyone new to it. Flip through with the arrows (or the ← → keys) and press <b>Full screen</b> to present it.</div>`;
   host.innerHTML = `
     <div class="deck-intro">${intro}</div>
     <div class="deck-bar">
       <div class="ttl">${kind==='slides'?'Countdown show':'About the quest'}</div>
+      ${modeCtl}
       <span class="counter">${i+1} / ${slides.length}</span>
       <button class="btn" data-act="prev">← Back</button>
       <button class="btn" data-act="next">Next →</button>
@@ -1184,8 +1311,10 @@ function renderDeck(kind){
       <button class="navbtn n" data-act="next" aria-label="Next slide">›</button>
       <button class="fsx" data-act="exitfs" type="button">✕ Exit full screen</button>
       <span class="fscount">${i+1} / ${slides.length}</span></div>
-    <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"><b>${k+1}</b>${esc(s.t)}</button>`).join('')}</div>`;
+    <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"${s.ch?' class="ch"':''}><b>${k+1}</b>${esc(s.t)}</button>`).join('')}</div>`;
   const go = k=>{ state.idx[kind]=Math.max(0,Math.min(slides.length-1,k)); renderDeck(kind); };
+  host.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ if(state.mode===b.dataset.mode) return; state.mode=b.dataset.mode; store('hk-mode',state.mode); state.idx.slides=0; renderDeck(kind); });
+  const jump = host.querySelector('[data-jump]'); if(jump) jump.onchange=()=>{ if(jump.value!=='') go(+jump.value); };
   host.querySelectorAll('[data-act="prev"]').forEach(b=>b.onclick=()=>go(i-1));
   host.querySelectorAll('[data-act="next"]').forEach(b=>b.onclick=()=>go(i+1));
   host.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
