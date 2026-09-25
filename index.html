@@ -88,6 +88,7 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .g-main{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px;align-items:start}
 .g-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
 .g-two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:16px}
+.g-main + .g-two{margin-top:24px}   /* Leaderboard/scorecard row to Find your hawker */
 @media (max-width:1080px){.g-hero,.g-main,.g-two{grid-template-columns:1fr}.g-three{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){.g-three{grid-template-columns:1fr}}
 
@@ -179,8 +180,33 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 
 /* leaderboard */
 .lb{position:relative}
-.lbr{position:absolute;left:0;right:0;height:32px;display:grid;grid-template-columns:30px minmax(96px,1fr) minmax(120px,1.7fr) 46px 26px;
-  gap:10px;align-items:center;transition:top .55s cubic-bezier(.2,.8,.2,1),opacity .2s;cursor:pointer;border-radius:8px;padding:0 4px}
+/* card with two tabs: LEADERBOARD (top 10) and TOTAL (every rated centre) */
+.lbtabs{display:flex;gap:24px;border-bottom:1px solid var(--line);margin:12px 0 12px}
+.lbtabs button{border:0;background:none;padding:6px 0 9px;margin-bottom:-1px;font-family:var(--fd);font-weight:800;font-size:18px;
+  text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+.lbtabs button:hover{color:var(--ink)}
+.lbtabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--kaya)}
+.lbchips{margin-bottom:10px}
+.lbchips .chip{padding:4px 10px;font-size:12px}
+.lbhead,.lbr{display:grid;grid-template-columns:30px minmax(96px,1fr) minmax(120px,1.7fr) 46px 26px;gap:10px;align-items:center;padding:0 6px}
+.lbhead{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding-bottom:7px;border-bottom:1px solid var(--line2)}
+.lbhead span:first-child{text-align:right}
+.lbhead span:nth-child(4){text-align:right}
+.lbh-bar{display:flex;gap:7px;overflow:hidden;white-space:nowrap;letter-spacing:.02em}
+.lbh-bar i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px}
+.lb{transition:height .45s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+.lbr{position:absolute;left:0;right:0;height:38px;border-bottom:1px solid var(--line);
+  transition:top .55s cubic-bezier(.2,.8,.2,1),opacity .25s;cursor:pointer}
+.lbr.off{opacity:0;visibility:hidden;pointer-events:none}
+.lbdots{position:absolute;left:0;right:0;height:22px;display:grid;place-items:center;color:var(--muted);letter-spacing:.3em;font-weight:700;transition:top .55s,opacity .25s}
+.lbfoot{display:grid;justify-items:center;gap:6px;margin-top:10px}
+.lbfoot .note{font-size:12.5px;color:var(--muted)}
+.lbmore{border:0;background:none;font-weight:700;font-size:13px;color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer}
+.lbmore:hover{background:var(--paper2)}
+.lbmore i{font-style:normal;display:inline-block;margin-left:4px;transition:transform .2s}
+/* podium badges for places 1-3 in the Overall view */
+.lbr .pos.pd{justify-self:end;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:15px;color:#1A1A1A}
+.pos.p1{background:#E6BE4E}.pos.p2{background:#C3CCD1}.pos.p3{background:#CF9567}
 .lbr:hover,.lbr.sel{background:var(--paper2)}
 .lbr .pos{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--muted);text-align:right}
 .lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;display:flex;align-items:center;min-width:0}
@@ -192,7 +218,7 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .lbr .tot{font-family:var(--fd);font-weight:800;font-size:21px;text-align:right}
 .lb.crit .bar span{opacity:.18}
 .lb.crit .bar span.k{opacity:1}
-@media (max-width:560px){.lbr{grid-template-columns:22px minmax(80px,1fr) 1fr 38px 24px;gap:6px}}
+@media (max-width:560px){.lbhead,.lbr{grid-template-columns:26px minmax(0,1fr) 44px 26px;gap:8px;padding:0 2px}.lbr .bar,.lbh-bar{display:none}.lbtabs{gap:18px}}  /* phones: drop the tiny score bars so names have room */
 
 /* detail */
 .detail .top{display:flex;gap:16px;align-items:flex-start}
@@ -207,6 +233,26 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;font-size:13px}
 .facts div{border-top:1px solid var(--line);padding-top:8px}
 .facts b{display:block;font-size:12px;color:var(--muted);font-weight:500}
+.facts div:last-child{grid-column:1/-1}
+/* compact scorecard beside the top-10 Leaderboard (wider screens): one line per score, facts in one row,
+   so the card is about as tall as the Leaderboard and there's no empty band under it */
+@media (min-width:561px){
+  .detail .st.big{width:74px;height:74px;font-size:52px;border-radius:15px}
+  .detail h3{font-size:28px}
+  .detail .score{display:inline-block;font-size:46px;margin-top:8px;vertical-align:middle}
+  .detail .verdict-stamp{margin:8px 0 0 12px;font-size:17px;vertical-align:middle}
+  .detail .verdict{margin:10px 0 2px;font-size:14px}
+  .detail .krow{grid-template-columns:26px minmax(0,1fr) minmax(0,1.15fr) 48px;gap:10px;padding:6px 0}
+  .detail .krow .em{grid-row:auto;font-size:20px}
+  .detail .krow .kn{grid-column:2;font-size:13.5px;line-height:1.15}
+  .detail .krow .kn .tag{display:block;width:max-content;margin:2px 0 0;font-size:10.5px;padding:1px 7px}
+  .detail .krow .meter{grid-column:3;grid-row:1;height:12px}
+  .detail .krow .kv{grid-column:4;grid-row:1;font-size:22px}
+  .detail .quote{margin-top:10px;padding:10px 14px;font-size:14.5px}
+  .detail .facts{grid-template-columns:auto auto minmax(0,1.6fr);gap:14px;margin-top:10px}
+  .detail .facts div:last-child{grid-column:auto}
+  .detail .sub{margin-top:8px!important;font-size:12px}
+}
 .radar-wrap{display:flex;justify-content:center;margin-top:6px}
 .critrows{display:grid;gap:7px;margin-top:6px}
 .cr{display:grid;grid-template-columns:24px 88px 1fr 36px;align-items:center;gap:8px;font-size:13px}
@@ -473,12 +519,16 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     </div>
 
     <div class="grid g-main">
-      <div class="panel">
+      <div class="panel lbcard">
         <h2><span class="stall">#01-01</span>Leaderboard</h2>
-        <p class="sub">Pick a criterion to re-rank and spotlight it. Hover a centre to trace it across every chart; click to open its scorecard.</p>
-        <div class="chips" id="critChips"></div>
-        <div class="legend" id="lbLegend" style="margin:-4px 0 12px"></div>
+        <div class="lbtabs" role="tablist" aria-label="Leaderboard view">
+          <button type="button" role="tab" data-lbtab="top">Leaderboard</button>
+          <button type="button" role="tab" data-lbtab="all">Total</button>
+        </div>
+        <div class="chips lbchips" id="critChips"></div>
+        <div class="lbhead" aria-hidden="true"><span>#</span><span>Hawker centre</span><span class="lbh-bar" id="lbLegend"></span><span>Total</span><span>Tier</span></div>
         <div class="lb" id="lb"></div>
+        <div class="lbfoot" id="lbFoot"></div>
       </div>
       <div class="panel detail" id="detail"></div>
     </div>
@@ -595,7 +645,7 @@ const QMIN = Math.min(5, Math.floor(Math.min(...R.map(d=>d.s[1]), 10)));
 const range=(a,b)=>{const o=[];for(let v=a;v<=b;v++)o.push(v);return o;};
 const critOrder = [...CRIT.keys()].sort((a,b)=>AVG[b]-AVG[a]);
 
-const state = { sel: TOP.n, crit: -1, sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', mode:'stream', idx:{slides:0,pitch:0} };
+const state = { sel: TOP.n, crit: -1, lbTab: 'top', sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', mode:'stream', idx:{slides:0,pitch:0} };
 
 /* ---------- theme / tabs ---------- */
 const root = document.documentElement;
@@ -643,19 +693,33 @@ function highlight(n){
   scope.classList.add('hl');
   document.querySelectorAll(`[data-n="${n}"]`).forEach(e=>e.classList.add('on'));
 }
+// keep the tooltip fully on screen
+const placeTip = (x,y) => { tip.style.left = Math.max(8, Math.min(x, innerWidth-tip.offsetWidth-8))+'px'; tip.style.top = Math.max(8, Math.min(y, innerHeight-tip.offsetHeight-8))+'px'; };
+// On phones a tap arrives as a mouseover at the finger, so there the tip is centred over the tapped item instead,
+// and it (and the dimming) clears once the page scrolls or after a moment.
+let touchTap = false, tipTimer = 0;
+document.addEventListener('pointerdown', e=>{ touchTap = e.pointerType!=='mouse'; }, {passive:true});
+document.addEventListener('pointermove', e=>{ if(e.pointerType==='mouse') touchTap = false; }, {passive:true});
+function clearTouchTip(){ clearTimeout(tipTimer); tip.classList.remove('on'); highlight(null); }
+addEventListener('scroll', ()=>{ if(touchTap && tip.classList.contains('on')) clearTouchTip(); }, {passive:true});
 document.addEventListener('mouseover',e=>{
   const el = e.target.closest('[data-n]');
   if(!el || !el.closest('#v-dashboard')){ highlight(null); tip.classList.remove('on'); return; }
   const n = +el.dataset.n; highlight(n);
   tip.innerHTML = tipHtml(BY[n]); tip.classList.add('on');
+  if(touchTap){
+    const r = el.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    placeTip(r.left + r.width/2 - w/2, r.top-h-10 >= 8 ? r.top-h-10 : r.bottom+10);
+    clearTimeout(tipTimer); tipTimer = setTimeout(clearTouchTip, 2500);
+  }
 });
 document.addEventListener('mousemove',e=>{
-  if(!tip.classList.contains('on')) return;
+  if(touchTap || !tip.classList.contains('on')) return;
   const w = tip.offsetWidth, h = tip.offsetHeight;
   let x = e.clientX+14, y = e.clientY+16;
   if(x+w>innerWidth-8) x = e.clientX-w-14;
   if(y+h>innerHeight-8) y = e.clientY-h-16;
-  tip.style.left=x+'px'; tip.style.top=y+'px';
+  placeTip(x,y);
 });
 document.addEventListener('click',e=>{
   const el = e.target.closest('[data-n]');
@@ -722,33 +786,50 @@ function renderHero(){
 }
 
 function renderChips(){
-  const opts = [{i:-1,l:'Total'}].concat(CRIT.map((c,i)=>({i,l:`${c.e} ${c.s}`})));
+  const opts = [{i:-1,l:'Overall'}].concat(CRIT.map((c,i)=>({i,l:`${c.e} ${c.s}`})));
   document.getElementById('critChips').innerHTML = opts.map(o=>`<button class="chip" data-crit="${o.i}" aria-pressed="${state.crit===o.i}">${o.l}</button>`).join('');
   document.querySelectorAll('[data-crit]').forEach(b=>b.onclick=()=>{ state.crit=+b.dataset.crit; renderChips(); renderLB(); });
 }
 
+// Leaderboard card. LEADERBOARD tab = top 10 (plus the selected centre pinned below if it's further down);
+// TOTAL tab = every rated centre. Rows stay absolutely positioned so re-ranking animates.
+const LB_TOP = 10;
 function renderLB(){
-  document.getElementById('lbLegend').innerHTML = 'Bar colours: '+CRIT.map((c,i)=>`<span><i style="background:${CV(i)}"></i>${c.s}</span>`).join('');
+  document.getElementById('lbLegend').innerHTML = CRIT.map((c,i)=>`<span><i style="background:${CV(i)}"></i>${c.s}</span>`).join('');
   const lb = document.getElementById('lb');
-  const c = state.crit;
+  const c = state.crit, all = state.lbTab==='all';
   lb.classList.toggle('crit', c>=0);
+  document.querySelectorAll('.lbtabs [data-lbtab]').forEach(b=>b.setAttribute('aria-selected', b.dataset.lbtab===state.lbTab));
   const order = c<0 ? ranked : [...R].sort((a,b)=>b.s[c]-a.s[c] || b.t-a.t || a.name.localeCompare(b.name));
-  const H = 34;
-  lb.style.height = (order.length*H)+'px';
-  if(!lb.children.length){
+  const H = 38, DOTS = 22;
+  if(!lb.querySelector('.lbr')){
     lb.innerHTML = R.map(d=>`<div class="lbr" data-n="${d.n}" tabindex="0">
       <div class="pos"></div><div class="nm"><span>${esc(d.sh)}</span>${tieIcon(d)}</div>
       <div class="bar">${d.s.map((v,i)=>`<span data-i="${i}" style="flex:0 0 calc(${v/50*100}% - 2px);background:${CV(i)}"></span>`).join('')}</div>
-      <div class="tot num"></div><span class="st t${d.rk}">${d.rk}</span></div>`).join('');
+      <div class="tot num"></div><span class="st t${d.rk}">${d.rk}</span></div>`).join('') + '<div class="lbdots" aria-hidden="true">···</div>';
   }
+  const selK = order.findIndex(d=>d.n===state.sel);
+  const pin = !all && selK>=LB_TOP;   // selected centre is below the top 10: show it under a "···" gap
   order.forEach((d,k)=>{
-    const el = lb.querySelector(`.lbr[data-n="${d.n}"]`);
-    el.style.top = (k*H)+'px';
-    el.querySelector('.pos').textContent = c<0 ? d.pos : k+1;
+    const el = lb.querySelector(`.lbr[data-n="${d.n}"]`), shown = all || k<LB_TOP || (pin && k===selK);
+    el.style.top = (all || k<LB_TOP ? k*H : LB_TOP*H+DOTS)+'px';
+    el.classList.toggle('off', !shown);
+    el.tabIndex = shown ? 0 : -1;
+    const pos = el.querySelector('.pos');
+    pos.textContent = c<0 ? d.pos : k+1;
+    pos.className = 'pos' + (c<0 && d.pos<=3 ? ` pd p${d.pos}` : '');   // gold, silver, bronze; tied places share a medal
     el.querySelector('.tot').textContent = c<0 ? f1(d.t) : f1(d.s[c]);
     el.querySelectorAll('.bar span').forEach(s=>s.classList.toggle('k', +s.dataset.i===c));
     el.classList.toggle('sel', d.n===state.sel);
   });
+  const dots = lb.querySelector('.lbdots');
+  dots.style.top = (LB_TOP*H)+'px'; dots.style.opacity = pin?1:0;
+  lb.style.height = (all ? order.length*H : Math.min(order.length,LB_TOP)*H + (pin?DOTS+H:0))+'px';
+  const more = order.length > LB_TOP;
+  document.getElementById('lbFoot').innerHTML = all
+    ? `<span class="note">${LEFT} still to visit${CLOSED?` · ${CLOSED} closed`:''}</span>${more?'<button type="button" class="lbmore" data-lbtab="top">Show top 10<i>⌃</i></button>':''}`
+    : (more?`<button type="button" class="lbmore" data-lbtab="all">See more<i>⌄</i></button>`:'');
+  document.querySelectorAll('[data-lbtab]').forEach(b=>b.onclick=()=>{ state.lbTab=b.dataset.lbtab; renderLB(); });
 }
 
 function radarSVG(vals, avg, size, opts={}){
@@ -799,10 +880,10 @@ function select(n){
     <div class="facts">
       <div><b>Rank</b>#${d.pos} of ${R.length}${d.tied?` <span title="${tieText(d)}">🤝 tied</span>`:''}</div>
       <div><b>Visited</b>${fmtD(d.d)}</div>
-      <div style="grid-column:1/-1"><b>Best time to go</b>${esc(d.best)}</div>
+      <div><b>Best time to go</b>${esc(d.best)}</div>
     </div>
     <p class="sub" style="margin:10px 0 0">"Average" compares against all ${R.length} centres Zumi has rated. Click any centre on the page to see its scorecard.</p>`;
-  document.querySelectorAll('.lbr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
+  renderLB();
   document.querySelectorAll('#tbl tbody tr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
 }
 
