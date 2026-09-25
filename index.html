@@ -183,8 +183,9 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
   gap:10px;align-items:center;transition:top .55s cubic-bezier(.2,.8,.2,1),opacity .2s;cursor:pointer;border-radius:8px;padding:0 4px}
 .lbr:hover,.lbr.sel{background:var(--paper2)}
 .lbr .pos{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--muted);text-align:right}
-.lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tie{margin-left:6px;font-size:1.05em;cursor:help}
+.lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;display:flex;align-items:center;min-width:0}
+.lbr .nm span:first-child{overflow:hidden;text-overflow:ellipsis;min-width:0}   /* long names shorten, the 🤝 stays visible */
+.tie{margin-left:6px;font-size:1.05em;cursor:help;flex:none}
 .lb.crit .tie{display:none}  /* single-score views number rows 1, 2, 3 with no shared ranks */
 .lbr .bar{display:flex;gap:2px;height:16px}
 .lbr .bar span{height:100%;border-radius:3px;transition:opacity .3s,flex-basis .5s}
@@ -736,7 +737,7 @@ function renderLB(){
   lb.style.height = (order.length*H)+'px';
   if(!lb.children.length){
     lb.innerHTML = R.map(d=>`<div class="lbr" data-n="${d.n}" tabindex="0">
-      <div class="pos"></div><div class="nm">${esc(d.sh)}${tieIcon(d)}</div>
+      <div class="pos"></div><div class="nm"><span>${esc(d.sh)}</span>${tieIcon(d)}</div>
       <div class="bar">${d.s.map((v,i)=>`<span data-i="${i}" style="flex:0 0 calc(${v/50*100}% - 2px);background:${CV(i)}"></span>`).join('')}</div>
       <div class="tot num"></div><span class="st t${d.rk}">${d.rk}</span></div>`).join('');
   }
@@ -865,7 +866,7 @@ function renderTrail(){
   const months=[...new Set(newest.map(d=>d.slice(0,7)))];
   // opens on her latest month; one dropdown (plus older/newer arrows) keeps this tidy however many months there are
   if(jState.month!=='all' && !months.includes(jState.month)) jState.month=months[0];
-  const mLabel=m=>`${['January','February','March','April','May','June','July','August','September','October','November','December'][+m.slice(5,7)-1]} ${m.slice(0,4)}`;
+  const mLabel=m=>`${MON[+m.slice(5,7)-1]} ${m.slice(0,4)}`;
   const mi = months.indexOf(jState.month);   // months are newest first; -1 means "All days"
 
   trail.innerHTML = `<p class="jsum">Zumi has been out eating on <b>${plural(DATES.length,'day')}</b> since <b>${fmtDs(DATES[0])}</b> and rated <b>${plural(RD.length,'centre')}</b> on those days. Her latest visit was <b>${fmtDs(DATES[DATES.length-1])}</b> (${ago}).</p>
