@@ -76,8 +76,6 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
 .tab:hover{opacity:1}
 .tab[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
-.fmt-only{display:none}
-body[data-tab="slides"] .fmt-only,body[data-tab="pitch"] .fmt-only{display:inline-flex}
 
 main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .view{display:none}.view.on{display:block}
@@ -125,7 +123,79 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .lucky{border:2px dashed var(--line2);background:var(--paper2);border-radius:14px;padding:9px 14px;font-weight:700;font-size:14px;margin:-4px 0 14px;width:100%;text-align:left;transition:border-color .15s,background .15s}
 .lucky:hover{border-color:var(--kaya);background:color-mix(in srgb,var(--kaya) 14%,var(--paper))}
 .lucky span{font-weight:600;color:var(--muted)}
-.lucky.spin span{color:var(--ink)}
+.lucky:disabled{opacity:.5;cursor:default}
+
+/* ---------- roll ritual: "Can't decide?" → queue board → Makan wheel → reveal ---------- */
+body.rolling{overflow:hidden}
+.roll{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(6,14,12,.8);backdrop-filter:blur(3px);animation:rollIn .25s ease}
+.roll[hidden]{display:none}
+@keyframes rollIn{from{opacity:0}}
+.roll-stage{position:relative;width:min(92vw,560px);display:flex;flex-direction:column;align-items:center;gap:16px;outline:none}
+.roll-x{position:absolute;top:-52px;right:0;z-index:5;width:40px;height:40px;border:0;border-radius:99px;background:rgba(255,255,255,.16);color:#fff;font-size:18px}
+.roll-x:hover{background:rgba(255,255,255,.3)}
+.roll-board{width:100%;text-align:center;padding:20px 20px 22px;transition:padding .5s ease}
+.roll-board .lbl{font-size:clamp(16px,4vw,22px)}
+.roll-reel{margin-top:12px;font-family:'Doto',var(--fd);font-weight:900;text-transform:uppercase;letter-spacing:.04em;line-height:1.3;color:#FF3B30;
+  font-size:clamp(22px,6.4vw,40px);transition:font-size .5s ease,margin .5s ease;
+  text-shadow:0 0 6px rgba(255,59,48,.9),0 0 calc(10px + var(--glow,0px)) rgba(255,59,48,.75)}
+.roll-reel span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.roll-reel span.tick{animation:reel .12s ease-out}
+@keyframes reel{from{transform:translateY(-55%);opacity:.25}}
+.roll-board.mini{padding:14px 24px 12px}
+.roll-board.mini .roll-reel{margin-top:6px;font-size:clamp(18px,5vw,28px)}
+.roll-wheel{position:relative;width:min(80vw,400px,52vh);aspect-ratio:1;opacity:0;transform:scale(.6) rotate(-20deg);transition:opacity .45s ease,transform .6s cubic-bezier(.2,.9,.3,1.2)}
+.roll-wheel.on{opacity:1;transform:none}
+.roll-wheel svg{display:block;width:100%;height:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))}
+.roll-wheel text{font-family:var(--fb);font-weight:700;font-size:8.5px;fill:#fff;paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:1.6px}
+.roll-wheel text.hub{font-size:17px;stroke:none}
+.roll-wheel .bulb{fill:#6B5A1E}
+.roll-wheel.spinning .bulb{animation:bulb .5s steps(1) infinite}
+.roll-wheel.spinning .bulb:nth-child(odd){animation-delay:.25s}
+@keyframes bulb{50%{fill:#FFD34D}}
+.roll-ptr{position:absolute;left:50%;top:-12px;z-index:2;margin-left:-13px;border:13px solid transparent;border-top:26px solid var(--kaya);border-bottom:0;
+  filter:drop-shadow(0 3px 2px rgba(0,0,0,.5));transform-origin:50% 0}
+.roll-ptr.flick{animation:flick .14s ease-out}
+@keyframes flick{40%{transform:rotate(-16deg)}}
+.roll-hint{margin:0;color:rgba(255,255,255,.65);font-size:13px}
+.roll-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.roll-top .lbl{font-size:clamp(16px,4vw,22px)}
+.roll-no{color:#FF3B30!important;text-shadow:0 0 8px rgba(255,59,48,.8)!important;font-variant-numeric:tabular-nums}
+/* progress: a strip of amber LED segments that fills over the whole roll */
+.roll-prog{height:10px;margin-top:12px;border-radius:3px;background:repeating-linear-gradient(90deg,#2A2A2A 0 8px,transparent 8px 11px);overflow:hidden}
+.roll-prog i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#FFB020 0 8px,transparent 8px 11px);filter:drop-shadow(0 0 4px rgba(255,176,32,.8))}
+.roll-state{display:block;margin-top:10px;font-size:clamp(13px,3.4vw,16px)!important;opacity:.85}
+.roll[data-state="almost"] .roll-state{animation:blink .45s steps(1) infinite}
+@keyframes blink{50%{opacity:.2}}
+.roll-board.locked{box-shadow:inset 0 0 0 5px #2B2B2B,inset 0 0 0 7px #FFB020,0 0 40px rgba(255,176,32,.55)}
+.roll-board.locked .roll-reel{color:#FFD34D;text-shadow:0 0 8px rgba(255,211,77,.95),0 0 30px rgba(255,176,32,.8)}
+.roll-board.locked .roll-reel span{animation:lock .5s cubic-bezier(.2,.9,.3,1.4)}
+@keyframes lock{from{transform:scale(1.35)}}
+.roll-ticket{position:relative;width:100%;background:var(--paper);color:var(--ink);border-radius:22px;overflow:hidden;text-align:center;padding-bottom:20px;
+  animation:ticket .6s cubic-bezier(.2,.9,.3,1.25)}
+@keyframes ticket{from{transform:scale(.4) rotate(-6deg);opacity:0}}
+.roll-ticket .qb{border-radius:0;padding:14px 16px;box-shadow:none}
+.roll-ticket .qb .lbl{font-size:clamp(16px,4vw,22px)}
+.roll-ticket h3{margin:12px 18px 10px;font-family:var(--fd);font-weight:900;text-transform:uppercase;line-height:.92;font-size:clamp(30px,8vw,52px);
+  animation:namePop .7s .15s cubic-bezier(.2,.9,.3,1.3) backwards}
+@keyframes namePop{from{transform:scale(1.6);opacity:0;letter-spacing:.2em}}
+.roll-meta{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700;font-size:16px}
+.roll-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:6px;margin:12px 16px 0}
+.roll-pills span{background:var(--paper2);border:1px solid var(--line);border-radius:99px;padding:3px 10px;font-size:13px;font-weight:600}
+.roll-best{margin:10px 16px 0;color:var(--muted);font-size:14px}
+.roll-acts{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:18px;padding:0 16px}
+.roll-acts .btn{font-size:15px;padding:11px 18px}
+.roll-ticket{z-index:1}
+.roll-sparks{position:absolute;left:50%;top:50%;z-index:0;pointer-events:none}
+.roll-sparks i{position:absolute;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);opacity:0;animation:spark 1.3s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes spark{15%{opacity:1}to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(.3);opacity:0}}
+/* the dish badge sits in its own row between the NOW SERVING strip and the name */
+.roll-dish{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:16px}
+.roll-dish-ic{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:var(--paper2);font-size:30px;line-height:1;
+  box-shadow:0 0 0 3px var(--kaya),0 6px 14px rgba(0,0,0,.2);animation:dishIn .6s .1s cubic-bezier(.2,.9,.3,1.4) backwards}
+@keyframes dishIn{from{transform:scale(0) rotate(-90deg)}}
+.roll-dish-cap{font-size:12.5px;font-weight:600;color:var(--muted)}
+.flash{animation:flash 1.8s ease}
+@keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--kaya)}}
 
 /* Makan or Meh game */
 .duel{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
@@ -180,6 +250,12 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .chip{border:1px solid var(--line2);background:var(--paper);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;transition:background .15s,color .15s}
 .chip:hover{border-color:var(--ink)}
 .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+/* Clear filters: quiet until a filter is on */
+.chip.clear{border-style:dashed;color:var(--muted)}
+.chip.clear:disabled{opacity:.45;cursor:default}
+.chip.clear:disabled:hover{border-color:var(--line2)}
+.chip.clear.on{border-style:solid;border-color:var(--kaya);color:var(--ink);background:color-mix(in srgb,var(--kaya) 16%,var(--paper))}
+.also.finder-status{margin:-4px 0 12px}
 
 /* leaderboard */
 .lb{position:relative}
@@ -394,6 +470,8 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .btn{border:1px solid var(--line2);background:var(--paper);border-radius:999px;padding:8px 14px;font-weight:600;font-size:13px}
 .btn:hover{border-color:var(--ink)}
 .btn.solid{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default;border-color:var(--line2)}
+.navbtn[hidden]{display:none}
 .stage{position:relative;height:max(340px,min(calc(100vh - 370px),860px));display:grid;place-items:center;background:transparent;border-radius:18px}
 .deck:fullscreen{background:#000;display:block}
 .deck:fullscreen .deck-intro,.deck:fullscreen .deck-bar,.deck:fullscreen .rail{display:none}
@@ -448,27 +526,34 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .sl .plg{display:flex;flex-wrap:wrap;gap:10px 30px;color:var(--muted)}
 .sl .plg i{display:inline-block;width:.8em;height:.8em;border-radius:.2em;margin-right:.35em;vertical-align:-.05em}
 .sl .plg b{color:var(--ink)}
-.pitch .sl .plg{color:color-mix(in srgb,var(--paper) 70%,var(--ink))}
-.pitch .sl .plg b{color:var(--paper)}
 .deck-bar .seg{background:var(--paper2);border:1px solid var(--line2)}
 .deck-bar .seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .deck-bar select.btn{padding-right:10px}
-.rail button.ch{background:color-mix(in srgb,var(--kaya) 28%,var(--paper));border-color:var(--kaya);font-weight:700}
+/* every labelled slide shows its tier letter badge; chapter starts are also bold with a coloured left edge */
+.rail button.ch{font-weight:700;border-left:4px solid var(--tc,var(--line2))}
+.rail .rt{display:inline-block;min-width:1.5em;margin-right:6px;padding:0 .3em;border-radius:5px;background:var(--tc);color:#fff;font-style:normal;font-family:var(--fd);text-align:center}
 .rail button.ch[aria-current="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .slbar{height:40px;background:var(--paper2);border-radius:99px;overflow:hidden;position:relative;border:2px solid var(--line)}
 .slbar i{position:absolute;inset:0 auto 0 0;border-radius:99px}
-.pitch .sl{background-color:var(--ink);color:var(--paper);
-  background-image:radial-gradient(circle at 88% 8%,color-mix(in srgb,var(--red) 38%,transparent),transparent 42%),
-    radial-gradient(circle at 5% 100%,color-mix(in srgb,var(--kaya) 22%,transparent),transparent 38%),
-    linear-gradient(color-mix(in srgb,var(--paper) 4%,transparent) 2px,transparent 2px),linear-gradient(90deg,color-mix(in srgb,var(--paper) 4%,transparent) 2px,transparent 2px);
-  background-size:auto,auto,90px 90px,90px 90px}
-.pitch .sl::after{content:"MAKAN OR MEH?";position:absolute;right:110px;bottom:40px;font-family:var(--fd);font-weight:900;font-size:30px;letter-spacing:.05em;color:var(--kaya)}
-.pitch .v .sl::after,.pitch .canvas.v .sl::after{right:80px;bottom:50px}
-.pitch .canvas.sq .sl::after{right:70px;bottom:22px;font-size:24px}
-.pitch .sl .lead{color:color-mix(in srgb,var(--paper) 72%,var(--ink))}
-.pitch .sl .card{background:color-mix(in srgb,var(--paper) 7%,var(--ink));border-color:color-mix(in srgb,var(--paper) 16%,var(--ink));color:var(--paper)}
-.pitch .sl .foot{color:color-mix(in srgb,var(--paper) 55%,var(--ink))}
-.pitch .sl .h em{font-style:normal;color:var(--kaya)}
+
+/* ---------- about the quest (intro card) + page footer ---------- */
+.intro{margin-bottom:16px;border-left:6px solid var(--kaya)}
+.intro summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none}
+.intro summary::-webkit-details-marker{display:none}
+.intro summary .tog{flex:none;font-size:12.5px;font-weight:600;color:var(--muted)}
+.intro summary .tog::after{content:"Hide"}
+.intro:not([open]) summary .tog::after{content:"Show"}
+.intro{padding-top:14px;padding-bottom:14px}
+.intro-body{display:grid;gap:6px;margin-top:8px;font-size:15px}
+.intro-body p{margin:0}
+.intro-row{display:grid;gap:6px}
+@media (min-width:900px){.intro-row{grid-template-columns:auto auto;justify-content:start;align-items:center;gap:6px 28px}}
+.linkbtn{border:0;background:none;padding:0;font-weight:700;color:var(--red);text-decoration:underline;text-underline-offset:3px}
+.socials{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.socials a{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--paper2);color:var(--ink);border-radius:999px;padding:4px 12px 4px 10px;font-size:13px;font-weight:600;text-decoration:none}
+.socials svg{width:15px;height:15px;flex:none}
+.socials a:hover{border-color:var(--ink)}
+.site-foot{padding:0 16px 30px;text-align:center;color:var(--muted);font-size:12.5px}
 
 @media (max-width:720px){.board{position:static}.brand h1{font-size:36px}.modes{padding-bottom:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -484,11 +569,6 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     </div>
     <div class="modes">
       <button id="newData" type="button">New ratings are in. Refresh</button>
-      <div class="seg fmt-only" role="group" aria-label="Slide shape">
-        <button data-fmt="w" aria-pressed="true" title="For YouTube or a stream">▭ Wide</button>
-        <button data-fmt="v" aria-pressed="false" title="For TikTok, Shorts or Reels">▯ Tall</button>
-        <button data-fmt="sq" aria-pressed="false" title="For Instagram or X">□ Square</button>
-      </div>
       <div class="seg" role="group" aria-label="Colour mode">
         <button data-theme-btn="light" aria-pressed="false">☀️ Day market</button>
         <button data-theme-btn="dark" aria-pressed="false">🌙 Night market</button>
@@ -499,13 +579,16 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">🍜 Dashboard</button>
     <button class="tab" role="tab" data-tab="sheet" aria-selected="false">📋 Full list</button>
     <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown show</button>
-    <button class="tab" role="tab" data-tab="pitch" aria-selected="false">👋 About the quest</button>
   </nav>
 </header>
 
 <main>
   <!-- DASHBOARD -->
   <section class="view on dim-scope" id="v-dashboard">
+    <details class="panel intro" id="intro" open>
+      <summary><h2>👋 About the quest</h2><span class="tog"></span></summary>
+      <div class="intro-body" id="introBody"></div>
+    </details>
     <div class="grid g-hero">
       <div class="herocol">
         <div class="panel hero">
@@ -539,9 +622,10 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     <div class="grid g-two">
       <div class="panel">
         <h2><span class="stall">#01-02</span>Find your hawker</h2>
-        <p class="sub">What matters most to you? Tap one or more, and Zumi's scores pick the best matches.</p>
+        <p class="sub">What matters most to you? Select one or more of Zumi's five scores to find your best matches.</p>
         <div class="chips" id="wantChips"></div>
-        <button class="lucky" id="lucky" type="button">🎲 Can't decide? <span id="luckyTxt">Pick one for me</span></button>
+        <p class="also finder-status" id="finderStatus" aria-live="polite"></p>
+        <button class="lucky" id="lucky" type="button">🎲 Can't decide? <span id="luckyTxt">Roll for one of your best matches</span></button>
         <div class="picks" id="picks"></div>
       </div>
       <div class="panel">
@@ -592,11 +676,9 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   <section class="view" id="v-slides">
     <div class="deck" data-deck="slides"></div>
   </section>
-  <!-- PITCH -->
-  <section class="view" id="v-pitch">
-    <div class="deck pitch" data-deck="pitch"></div>
-  </section>
 </main>
+<div class="roll" id="roll" role="dialog" aria-modal="true" aria-label="Pick a hawker for me" hidden></div>
+<footer class="site-foot">Scores from Zumi's Singapore Hawker Centre List 2026</footer>
 <div id="tip" role="tooltip"></div>
 
 <script>
@@ -648,7 +730,16 @@ const QMIN = Math.min(5, Math.floor(Math.min(...R.map(d=>d.s[1]), 10)));
 const range=(a,b)=>{const o=[];for(let v=a;v<=b;v++)o.push(v);return o;};
 const critOrder = [...CRIT.keys()].sort((a,b)=>AVG[b]-AVG[a]);
 
-const state = { sel: TOP.n, crit: -1, lbTab: 'top', sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', mode:'stream', idx:{slides:0,pitch:0} };
+const state = { sel: TOP.n, crit: -1, lbTab: 'top', sort:{k:'n',dir:1}, filter:'all', q:'', fmt:'w', mode:'stream', idx:{slides:0} };
+// the links Zumi lists on her own Twitch page, in that order: label, url, logo colour (blank = text colour), logo path
+// logos from Simple Icons (simpleicons.org, CC0)
+const SOCIALS = [
+  ["Twitch","https://www.twitch.tv/zumi","#9146FF","M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"],
+  ["Instagram","https://www.instagram.com/zestyzumi","#E4405F","M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"],
+  ["X","https://x.com/zestyzumi","","M14.234 10.162 22.977 0h-2.072l-7.591 8.824L7.251 0H.258l9.168 13.343L.258 24H2.33l8.016-9.318L16.749 24h6.993zm-2.837 3.299-.929-1.329L3.076 1.56h3.182l5.965 8.532.929 1.329 7.754 11.09h-3.182z"],
+  ["YouTube","https://www.youtube.com/@zestyzumi","#FF0000","M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"],
+  ["TikTok","https://www.tiktok.com/@zestyzumi","","M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"]
+];
 
 /* ---------- theme / tabs ---------- */
 const root = document.documentElement;
@@ -664,20 +755,39 @@ applyTheme(load('hk-theme'));
 if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 
 function setTab(t){
-  if(!['dashboard','sheet','slides','pitch'].includes(t)) t='dashboard';
+  // #about (and the old #pitch link) open the Dashboard with the intro card shown
+  const intro = t==='about' || t==='pitch';
+  if(!['dashboard','sheet','slides'].includes(t)) t='dashboard';
   document.body.dataset.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
-  if(t==='slides'||t==='pitch') renderDeck(t);
-  try{ history.replaceState(null,'','#'+t); }catch(e){}
+  if(t==='slides') renderDeck(t);
+  try{ history.replaceState(null,'','#'+(intro?'about':t)); }catch(e){}
+  if(intro) document.getElementById('intro').open = true;
+  // every tab opens fresh at the top of the page (instant: the content has just been swapped, so a smooth
+  // scroll would glide over the new page's layout). The Full list table's own scroll is left alone.
+  scrollTo(0,0);
 }
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+addEventListener('hashchange',()=>setTab(location.hash.slice(1)));
 
-document.querySelectorAll('[data-fmt]').forEach(b=>b.onclick=()=>{
-  state.fmt=b.dataset.fmt;
-  document.querySelectorAll('[data-fmt]').forEach(x=>x.setAttribute('aria-pressed',x===b));
-  const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') renderDeck(t);
-});
+// slide shape follows the screen: tall on portrait phones, wide everywhere else
+const autoFmt = () => innerHeight > innerWidth ? 'v' : 'w';
+
+/* ---------- about the quest (intro card) ---------- */
+function renderIntro(){
+  const card = document.getElementById('intro');
+  if(load('hk-intro')==='closed') card.open = false;
+  card.addEventListener('toggle',()=>store('hk-intro', card.open?'open':'closed'));
+  document.getElementById('introBody').innerHTML = `
+    <p>New here? Makan or Meh follows Zumi as she visits and scores the <b>${TOTAL}</b> hawker centres on her list. <b>${R.length}</b> centre${R.length===1?'':'s'} rated so far.</p>
+    <div class="intro-row">
+      <p><b>How scoring works:</b> five scores out of 10, a total out of 50, graded S to F. <button type="button" class="linkbtn" data-score>See the scorecard</button></p>
+      <div class="socials"><b>Find Zumi on:</b>${SOCIALS.map(([l,u,c,d])=>`<a href="${esc(u)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:${c||'currentColor'}"><path d="${d}"/></svg>${esc(l)}</a>`).join('')}</div>
+    </div>`;
+  // open the "How she scores" slide: the second slide of the full countdown
+  document.querySelector('[data-score]').onclick=()=>{ state.mode='full'; state.idx.slides=1; setTab('slides'); };
+}
 
 /* ---------- tooltip + cross highlight ---------- */
 const tip = document.getElementById('tip');
@@ -705,8 +815,18 @@ document.addEventListener('pointerdown', e=>{ touchTap = e.pointerType!=='mouse'
 document.addEventListener('pointermove', e=>{ if(e.pointerType==='mouse') touchTap = false; }, {passive:true});
 function clearTouchTip(){ clearTimeout(tipTimer); tip.classList.remove('on'); highlight(null); }
 addEventListener('scroll', ()=>{ if(touchTap && tip.classList.contains('on')) clearTouchTip(); }, {passive:true});
-document.addEventListener('mouseover',e=>{
-  const el = e.target.closest('[data-n]');
+// after the page scrolls itself to a scorecard, the still mouse pointer ends up over some other centre;
+// don't let that fake "hover" highlight the wrong centre until the pointer really moves
+let lastPtr = {x:-1, y:-1}, hoverHold = null;
+function holdHover(){ hoverHold = {...lastPtr}; highlight(null); tip.classList.remove('on'); }
+document.addEventListener('mousemove',e=>{
+  lastPtr = {x:e.clientX, y:e.clientY};
+  // the pointer really moved: hover works again, starting with whatever it's over now
+  if(hoverHold && Math.hypot(e.clientX-hoverHold.x, e.clientY-hoverHold.y) > 4){ hoverHold = null; hoverOn(e.target); }
+}, true);
+document.addEventListener('mouseover',e=>{ if(!hoverHold) hoverOn(e.target); });
+function hoverOn(target){
+  const el = target.closest('[data-n]');
   if(!el || !el.closest('#v-dashboard')){ highlight(null); tip.classList.remove('on'); return; }
   const n = +el.dataset.n; highlight(n);
   tip.innerHTML = tipHtml(BY[n]); tip.classList.add('on');
@@ -715,7 +835,7 @@ document.addEventListener('mouseover',e=>{
     placeTip(r.left + r.width/2 - w/2, r.top-h-10 >= 8 ? r.top-h-10 : r.bottom+10);
     clearTimeout(tipTimer); tipTimer = setTimeout(clearTouchTip, 2500);
   }
-});
+}
 document.addEventListener('mousemove',e=>{
   if(touchTap || !tip.classList.contains('on')) return;
   const w = tip.offsetWidth, h = tip.offsetHeight;
@@ -733,7 +853,7 @@ document.addEventListener('click',e=>{
 // bring the scorecard into view (below the sticky header) unless its top is already on screen
 function scrollToDetail(){
   const det=document.getElementById('detail'), top=det.getBoundingClientRect().top, hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
-  if(top<hb || top>innerHeight*0.6) scrollTo({top:scrollY+top-hb-12, behavior:REDUCED?'auto':'smooth'});
+  if(top<hb || top>innerHeight*0.6){ holdHover(); scrollTo({top:scrollY+top-hb-12, behavior:REDUCED?'auto':'smooth'}); }
 }
 
 /* ---------- dashboard ---------- */
@@ -890,31 +1010,42 @@ function select(n){
   document.querySelectorAll('#tbl tbody tr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
 }
 
-const WANT = [
-  {i:1,l:'👅 Tastiest food'},{i:2,l:'💸 Best prices'},{i:0,l:'🫦 Lots of choice'},{i:3,l:'🫶🏼 Most comfortable'},{i:4,l:'🍽 Something unique'}
-];
-state.want = new Set([1,2]);
+state.want = new Set();   // start unfiltered: visitors choose what matters to them
 function renderFinder(){
-  document.getElementById('wantChips').innerHTML = WANT.map(w=>`<button class="chip" data-want="${w.i}" aria-pressed="${state.want.has(w.i)}">${w.l}</button>`).join('');
+  // one chip per scoring category, straight from Zumi's own list: her icon, her name, her definition; then Clear filters
+  const on=state.want.size>0;
+  document.getElementById('wantChips').innerHTML = CRIT.map((c,i)=>`<button class="chip" data-want="${i}" aria-pressed="${state.want.has(i)}" title="${esc(c.d)}">${c.e} ${esc(c.k)}</button>`).join('')
+    + `<button class="chip clear${on?' on':''}" id="wantClear" type="button"${on?'':' disabled'}>✕ Clear filters</button>`;
   document.querySelectorAll('[data-want]').forEach(b=>b.onclick=()=>{
     const i=+b.dataset.want;
-    if(state.want.has(i)){ if(state.want.size>1) state.want.delete(i); } else state.want.add(i);
+    if(state.want.has(i)) state.want.delete(i); else state.want.add(i);   // any number, including none
     renderFinder();
   });
-  const ks=[...state.want].sort((a,b)=>a-b);
-  const sc=d=>ks.reduce((a,i)=>a+d.s[i],0)/ks.length;
-  const order=[...R].sort((a,b)=>sc(b)-sc(a) || b.t-a.t || a.name.localeCompare(b.name));
+  document.getElementById('wantClear').onclick=()=>{ state.want.clear(); renderFinder(); };
+  // picks, "also worth a look", the status line and the roll all come from the same result set
+  const res=finderResults(), list=res.list, n=list.length, G=res.good?'Good makan':'rated';
+  const ks=[...state.want].sort((a,b)=>a-b), picked=ks.map(i=>`${CRIT[i].e} ${CRIT[i].k}`).join(' + ');
+  document.getElementById('finderStatus').textContent =
+      res.kind==='all'    ? `No filters on: Zumi's top-rated ${G} spots.`
+    : res.kind==='strong' ? `${n} ${G} spots are at or above her average on ${picked}.`
+    : res.kind==='one'    ? `Only ${list[0].sh} is at or above her average on ${picked}.`
+    :                       `Nothing is at or above her average on ${picked}, so here are the ${n} closest.`;
   const medals=['🥇','🥈','🥉'];
-  document.getElementById('picks').innerHTML = order.slice(0,3).map((d,k)=>`<div class="pick" data-n="${d.n}" tabindex="0">
+  document.getElementById('picks').innerHTML = list.slice(0,3).map((d,k)=>`<div class="pick" data-n="${d.n}" tabindex="0">
       <div style="display:flex;justify-content:space-between;align-items:center"><span class="md">${medals[k]}</span><span class="st t${d.rk}">${d.rk}</span></div>
       <div class="pn">${esc(d.sh)}</div>
       <div class="pills">${ks.map(i=>`<span>${CRIT[i].e} ${f1(d.s[i])}/10</span>`).join('')}</div>
       <div class="pb">Overall ${f1(d.t)}/50. Best time: ${esc(d.best)}</div>
     </div>`).join('');
-  const more=order.slice(3,6);
-  document.getElementById('picks').insertAdjacentHTML('afterend','');
+  const more=list.slice(3,6);
   let also=document.getElementById('also'); if(!also){ also=document.createElement('p'); also.id='also'; also.className='also'; document.getElementById('picks').after(also); }
-  also.innerHTML = `Also worth a look: ${more.map(d=>`<button data-n="${d.n}">${esc(d.sh)}</button>`).join(', ')}. Tap a pick to open its scorecard.`;
+  also.innerHTML = (more.length ? `Also worth a look: ${more.map(d=>`<button data-n="${d.n}">${esc(d.sh)}</button>`).join(', ')}. ` : '') + 'Tap a pick to open its scorecard.';
+  paintLucky(res);
+}
+// best matches first for the chips that are on: average of those scores, then total, then name (no chips: by total)
+function finderOrder(list){
+  const ks=[...state.want], sc=d=>ks.length ? ks.reduce((a,i)=>a+d.s[i],0)/ks.length : 0;
+  return [...list].sort((a,b)=>sc(b)-sc(a) || b.t-a.t || a.name.localeCompare(b.name));
 }
 
 function renderReport(){
@@ -1098,17 +1229,200 @@ function renderGame(){
   const nx=document.getElementById('gameNext'); if(nx) nx.onclick=newPair;
 }
 
-/* ---------- pick one for me: a random Good makan (B tier) or better ---------- */
-document.getElementById('lucky').onclick=()=>{
-  const btn=document.getElementById('lucky'), txt=document.getElementById('luckyTxt');
-  if(btn.classList.contains('spin')) return;
-  const good=R.filter(d=>['S','A','B'].includes(d.rk)), P=good.length?good:R;
-  const pick=P[Math.random()*P.length|0];
-  const land=()=>{ btn.classList.remove('spin'); txt.textContent=`Go makan at ${pick.sh}! Tap to roll again.`; select(pick.n); scrollToDetail(); };
-  if(REDUCED) return land();
-  btn.classList.add('spin'); let k=0;
-  const iv=setInterval(()=>{ txt.textContent=P[k++%P.length].sh; if(k>14){ clearInterval(iv); land(); } },60);
-};
+/* ---------- can't decide? a hawker selection ritual: queue board → Makan wheel → reveal ---------- */
+// THE finder result set, shared by the picks, "also worth a look", the status line and the roll:
+// centres Zumi has rated, Good makan (B) or better, and for every chip that's on, at or above her own average
+// for that score (the scorecard's "Above average" yardstick), best matches first. No cap on the number.
+const rollPool = () => finderResults();
+function finderResults(){
+  const good=R.filter(d=>['S','A','B'].includes(d.rk)), base=good.length?good:R, ks=[...state.want];
+  const g=good.length>0;
+  if(!ks.length) return {kind:'all', good:g, list:finderOrder(base)};
+  const strong=base.filter(d=>ks.every(i=>d.s[i]>=AVG[i]));
+  if(strong.length>=2) return {kind:'strong', good:g, list:finderOrder(strong)};
+  if(strong.length===1) return {kind:'one', good:g, list:strong};
+  return {kind:'closest', good:g, list:finderOrder(base).slice(0,3)};   // nothing clears the bar: the 3 closest, and the label says so
+}
+function paintLucky(res){
+  const {kind,good,list}=res||finderResults(), n=list.length, G=good?'Good makan':'rated';
+  document.getElementById('luckyTxt').textContent =
+      kind==='all'     ? `Roll between all ${n} ${G} spots`
+    : kind==='strong'  ? `Roll between your ${n} matches`
+    : kind==='one'     ? `Only 1 match: tap to see it`
+    :                    `Roll between the ${n} closest`;
+  document.getElementById('lucky').disabled = !n;
+}
+// a dish icon only when Zumi's own note names the dish; otherwise a neutral 🥢. Clauses telling people to avoid something never count.
+const DISHES=[[/chicken rice/i,'🍚','chicken rice'],[/duck rice/i,'🍚','duck rice'],[/chicken wing/i,'🍗','chicken wings'],[/peanut pancake|min jiang kueh/i,'🥞','peanut pancake'],
+  [/laksa/i,'🍜','laksa'],[/mee rebe?us/i,'🍜','mee rebus'],[/white mee ?hoon/i,'🍜','white meehoon'],[/mee ?hoon|bee ?hoon/i,'🍜','meehoon'],[/noodle/i,'🍜','noodles'],
+  [/satay/i,'🍢','satay'],[/prata/i,'🫓','prata'],[/\bkopi\b|coffee/i,'☕','coffee']];
+function dishOf(d){
+  const clauses=String(d.note||'').split(/[.!·;]| - /).filter(c=>!/\b(don'?t|dont|do not|avoid|skip)\b/i.test(c));
+  for(const [re,icon,label] of DISHES) if(clauses.some(c=>re.test(c))) return {icon,label};
+  return null;
+}
+const roll=document.getElementById('roll');
+let rollRun=0, rollResult=null;
+const easeOutQuart=t=>1-Math.pow(1-t,4);
+function rollShut(){
+  rollRun++; roll.hidden=true; roll.innerHTML='';
+  document.body.classList.remove('rolling');
+  document.querySelectorAll('.board,main,.site-foot').forEach(e=>e.inert=false);
+  document.getElementById('lucky').focus({preventScroll:true});
+}
+// the wheel: one slice per centre in tier colours (alternate slices a shade darker), names reading outwards, rim bulbs and a noodle hub
+function wheelSvg(P){
+  const n=P.length, a=360/n, r=94;
+  const pt=deg=>{ const t=(deg-90)*Math.PI/180; return `${(r*Math.cos(t)).toFixed(2)} ${(r*Math.sin(t)).toFixed(2)}`; };
+  const slices=P.map((d,i)=>{
+    const fill = i%2 ? `color-mix(in srgb,${TV(d.rk)} 74%,#000)` : TV(d.rk);
+    const shape = n===1 ? `<circle r="${r}" style="fill:${fill}"/>` : `<path d="M0 0L${pt(i*a-a/2)}A${r} ${r} 0 0 1 ${pt(i*a+a/2)}Z" style="fill:${fill}"/>`;
+    const name = d.sh.length>15 ? d.sh.slice(0,14)+'…' : d.sh;
+    return `${shape}<g data-slice="${d.n}" transform="rotate(${i*a})"><text transform="rotate(-90)" x="22" y="3">${esc(name)}</text></g>`;
+  }).join('');
+  const bulbs=[...Array(24).keys()].map(i=>{ const t=i*15*Math.PI/180; return `<circle class="bulb" cx="${(97*Math.sin(t)).toFixed(2)}" cy="${(-97*Math.cos(t)).toFixed(2)}" r="1.9"/>`; }).join('');
+  return `<svg viewBox="-100 -100 200 200" aria-hidden="true"><g id="wheelSpin">${slices}</g>
+    <circle r="97" fill="none" stroke="#1B1B1B" stroke-width="6"/><g>${bulbs}</g>
+    <circle r="17" fill="#0B0B0B" stroke="#FFB020" stroke-width="2"/><text class="hub" y="6" text-anchor="middle">🥢</text></svg>`;
+}
+// states: idle → rolling → slowing → almost → locked → reveal. The winner is chosen fairly at the start but stays hidden until the end.
+// With "reduce motion" switched on, the spinning wheel is left out, but the board still rolls through the names with the same timing.
+function openRoll(){
+  const P=rollPool().list; if(!P.length) return;
+  const run=++rollRun, alive=()=>run===rollRun && !roll.hidden;
+  rollResult=null;   // a new roll has no result until its reveal
+  const n=P.length, w=Math.random()*n|0, win=P[w];
+  // the board cycles every eligible centre; the wheel shows up to 12 of them (more gets unreadable on phones), always including the winner
+  let W=P; if(n>12){ const others=P.filter(d=>d!==win).sort(()=>Math.random()-.5).slice(0,11); W=P.filter(d=>d===win||others.includes(d)); }
+  const m=W.length, wi=W.indexOf(win);
+  const useWheel=!REDUCED && m>1;
+  const near = useWheel ? W[(wi+1)%m] : P[(w+1)%n];   // the centre it almost stops on
+  roll.hidden=false; document.body.classList.add('rolling');
+  document.querySelectorAll('.board,main,.site-foot').forEach(e=>e.inert=true);
+  roll.innerHTML=`<div class="roll-stage" id="rollStage" tabindex="-1">
+      <button type="button" class="roll-x" data-roll="close" aria-label="Close">✕</button>
+      <div class="qb roll-board" id="rollBoard">
+        <div class="roll-top"><span class="lbl">Now serving</span><span class="lbl roll-no" id="rollNo">#--</span></div>
+        <div class="roll-reel"><span id="reelTxt">&nbsp;</span></div>
+        <div class="roll-prog"><i id="rollBar"></i></div>
+        <span class="lbl roll-state" id="rollState">Rolling…</span>
+      </div>
+      ${useWheel?`<div class="roll-wheel" id="rollWheel"><span class="roll-ptr" id="rollPtr"></span>${wheelSvg(W)}</div>`:''}
+      <p class="roll-hint">Tap anywhere to skip</p>
+    </div>`;
+  const $=id=>document.getElementById(id);
+  const stage=$('rollStage'), board=$('rollBoard'), reelTxt=$('reelTxt'), rollNo=$('rollNo'), bar=$('rollBar'), stateTxt=$('rollState');
+  const setState=(s,label)=>{ roll.dataset.state=s; if(label) stateTxt.textContent=label; };
+  const show=(d,tick)=>{ reelTxt.textContent=d.sh; reelTxt.dataset.cur=d.n; rollNo.textContent='#'+String(d.pos).padStart(2,'0');
+    if(tick){ reelTxt.classList.remove('tick'); void reelTxt.offsetWidth; reelTxt.classList.add('tick'); } };
+  let done=false;
+  const reveal=()=>{ if(done || !alive()) return; done=true; setState('reveal'); showTicket(win); };
+  stage.querySelector('[data-roll="close"]').onclick=rollShut;
+  stage.onclick=e=>{ if(!done && !e.target.closest('button')) reveal(); };
+  roll.onclick=e=>{ if(e.target===roll){ if(!done) reveal(); else rollShut(); } };
+  stage.focus();
+  setState('rolling','Rolling…');
+
+  // timings (ms): the whole journey is about 5.5 s
+  const REEL=useWheel?1400:(n===1?1500:4400), SPIN=3000, PAUSE=450, NUDGE=320, HOLD=600;
+  const TOTAL=REEL+(useWheel?SPIN:0)+(n>1?PAUSE+NUDGE:0)+HOLD;
+  const t0=performance.now();
+  // progress bar and glow follow the whole journey
+  const tickBar=now=>{ if(!alive() || done) return; const p=Math.min(1,(now-t0)/TOTAL);
+    bar.style.width=(p*100).toFixed(1)+'%'; board.style.setProperty('--glow',(p*20).toFixed(1)+'px'); if(p<1) requestAnimationFrame(tickBar); };
+  requestAnimationFrame(tickBar);
+
+  // the last moments, shared by both versions: almost stops on the centre before the winner, jumps once more, locks in
+  const lockIn=()=>{ if(!alive() || done) return;
+    setState('locked','Locked in!'); show(win,true); board.classList.add('locked'); bar.style.width='100%';
+    setTimeout(()=>{ if(alive()) reveal(); },HOLD); };
+
+  // the board's name reel: starts moderately fast, speeds up; without the wheel it also stays fast, then slows right down
+  let k=(w+2)%n, next=0;
+  const gap=e=> e<1400 ? 150-105*(e/1400)                       // accelerate: 150 → 45 ms per name
+            : e<2200 ? 45                                         // stay fast briefly
+            : 45+475*Math.pow((e-2200)/2200,2);                   // slow down: 45 → 520 ms per name
+  const reelStep=now=>{
+    if(!alive() || done) return;
+    const e=now-t0;
+    if(!useWheel && e>=2200 && roll.dataset.state==='rolling') setState('slowing','Slowing down…');
+    if(e>=REEL){
+      if(useWheel) return startWheel();
+      if(n===1) return lockIn();                                       // only one match: nothing to almost-stop on
+      show(near,true); setState('almost','Almost…');                  // hovers on the one before…
+      return setTimeout(()=>{ if(alive() && !done) lockIn(); },PAUSE+NUDGE);   // …then jumps once more
+    }
+    if(e>=next){ show(P[k%n],true); k++; next=e+gap(e); }
+    requestAnimationFrame(reelStep);
+  };
+  requestAnimationFrame(reelStep);
+
+  // the Makan wheel: fast from the board's pace, eases right down onto the centre before the winner, pauses, nudges into the winner
+  const startWheel=()=>{
+    const wheel=$('rollWheel'), spin=$('wheelSpin'), ptr=$('rollPtr');
+    board.classList.add('mini'); wheel.classList.add('on','spinning');
+    const a=360/m, j1=(Math.random()-.5)*a*.3, j2=(Math.random()-.5)*a*.3;
+    const end0=360*6 - ((wi+1)%m)*a + j1;          // stops on `near` first
+    const end1=end0 + a - j1 + j2;               // one more slice clockwise lands on the winner
+    let last=-1, t1=null;
+    const put=r=>{ spin.setAttribute('transform',`rotate(${r.toFixed(2)})`);
+      const idx=Math.round((((-r)%360)+360)%360/a)%m;          // slice under the pointer
+      if(idx!==last){ last=idx; show(W[idx],false); ptr.classList.remove('flick'); void ptr.offsetWidth; ptr.classList.add('flick'); } };
+    const spinStep=now=>{
+      if(!alive() || done) return;
+      if(t1==null) t1=now;
+      const p=Math.min(1,(now-t1)/SPIN);
+      if(p>.4 && roll.dataset.state==='rolling') setState('slowing','Slowing down…');
+      put(end0*easeOutQuart(p));
+      if(p<1) return requestAnimationFrame(spinStep);
+      setState('almost','Almost…');
+      setTimeout(()=>{ if(!alive() || done) return;
+        let t2=null;
+        const nudge=now=>{ if(!alive() || done) return; if(t2==null) t2=now;
+          const q=Math.min(1,(now-t2)/NUDGE), back=1+2.2*Math.pow(q-1,3)+1.2*Math.pow(q-1,2);   // ease out with a small overshoot
+          put(end0+(end1-end0)*back);
+          if(q<1) requestAnimationFrame(nudge); else { put(end1); wheel.classList.remove('spinning'); lockIn(); } };
+        requestAnimationFrame(nudge);
+      },PAUSE);
+    };
+    requestAnimationFrame(spinStep);
+  };
+}
+// 3. reveal: a queue ticket with the winner, then go to its scorecard or roll again
+function showTicket(d){
+  const stage=document.getElementById('rollStage'), ks=[...state.want].sort((a,b)=>a-b);
+  // celebration sparks in tier colour and kaya, drawn behind the ticket so they never cover any text
+  const sparks=[...Array(22).keys()].map(k=>{ const t=Math.random()*Math.PI*2, dist=180+Math.random()*140;
+    return `<i style="--x:${(Math.cos(t)*dist).toFixed(0)}px;--y:${(Math.sin(t)*dist).toFixed(0)}px;background:${k%3?TV(d.rk):'#FFB020'};animation-delay:${(Math.random()*.2).toFixed(2)}s"></i>`; }).join('');
+  const dish=dishOf(d);
+  stage.onclick=null;
+  stage.innerHTML=`<button type="button" class="roll-x" data-roll="close" aria-label="Close">✕</button>
+    <div class="roll-sparks" aria-hidden="true">${sparks}</div>
+    <div class="roll-ticket" role="status" data-winner="${d.n}">
+      <div class="qb"><span class="lbl">Now serving · #${d.pos}</span></div>
+      <div class="roll-dish" data-dish="${dish?esc(dish.label):''}"><span class="roll-dish-ic" aria-hidden="true">${dish?dish.icon:'🥢'}</span>${dish?`<span class="roll-dish-cap">From Zumi's notes: ${esc(dish.label)}</span>`:''}</div>
+      <h3>${esc(d.name)}</h3>
+      <div class="roll-meta"><span class="st t${d.rk}">${d.rk}</span><span>${f1(d.t)}/50 · ${TIER_WORD[d.rk]}</span></div>
+      <div class="roll-pills">${ks.map(i=>`<span>${CRIT[i].e} ${CRIT[i].s} ${f1(d.s[i])}/10</span>`).join('')}</div>
+      <p class="roll-best">Best time: ${esc(d.best)}</p>
+      <div class="roll-acts"><button type="button" class="btn solid" data-roll="go">Take me there →</button><button type="button" class="btn" data-roll="again">🎲 Roll again</button></div>
+    </div>`;
+  stage.querySelector('[data-roll="close"]').onclick=rollShut;
+  stage.querySelector('[data-roll="again"]').onclick=openRoll;
+  rollResult = d.n;   // the latest roll's result, by the centre's stable serial number (never its rank)
+  stage.querySelector('[data-roll="go"]').onclick=()=>{
+    const n = rollResult; if(!BY[n]) return;
+    rollShut(); holdHover(); select(n); scrollToDetail();
+    document.querySelectorAll(`#detail, .lbr[data-n="${n}"]`).forEach(e=>{ e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); });
+  };
+  stage.querySelector('[data-roll="go"]').focus();
+}
+document.getElementById('lucky').onclick=openRoll;
+document.addEventListener('keydown',e=>{
+  if(roll.hidden) return;
+  if(e.key==='Escape'){ e.preventDefault(); rollShut(); }
+  else if((e.key===' '||e.key==='Enter') && document.activeElement && document.activeElement.id==='rollStage'){ e.preventDefault(); document.activeElement.click(); }
+});
 
 /* ---------- sheet ---------- */
 const COLS = [
@@ -1274,12 +1588,12 @@ function trackerSlides(f, mode){
   const S=[];
   S.push({t:'Now serving',ch:1,h:servingSlide(f)});
   if(mode==='stream'){
-    LATEST.forEach(d=>S.push({t:`New: #${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+    LATEST.forEach(d=>S.push({t:`New: #${d.pos} ${d.sh}`,grade:d.rk,h:centreSlide(d,f)}));
     S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
     S.push({t:'Next up',h:nextUpSlide(f)});
     return S;
   }
-  S.push({t:'How I score',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?60:44}px">
+  S.push({t:'How she scores',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?60:44}px">
     <div><span class="kick">The scorecard</span><h2 class="h" style="font-size:${v?140:sq?92:120}px;margin-top:22px">Five scores out of 10</h2></div>
     <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(5,1fr)'};gap:${sq?14:26}px;flex:1">${CRIT.map((c,i)=>`<div class="card" style="border-top:${sq?0:14}px solid ${CV(i)};${sq?`border-left:14px solid ${CV(i)};padding:16px 26px;display:flex;gap:26px;align-items:center`:v?'display:flex;gap:40px;align-items:center':''}">
       <div style="font-size:${v?84:sq?60:96}px;line-height:1">${c.e}</div><div><div class="h" style="font-size:${v?60:sq?46:56}px;margin-top:${v||sq?0:24}px">${c.k}</div>
@@ -1293,8 +1607,8 @@ function trackerSlides(f, mode){
       <div style="font-size:${v?34:sq?24:28}px;color:var(--muted);margin-top:8px">${t==='F'?'20 or under. KEKW':`${TC[t]} centre${TC[t]===1?'':'s'} so far`}</div></div></div>`).join('')}</div>
     </div></div>`});
   TIER_ORDER.forEach(t=>{
-    S.push({t:`${t} tier · ${TIER_WORD[t]}`,ch:1,h:chapterSlide(t,f)});
-    ranked.filter(d=>d.rk===t).reverse().forEach(d=>S.push({t:`#${d.pos} ${d.sh}`,h:centreSlide(d,f)}));
+    S.push({t:`${t} tier · ${TIER_WORD[t]}`,ch:1,tier:t,h:chapterSlide(t,f)});
+    ranked.filter(d=>d.rk===t).reverse().forEach(d=>S.push({t:`#${d.pos} ${d.sh}`,grade:d.rk,h:centreSlide(d,f)}));
   });
   S.push({t:'Champions',h:`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:sq?28:40}px">
     <div><span class="kick">Category champions</span><h2 class="h" style="font-size:${v?130:sq?84:120}px;margin-top:22px">Best at each thing</h2></div>
@@ -1315,88 +1629,35 @@ function nextUpSlide(f){
     <div>${slideBar(v?64:sq?44:56,v?30:sq?22:28)}</div></div></div>`;
 }
 
-function pitchSlides(f){
-  const v=f==='v', sq=f==='sq';
-  const H=(a,b,c)=>v?a:sq?b:c;
-  const hi = critOrder[0], lo = critOrder[critOrder.length-1];
-  const famous = ['Maxwell Food Centre','Newton Food Centre'].map(n=>R.find(d=>d.name===n)).filter(Boolean);
-  const hidden = ranked.find(d=>/not a touristy spot/i.test(d.note));
-  const S=[];
-  const wrap=(inner,ft)=>`<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(60,34,44)}px;${ft?'':''}">${inner}</div>${ft&&!v&&!sq?foot(ft,''):''}</div>`;
-  S.push({t:'Welcome',h:wrap(`<div style="margin:auto 0"><span class="kick">Makan or Meh?</span>
-    <h1 class="h" style="font-size:${H(150,116,168)}px;margin-top:34px">Every hawker<br>centre in<br><em>Singapore.</em> Rated.</h1>
-    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1100px">One person, ${TOTAL} hawker centres. Zumi eats her way through all of them and scores each one the same way.</p></div>`)});
-  S.push({t:'Why do this?',h:wrap(`<span class="kick" style="align-self:flex-start">Why do this?</span>
-    <h2 class="h" style="font-size:${H(130,84,120)}px">Most food guides stop at the <em>famous few</em></h2>
-    <div style="display:grid;grid-template-columns:${v||sq?'1fr':'1fr 1fr'};gap:30px;margin-top:auto">
-      <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">${TOTAL}</div><div style="font-size:${H(38,26,34)}px">hawker centres on the official NEA and operator-managed list</div></div>
-      <div class="card"><div class="h num" style="font-size:${H(170,100,170)}px;color:var(--kaya)">1</div><div style="font-size:${H(38,26,34)}px">question everyone actually asks: which ones are worth the trip?</div></div>
-    </div>`)});
-  S.push({t:'The plan',h:wrap(`<span class="kick" style="align-self:flex-start">The plan</span>
-    <h2 class="h" style="font-size:${H(130,84,120)}px">Visit them all.<br>Score them <em>the same way.</em></h2>
-    <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
-      ${[['🗺️','The full list','Every centre on the official list, from Adam Road to Punggol Coast.'],['📋','One scorecard','Five scores out of 10, a total out of 50, and a grade from S (legendary) to F (don’t go).'],['💬','Honest notes','Best time to go, the stall to hit, and the one to skip.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
-    </div>`)});
-  S.push({t:'So far',h:wrap(`<span class="kick" style="align-self:flex-start">So far</span>
-    <h2 class="h" style="font-size:${H(130,84,120)}px">${R.length} centres in <em>${DATES.length} hawker days</em></h2>
-    <div style="display:grid;grid-template-columns:${v?'1fr 1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?16:26}px;margin-top:auto">
-      ${[[R.length,'centres rated'],[f1(AVGT),'average score /50'],[TC.A,'A-tier finds'],[fmtDs(DATES[0]),'first visit, 2026']].map(([a,b])=>`<div class="card"><div class="h num" style="font-size:${H(130,80,120)}px;color:var(--kaya)">${a}</div><div style="font-size:${H(34,24,30)}px;margin-top:10px">${b}</div></div>`).join('')}
-    </div>
-    ${sq?'':`<div style="margin-top:10px">${slideBar(v?56:48,v?28:26)}</div>`}`)});
-  const big=(n,l,c)=>`<div style="display:flex;align-items:baseline;gap:${H(24,16,22)}px"><div class="h num" style="font-size:${H(104,54,130)}px;color:${c||'var(--kaya)'}">${n}</div><div style="font-size:${H(38,24,32)}px;font-weight:700;line-height:1.15">${l}</div></div>`;
-  S.push({t:'Surprises',h:wrap(`<span class="kick" style="align-self:flex-start">Surprises so far</span>
-    <h2 class="h" style="font-size:${H(110,76,110)}px">Famous doesn't mean <em>best</em></h2>
-    <div style="display:grid;grid-template-columns:${v||sq?'1fr':'repeat(3,1fr)'};gap:${sq?14:26}px;flex:1">
-      <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Tourist favourites</div>${famous.map(d=>big(f1(d.t),`${esc(d.sh)}<br><span style="opacity:.65;font-weight:500">${d.rk} tier</span>`,'var(--paper)')).join('')}</div>
-      ${hidden?`<div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;border-color:var(--kaya);${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Local pick</div>${big(f1(hidden.t),`${esc(hidden.sh)}<br><span style="opacity:.65;font-weight:500">${hidden.rk} tier</span>`)}${sq?'':`<div style="font-size:${H(38,24,34)}px;font-style:italic;opacity:.85">“Not a touristy spot. Highly recommend.”</div>`}</div>`:''}
-      <div class="card" style="display:flex;flex-direction:column;justify-content:space-between;gap:16px;${sq?'padding:18px 28px':''}"><div style="font-size:${H(32,22,28)}px;opacity:.7">Average across all ${R.length}</div>${big(f1(AVG[hi]),`${CRIT[hi].e} ${CRIT[hi].s}<br><span style="opacity:.65;font-weight:500">strongest</span>`)}${big(f1(AVG[lo]),`${CRIT[lo].e} ${CRIT[lo].s}<br><span style="opacity:.65;font-weight:500">hardest to earn</span>`,'var(--paper)')}</div>
-    </div>`)});
-  S.push({t:'Where to watch',h:wrap(`<span class="kick" style="align-self:flex-start">Where to watch</span>
-    <h2 class="h" style="font-size:${H(130,84,120)}px">One visit,<br><em>three formats</em></h2>
-    <div style="display:grid;grid-template-columns:${v?'1fr':sq?'1fr':'repeat(3,1fr)'};gap:${sq?16:30}px;margin-top:auto">
-      ${[['🎥','Live on stream','The visit, the tasting and the scoring, in real time.'],['📱','Short reveals','A 9:16 scorecard per centre, ready to post.'],['🏆','Ranking updates','The leaderboard shifts every time a new centre lands.']].map(([e,a,b])=>`<div class="card" style="${sq?'padding:20px 28px;display:flex;gap:26px;align-items:center':v?'display:flex;gap:34px;align-items:center':''}"><div style="font-size:${H(72,50,80)}px">${e}</div><div><div class="h" style="font-size:${H(56,40,56)}px;margin-top:${sq||v?0:18}px">${a}</div><p style="font-size:${H(32,22,30)}px;margin:${sq||v?6:12}px 0 0;opacity:.75;line-height:1.3">${b}</p></div></div>`).join('')}
-    </div>`)});
-  S.push({t:"What's next",h:wrap(`<span class="kick" style="align-self:flex-start">What's next</span>
-    <h2 class="h" style="font-size:${H(130,84,120)}px">The road to <em>${TOTAL}</em></h2>
-    <div style="position:relative;margin-top:auto;display:grid;grid-template-columns:${v?'1fr':sq?'1fr 1fr':'repeat(4,1fr)'};gap:${sq?14:26}px">
-      ${[[R.length,'Now',`Leaderboard live, ${TC.A} A-tier finds`],[Math.max(50,R.length+1),'Halfway-ish','Mid-quest rankings shake-up'],[100,'Triple digits','Region-by-region best-of'],[TOTAL,'Every centre','The final definitive ranking']].map(([n,a,b],k)=>`<div class="card" style="${k===0?'border-color:var(--kaya);':''}${v||sq?'display:flex;gap:30px;align-items:center;padding:'+(sq?'14px 24px':'26px 34px'):''}">
-        <div class="h num" style="font-size:${H(110,60,110)}px;color:${k===0?'var(--kaya)':'inherit'}">${n}</div><div><div style="font-size:${H(40,26,34)}px;font-weight:700;margin-top:${v||sq?0:8}px">${a}</div><div style="font-size:${H(32,22,26)}px;opacity:.7;margin-top:6px">${b}</div></div></div>`).join('')}
-    </div>`)});
-  S.push({t:'Say hi',h:wrap(`<div style="margin:auto 0"><span class="kick">Get involved</span>
-    <h2 class="h" style="font-size:${H(170,110,170)}px;margin-top:34px">Where should<br>Zumi eat <em>next?</em></h2>
-    <p class="lead" style="margin-top:40px;font-size:${H(46,32,44)}px;max-width:1200px">Recommendations, stall tips and collabs welcome. Follow the quest on Twitch, TikTok, YouTube and X.</p></div>`)});
-  return S;
-}
-
 function renderDeck(kind){
   const host = document.querySelector(`[data-deck="${kind}"]`);
-  const slides = kind==='slides' ? trackerSlides(state.fmt, state.mode) : pitchSlides(state.fmt);
+  state.fmt = autoFmt();
+  const slides = trackerSlides(state.fmt, state.mode);
   let i = Math.min(state.idx[kind], slides.length-1); state.idx[kind]=i;
   const [W,H] = SIZES[state.fmt];
   const chapters = slides.map((s,k)=>[s,k]).filter(([s])=>s.ch);
-  const modeCtl = kind!=='slides' ? '' : `<div class="seg" role="group" aria-label="Show length">
-      <button type="button" data-mode="stream" aria-pressed="${state.mode==='stream'}" title="Short: the board, the latest reveals and the Top 10">📺 Stream mode</button>
+  const modeCtl = `<div class="seg" role="group" aria-label="Show length">
+      <button type="button" data-mode="stream" aria-pressed="${state.mode==='stream'}" title="The board, her latest hawker day's centres and the Top 10">⚡ Quick recap</button>
       <button type="button" data-mode="full" aria-pressed="${state.mode==='full'}" title="Every rated centre, from last place to #1, in tier chapters">📜 Full countdown</button></div>
     ${state.mode==='full'?`<select class="btn" data-jump aria-label="Jump to a chapter"><option value="">Jump to…</option>${chapters.map(([s,k])=>`<option value="${k}">${esc(s.t)}</option>`).join('')}</select>`:''}`;
-  const intro = kind==='slides'
-    ? `<span class="ie">🔔</span><div><b>The countdown show:</b> the hawker queue board calls out Zumi's centres. <b>📺 Stream mode</b> is short for live episodes: the board, her latest hawker day's reveals and the Top 10. <b>📜 Full countdown</b> calls every rated centre from last place to #1, tier by tier. Flip through with the arrows (or the ← → keys), choose a shape at the top (Wide for YouTube, Tall for TikTok, Square for Instagram), and press <b>Full screen</b> to present it.</div>`
-    : `<span class="ie">👋</span><div><b>About the quest:</b> a short slideshow explaining what Makan or Meh is, for friends, brands or anyone new to it. Flip through with the arrows (or the ← → keys) and press <b>Full screen</b> to present it.</div>`;
+  const intro =
+    `<span class="ie">🔔</span><div><b>The countdown show:</b> Zumi's ratings as a slideshow, styled like a hawker centre queue board. <b>⚡ Quick recap</b> shows the board, the centres from her latest hawker day and the Top 10. <b>📜 Full countdown</b> goes through every rated centre, from last place to #1, tier by tier. Flip through with the arrows (or the ← → keys), or press <b>Full screen</b> to see it big.</div>`;
   host.innerHTML = `
     <div class="deck-intro">${intro}</div>
     <div class="deck-bar">
-      <div class="ttl">${kind==='slides'?'Countdown show':'About the quest'}</div>
+      <div class="ttl">Countdown show</div>
       ${modeCtl}
       <span class="counter">${i+1} / ${slides.length}</span>
-      <button class="btn" data-act="prev">← Back</button>
-      <button class="btn" data-act="next">Next →</button>
+      <button class="btn" data-act="prev"${i===0?' disabled':''}>← Back</button>
+      <button class="btn" data-act="next"${i===slides.length-1?' disabled':''}>Next →</button>
       <button class="btn solid" data-act="fs">⛶ Full screen</button>
     </div>
-    <div class="stage"><button class="navbtn p" data-act="prev" aria-label="Previous slide">‹</button>
+    <div class="stage"><button class="navbtn p" data-act="prev" aria-label="Previous slide"${i===0?' hidden':''}>‹</button>
       <div class="canvas-holder"><div class="canvas ${state.fmt}" style="width:${W}px;height:${H}px">${slides[i].h}</div></div>
-      <button class="navbtn n" data-act="next" aria-label="Next slide">›</button>
+      <button class="navbtn n" data-act="next" aria-label="Next slide"${i===slides.length-1?' hidden':''}>›</button>
       <button class="fsx" data-act="exitfs" type="button">✕ Exit full screen</button>
       <span class="fscount">${i+1} / ${slides.length}</span></div>
-    <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"${s.ch?' class="ch"':''}><b>${k+1}</b>${esc(s.t)}</button>`).join('')}</div>`;
+    <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"${s.ch?' class="ch"':''}${(s.tier||s.grade)?` style="--tc:${TV(s.tier||s.grade)}"`:''}><b>${k+1}</b>${(s.tier||s.grade)?`<i class="rt">${s.tier||s.grade}</i>`:''}${esc(s.t)}</button>`).join('')}</div>`;
   const go = k=>{ state.idx[kind]=Math.max(0,Math.min(slides.length-1,k)); renderDeck(kind); };
   host.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ if(state.mode===b.dataset.mode) return; state.mode=b.dataset.mode; store('hk-mode',state.mode); state.idx.slides=0; renderDeck(kind); });
   const jump = host.querySelector('[data-jump]'); if(jump) jump.onchange=()=>{ if(jump.value!=='') go(+jump.value); };
@@ -1421,10 +1682,11 @@ function fitDeck(host){
   holder.style.width = W*s+'px'; holder.style.height = H*s+'px';
   cv.style.transform = `scale(${s})`;
 }
-addEventListener('resize',()=>{ const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') fitDeck(document.querySelector(`[data-deck="${t}"]`)); });
-document.addEventListener('fullscreenchange',()=>{ const t=document.body.dataset.tab; if(t==='slides'||t==='pitch') setTimeout(()=>fitDeck(document.querySelector(`[data-deck="${t}"]`)),50); });
+addEventListener('resize',()=>{ if(document.body.dataset.tab!=='slides') return;
+  if(autoFmt()!==state.fmt) renderDeck('slides'); else fitDeck(document.querySelector('[data-deck="slides"]')); });
+document.addEventListener('fullscreenchange',()=>{ const t=document.body.dataset.tab; if(t==='slides') setTimeout(()=>fitDeck(document.querySelector(`[data-deck="${t}"]`)),50); });
 document.addEventListener('keydown',e=>{
-  const t=document.body.dataset.tab; if(t!=='slides'&&t!=='pitch') return;
+  const t=document.body.dataset.tab; if(t!=='slides') return;
   if(/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
   const host=document.querySelector(`[data-deck="${t}"]`);
   if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="next"]').click(); }
@@ -1432,7 +1694,7 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ---------- init ---------- */
-renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); newPair();
+renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); newPair();
 countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
 select(state.sel);
@@ -1442,7 +1704,7 @@ setTab((location.hash||'').slice(1));
 function ago(iso){ if(!iso) return ''; const m=Math.round((Date.now()-Date.parse(iso))/60000);
   if(m<2) return 'just now'; if(m<60) return m+' min ago'; const h=Math.round(m/60); if(h<48) return h+' h ago'; return Math.round(h/24)+' days ago'; }
 const fresh=document.getElementById('fresh');
-function paintFresh(){ fresh.className = META.live?'':'snap'; fresh.innerHTML = META.live ? `<i></i>Live from her sheet${META.updated?', updated '+ago(META.updated):''}` : `<i></i>Snapshot of her sheet${META.updated?', '+fmtD(META.updated.slice(0,10)):''}`; }
+function paintFresh(){ fresh.className = META.live?'':'snap'; fresh.innerHTML = META.live ? `<i></i>Live from her sheet${META.updated?', updated '+ago(META.updated):''}` : `<i></i>Couldn't reach her sheet just now${META.updated?', showing ratings from '+fmtDs(META.updated.slice(0,10)):''}`; }
 paintFresh(); setInterval(paintFresh, 60000);
 document.getElementById('totalN').textContent = TOTAL;
 document.getElementById('newData').onclick=()=>location.reload();
