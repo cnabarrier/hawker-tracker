@@ -195,6 +195,19 @@ body.rolling{overflow:hidden}
   box-shadow:0 0 0 3px var(--kaya),0 6px 14px rgba(0,0,0,.2);animation:dishIn .6s .1s cubic-bezier(.2,.9,.3,1.4) backwards}
 @keyframes dishIn{from{transform:scale(0) rotate(-90deg)}}
 .roll-dish-cap{font-size:12.5px;font-weight:600;color:var(--muted)}
+/* short screens (phones on their side): start at the top, scroll if needed, compact ticket so its buttons stay on screen */
+@media (max-height:500px){
+  .roll{place-items:start center;overflow-y:auto;padding:50px 16px 12px}
+  .roll-x{top:-44px}
+  .roll-stage{gap:10px}
+  .roll-ticket{padding-bottom:12px}
+  .roll-ticket .qb{padding:8px 16px}
+  .roll-dish{display:none}
+  .roll-ticket h3{margin:10px 18px 6px;font-size:30px}
+  .roll-acts{margin-top:10px}
+  .roll-hint{display:none}
+  .roll-wheel{width:min(80vw,400px,40vh)}
+}
 .flash{animation:flash 1.8s ease}
 @keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--kaya)}}
 
@@ -1329,7 +1342,7 @@ function openRoll(){
   stage.querySelector('[data-roll="close"]').onclick=rollShut;
   stage.onclick=e=>{ if(!done && !e.target.closest('button')) reveal(); };
   roll.onclick=e=>{ if(e.target===roll){ if(!done) reveal(); else rollShut(); } };
-  stage.focus();
+  stage.focus({preventScroll:true});
   setState('rolling','Rolling…');
 
   // timings (ms): the whole journey is about 5.5 s
