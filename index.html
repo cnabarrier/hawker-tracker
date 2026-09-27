@@ -556,7 +556,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .socials a:hover{border-color:var(--ink)}
 .site-foot{padding:0 16px 30px;text-align:center;color:var(--muted);font-size:12.5px}
 
-@media (max-width:720px){.board{position:static}.brand h1{font-size:36px}.modes{padding-bottom:0}}
+@media (max-width:720px),(max-height:500px){.board{position:static}.brand h1{font-size:36px}.modes{padding-bottom:0}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{.board{position:static}}
 </style>
@@ -1333,7 +1333,7 @@ function openRoll(){
   setState('rolling','Rolling…');
 
   // timings (ms): the whole journey is about 5.5 s
-  const REEL=useWheel?1400:(n===1?1500:4400), SPIN=3000, PAUSE=450, NUDGE=320, HOLD=600;
+  const REEL=useWheel?1400:(n===1?1500:4400), SPIN=3000, PAUSE=450, NUDGE=320, HOLD=useWheel?1800:600;   // with the wheel, linger so people see where it landed
   const TOTAL=REEL+(useWheel?SPIN:0)+(n>1?PAUSE+NUDGE:0)+HOLD;
   const t0=performance.now();
   // progress bar and glow follow the whole journey
