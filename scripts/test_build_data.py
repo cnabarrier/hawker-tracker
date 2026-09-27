@@ -137,6 +137,13 @@ class Scores(unittest.TestCase):
         with self.assertRaisesRegex(SheetError, "does not match"):
             run(rows)
 
+    def test_decimal_scores_on_a_tier_boundary_keep_their_tier(self):
+        # these add up to 29.999999999999996 in floating point; her sheet says 30, which is C
+        rows = make_rows()
+        set_row(rows, 4, [0.6, 8.2, 8.1, 3.9, 9.2, 30, "C", "", "", None])
+        c = centre(run(rows)[0], 4)
+        self.assertEqual((c["t"], c["rk"]), (30, "C"))
+
     def test_low_total_with_blank_rank_is_F(self):
         rows = make_rows()
         set_row(rows, 4, [4, 4, 4, 4, 4, 20, None, "", "", None])

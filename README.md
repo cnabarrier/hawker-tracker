@@ -1,6 +1,6 @@
 # Makan or Meh? — Singapore Hawker Centre Rating Tracker
 
-A fan-made website for Zumi's 2026 quest to visit and rate all 123 official hawker centres in Singapore.
+A website for Zumi's 2026 quest to visit and rate all 123 official hawker centres in Singapore.
 
 **View it here:** https://cnabarrier.github.io/hawker-tracker/
 

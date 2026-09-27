@@ -177,7 +177,7 @@ def build(workbook_bytes, today=None):
         d = parse_date(get("d"), where, today)
 
         if all(v is not None for v in s):
-            total = sum(s)
+            total = round(sum(s), 6)  # 0.6+8.2+8.1+3.9+9.2 sums to 29.999999999999996 in floating point, not 30
             t_cell, rk_cell = get("t"), get("rk")
             if blank(t_cell):
                 warnings.append(f"{where}: all 5 scores filled but Total is blank; using the sum {num(total)}")

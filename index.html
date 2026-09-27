@@ -74,6 +74,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
+@media (max-width:560px){.tabs{gap:2px}.tab{font-size:clamp(12px,3.4vw,17px);padding:9px clamp(6px,1.8vw,12px) 10px}}  /* phones: all three tabs fit without swiping */
 .tab:hover{opacity:1}
 .tab[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
 
@@ -844,16 +845,24 @@ document.addEventListener('mousemove',e=>{
   if(y+h>innerHeight-8) y = e.clientY-h-16;
   placeTip(x,y);
 });
-document.addEventListener('click',e=>{
+// on <main>, not document: iPhone Safari only sends a tap's click to plain elements (tier squares, table rows…)
+// when something inside the page listens for it
+document.querySelector('main').addEventListener('click',e=>{
   const el = e.target.closest('[data-n]');
   if(!el) return;
   const d = BY[+el.dataset.n];
   if(d && d.s){ select(d.n); if(el.closest('#v-dashboard')) scrollToDetail(); }
 });
+// keyboard: Enter or Space on a focusable centre row/card, or on a sortable column header, works like a click
+document.querySelector('main').addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.matches('[data-n][tabindex], th[tabindex]')){ e.preventDefault(); e.target.click(); }
+});
 // bring the scorecard into view (below the sticky header) unless its top is already on screen
-function scrollToDetail(){
+function scrollToDetail(smooth=!REDUCED){
   const det=document.getElementById('detail'), top=det.getBoundingClientRect().top, hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
-  if(top<hb || top>innerHeight*0.6){ holdHover(); scrollTo({top:scrollY+top-hb-12, behavior:REDUCED?'auto':'smooth'}); }
+  if(top<hb || top>innerHeight*0.6){ holdHover(); scrollTo({top:scrollY+top-hb-12, behavior:smooth?'smooth':'auto'});
+    // Safari abandons a smooth scroll while the leaderboard animates its height; if the scorecard still isn't in view, jump there
+    if(smooth) setTimeout(()=>scrollToDetail(false),700); }
 }
 
 /* ---------- dashboard ---------- */
@@ -864,7 +873,7 @@ function countUps(scope){
   if(REDUCED) return;
   scope.querySelectorAll('[data-cu]').forEach(el=>{
     const to=+el.dataset.cu, fin=f1(to), dec=fin.includes('.')?1:0, t0=performance.now();
-    const step=now=>{ const p=Math.min(1,(now-t0)/900); el.textContent = p<1 ? (to*(1-Math.pow(1-p,3))).toFixed(dec) : fin; if(p<1) requestAnimationFrame(step); };
+    const step=now=>{ const p=Math.max(0,Math.min(1,(now-t0)/900)); /* a frame can be stamped just before t0: never show "-0" */ el.textContent = p<1 ? (to*(1-Math.pow(1-p,3))).toFixed(dec) : fin; if(p<1) requestAnimationFrame(step); };
     requestAnimationFrame(step);
   });
 }
@@ -1430,12 +1439,15 @@ const COLS = [
   ...CRIT.map((c,i)=>({k:'s'+i,l:`<span class="hd"><em>${c.e}</em>${c.s}</span>`,c:1})),
   {k:'t',l:'<span class="hd"><em>Σ</em>Total</span>',c:1},{k:'rk',l:'Rank',c:1},{k:'d',l:'Visited'},{k:'best',l:'Best time to go',ns:1},{k:'note',l:'Notes',ns:1}
 ];
-function sheetVal(d,k){ if(k[0]==='s'&&k.length===2) return d.s?d.s[+k[1]]:null; return d[k]??null; }
+function sheetVal(d,k){ if(k[0]==='s'&&k.length===2) return d.s?d.s[+k[1]]:null;
+  if(k==='rk') return d.rk ? TIERS.length - TIERS.findIndex(([t])=>t===d.rk) : null;   // S highest, F lowest (not alphabetical)
+  return d[k]??null; }
 function renderSheetHead(){
-  document.querySelector('#tbl thead').innerHTML = '<tr>'+COLS.map(c=>`<th data-k="${c.k}" class="${c.ns?'nosort':''} ${c.c?'ctr':''} ${state.sort.k===c.k?'sorted':''}">${c.l}${c.ns?'':`<span class="arr">${state.sort.k===c.k?(state.sort.dir>0?'▲':'▼'):'↕'}</span>`}</th>`).join('')+'</tr>';
+  document.querySelector('#tbl thead').innerHTML = '<tr>'+COLS.map(c=>`<th data-k="${c.k}" class="${c.ns?'nosort':''} ${c.c?'ctr':''} ${state.sort.k===c.k?'sorted':''}"${c.ns?'':` tabindex="0"${state.sort.k===c.k?` aria-sort="${state.sort.dir>0?'ascending':'descending'}"`:''}`}>${c.l}${c.ns?'':`<span class="arr">${state.sort.k===c.k?(state.sort.dir>0?'▲':'▼'):'↕'}</span>`}</th>`).join('')+'</tr>';
   document.querySelectorAll('#tbl th[data-k]:not(.nosort)').forEach(th=>th.onclick=()=>{
-    const k=th.dataset.k; if(state.sort.k===k) state.sort.dir*=-1; else { state.sort.k=k; state.sort.dir = (k==='n'||k==='name'||k==='addr')?1:-1; }
+    const k=th.dataset.k, had=document.activeElement===th; if(state.sort.k===k) state.sort.dir*=-1; else { state.sort.k=k; state.sort.dir = (k==='n'||k==='name'||k==='addr')?1:-1; }
     renderSheetHead(); renderSheet();
+    if(had) document.querySelector(`#tbl th[data-k="${k}"]`).focus();   // the header row was redrawn: keep keyboard focus on it
   });
 }
 function renderSheetChips(){
@@ -1629,6 +1641,8 @@ function nextUpSlide(f){
     <div>${slideBar(v?64:sq?44:56,v?30:sq?22:28)}</div></div></div>`;
 }
 
+// a control focused with the keyboard (Tab), not just clicked with a mouse or finger
+const kbFocus = el => { try{ return ['BUTTON','SELECT','A'].includes(el.tagName) && el.matches(':focus-visible'); }catch(e){ return false; } };
 function renderDeck(kind){
   const host = document.querySelector(`[data-deck="${kind}"]`);
   state.fmt = autoFmt();
@@ -1640,6 +1654,10 @@ function renderDeck(kind){
       <button type="button" data-mode="stream" aria-pressed="${state.mode==='stream'}" title="The board, her latest hawker day's centres and the Top 10">⚡ Quick recap</button>
       <button type="button" data-mode="full" aria-pressed="${state.mode==='full'}" title="Every rated centre, from last place to #1, in tier chapters">📜 Full countdown</button></div>
     ${state.mode==='full'?`<select class="btn" data-jump aria-label="Jump to a chapter"><option value="">Jump to…</option>${chapters.map(([s,k])=>`<option value="${k}">${esc(s.t)}</option>`).join('')}</select>`:''}`;
+  // the deck is redrawn on every move: remember which control had keyboard focus so it keeps it afterwards
+  const a = document.activeElement, keep = !host.contains(a) || !kbFocus(a) ? null
+    : a.dataset.act ? (a.classList.contains('navbtn') ? `.navbtn[data-act="${a.dataset.act}"]` : `.deck-bar [data-act="${a.dataset.act}"]`)
+    : a.dataset.go!=null ? `.rail [data-go="${a.dataset.go}"]` : a.dataset.mode ? `[data-mode="${a.dataset.mode}"]` : a.matches('[data-jump]') ? '[data-jump]' : null;
   const intro =
     `<span class="ie">🔔</span><div><b>The countdown show:</b> Zumi's ratings as a slideshow, styled like a hawker centre queue board. <b>⚡ Quick recap</b> shows the board, the centres from her latest hawker day and the Top 10. <b>📜 Full countdown</b> goes through every rated centre, from last place to #1, tier by tier. Flip through with the arrows (or the ← → keys), or press <b>Full screen</b> to see it big.</div>`;
   host.innerHTML = `
@@ -1665,11 +1683,14 @@ function renderDeck(kind){
   host.querySelectorAll('[data-act="next"]').forEach(b=>b.onclick=()=>go(i+1));
   host.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go));
   // full screen the whole deck (which survives re-renders), not the stage inside it
-  host.querySelector('[data-act="fs"]').onclick=()=>{ (host.requestFullscreen||host.webkitRequestFullscreen||(()=>{})).call(host); };
+  host.querySelector('[data-act="fs"]').onclick=()=>{ const r=(host.requestFullscreen||host.webkitRequestFullscreen||(()=>{})).call(host); if(r&&r.catch) r.catch(()=>{}); };   // a refused request just leaves the normal view
   host.querySelector('[data-act="exitfs"]').onclick=()=>{ (document.exitFullscreen||document.webkitExitFullscreen||(()=>{})).call(document); };
   // centre the current slide in the rail without scrolling the page
   const rail = host.querySelector('.rail'), cur = rail.querySelector('[aria-current="true"]');
   if(cur) rail.scrollLeft = cur.offsetLeft - rail.offsetLeft - (rail.clientWidth - cur.offsetWidth)/2;
+  if(keep){ let el = host.querySelector(keep);
+    if(el && (el.disabled || el.hidden)) el = host.querySelector(`.deck-bar [data-act="${el.dataset.act==='next'?'prev':'next'}"]`);   // at the first/last slide
+    if(el) el.focus({preventScroll:true}); }
   fitDeck(host);
 }
 function fitDeck(host){
@@ -1688,6 +1709,7 @@ document.addEventListener('fullscreenchange',()=>{ const t=document.body.dataset
 document.addEventListener('keydown',e=>{
   const t=document.body.dataset.tab; if(t!=='slides') return;
   if(/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  if(e.key===' ' && kbFocus(document.activeElement)) return;   // Space presses a control reached with the keyboard
   const host=document.querySelector(`[data-deck="${t}"]`);
   if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="next"]').click(); }
   if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="prev"]').click(); }
