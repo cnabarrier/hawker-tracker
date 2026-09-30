@@ -78,7 +78,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
-@media (max-width:560px){.tabs{gap:2px}.tab{font-size:clamp(12px,3.4vw,17px);padding:9px clamp(6px,1.8vw,12px) 10px}}  /* phones: all three tabs fit without swiping */
+@media (max-width:860px){.tab-more{display:none}}  /* the Map tab says "& regions" only where there is room */
+@media (min-width:561px) and (max-width:720px){.tab{font-size:17px;padding:10px 12px 12px}}
+@media (max-width:560px){.tabs{gap:2px}.tab{font-size:clamp(11px,3.1vw,16px);padding:9px clamp(3px,1.2vw,10px) 10px}}  /* phones: all four tabs fit without swiping */
 .tab:hover{opacity:1}
 .tab[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
 
@@ -169,8 +171,6 @@ body.rolling{overflow:hidden}
 .roll-prog{height:10px;margin-top:12px;border-radius:3px;background:repeating-linear-gradient(90deg,#2A2A2A 0 8px,transparent 8px 11px);overflow:hidden}
 .roll-prog i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#FFB020 0 8px,transparent 8px 11px);filter:drop-shadow(0 0 4px rgba(255,176,32,.8))}
 .roll-state{display:block;margin-top:10px;font-size:clamp(13px,3.4vw,16px)!important;opacity:.85}
-.roll[data-state="almost"] .roll-state{animation:blink .45s steps(1) infinite}
-@keyframes blink{50%{opacity:.2}}
 .roll-board.locked{box-shadow:inset 0 0 0 5px #2B2B2B,inset 0 0 0 7px #FFB020,0 0 40px rgba(255,176,32,.55)}
 .roll-board.locked .roll-reel{color:#FFD34D;text-shadow:0 0 8px rgba(255,211,77,.95),0 0 30px rgba(255,176,32,.8)}
 .roll-board.locked .roll-reel span{animation:lock .5s cubic-bezier(.2,.9,.3,1.4)}
@@ -212,6 +212,20 @@ body.rolling{overflow:hidden}
   .roll-hint{display:none}
   .roll-wheel{width:min(80vw,400px,40vh)}
 }
+/* the pop-up scorecard: taller than the roll ticket, so it starts near the top and the page behind it scrolls */
+.roll:has(.card-pop){place-items:start center;overflow-y:auto;padding:64px 16px 24px}
+.card-pop{text-align:left;padding-bottom:18px}
+.card-pop .qb{text-align:center}
+.card-pop h3{text-align:center;font-size:clamp(28px,7vw,44px);animation:none}
+.card-pop .roll-meta{margin-bottom:4px}
+.cp-addr{margin:6px 20px 0;text-align:center;color:var(--muted);font-size:13.5px}
+.cp-addr span{font-weight:700;color:var(--ink)}
+.cp-scores{margin:12px 20px 0}
+.card-pop .quote{margin:12px 20px 0}
+.card-pop .cp-facts{margin:12px 20px 0}
+.card-pop .roll-acts .btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
+.card-pop .roll-acts .btn.solid{color:var(--paper)}
+@media (max-height:500px){.roll:has(.card-pop){padding-top:50px}}
 .flash{animation:flash 1.8s ease}
 @keyframes flash{0%,60%{box-shadow:0 0 0 4px var(--kaya)}}
 
@@ -230,6 +244,21 @@ body.rolling{overflow:hidden}
 .dcard.win{border-color:var(--tA);background:color-mix(in srgb,var(--tA) 12%,var(--paper))}
 .dcard.lose{opacity:.75}
 .dcard.win .dr{animation:pop .4s cubic-bezier(.2,.9,.3,1.3)}
+/* the answer lands: a rubber stamp on your pick (green MAKAN! or grey MEH), confetti when right, a head-shake when wrong */
+.dcard{position:relative}
+.dcard.win{box-shadow:0 0 0 4px color-mix(in srgb,var(--tA) 30%,transparent)}
+.gstamp{position:absolute;top:14px;right:14px;font-family:var(--fd);font-weight:900;font-size:clamp(30px,4vw,40px);text-transform:uppercase;letter-spacing:.05em;line-height:1;
+  color:var(--c);border:4px solid var(--c);border-radius:10px;padding:4px 12px 2px;transform:rotate(-10deg);background:color-mix(in srgb,var(--paper) 70%,transparent);
+  animation:gstamp .4s cubic-bezier(.2,.9,.3,1.4) both;pointer-events:none}
+.gstamp.yes{--c:var(--tA)}
+.gstamp.no{--c:var(--tF)}
+@keyframes gstamp{from{transform:rotate(-10deg) scale(2.4);opacity:0}}
+.dcard.shake{animation:shake .45s ease}
+@keyframes shake{20%{transform:translateX(-9px) rotate(-1deg)}40%{transform:translateX(8px) rotate(1deg)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.gburst{position:absolute;left:50%;top:40%;pointer-events:none}
+.gburst i{position:absolute;width:8px;height:12px;border-radius:2px;opacity:0;animation:confetti 1.4s cubic-bezier(.15,.7,.35,1) forwards}
+@keyframes confetti{12%{opacity:1}to{transform:translate(var(--x),calc(var(--y) + 90px)) rotate(var(--r));opacity:0}}
+.gstreak{font-weight:800;font-size:14px;background:color-mix(in srgb,var(--kaya) 22%,var(--paper));border:1px solid var(--kaya);border-radius:99px;padding:4px 12px;animation:pop .4s cubic-bezier(.2,.9,.3,1.4)}
 .vs{align-self:center;font-family:var(--fd);font-weight:900;font-size:26px;background:var(--red);color:#fff;border-radius:99px;width:52px;height:52px;display:grid;place-items:center;box-shadow:0 3px 0 var(--kaya)}
 .gfoot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 .gmsg{font-weight:700;font-size:16px;margin-right:auto}
@@ -237,6 +266,8 @@ body.rolling{overflow:hidden}
 .gfoot .also{margin:0}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--muted)}
 .legend b{color:var(--ink)}
+.hero-src{margin:10px 0 0;font-size:12.5px;color:var(--muted)}
+.hero-src a{color:var(--red);font-weight:700;white-space:nowrap}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
 
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-content:start}
@@ -305,6 +336,11 @@ body.rolling{overflow:hidden}
 .lbr .pos.pd{justify-self:end;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:15px;color:#1A1A1A}
 .pos.p1{background:#E6BE4E}.pos.p2{background:#C3CCD1}.pos.p3{background:#CF9567}
 .lbr:hover,.lbr.sel{background:var(--paper2)}
+/* "See it on the leaderboard": three soft kaya pulses (~4 s), then back to normal. Reduced motion: a steady outline for the same time */
+.lbr.spot{z-index:2;border-radius:8px;animation:spot 1.3s ease-in-out 3}
+@keyframes spot{0%,100%{box-shadow:inset 0 0 0 2px var(--kaya);background:color-mix(in srgb,var(--kaya) 10%,var(--paper))}
+  50%{box-shadow:inset 0 0 0 3px var(--kaya),0 0 14px 2px color-mix(in srgb,var(--kaya) 55%,transparent);background:color-mix(in srgb,var(--kaya) 30%,var(--paper))}}
+@media (prefers-reduced-motion:reduce){.lbr.spot{box-shadow:inset 0 0 0 3px var(--kaya);background:color-mix(in srgb,var(--kaya) 22%,var(--paper))}}
 .lbr .pos{font-family:var(--fd);font-weight:800;font-size:18px;color:var(--muted);text-align:right}
 .lbr .nm{font-weight:600;font-size:13.5px;white-space:nowrap;display:flex;align-items:center;min-width:0}
 .lbr .nm span:first-child{overflow:hidden;text-overflow:ellipsis;min-width:0}   /* long names shorten, the 🤝 stays visible */
@@ -575,6 +611,74 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .socials a:hover{border-color:var(--ink)}
 .site-foot{padding:0 16px 30px;text-align:center;color:var(--muted);font-size:12.5px}
 
+/* Map tab: OneMap base map with tier pins, and the region battle beside it (below it on phones) */
+.map-intro{margin:0 0 12px;font-size:14px;color:var(--muted);max-width:820px}
+.map-intro b{color:var(--ink)}
+.maptools{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:12px}
+.maptools .chips{margin:0}
+.maptools .chip small{font-weight:700;opacity:.65;margin-left:2px}
+.mapwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,380px);gap:16px;align-items:start}
+@media (max-width:900px){.mapwrap{grid-template-columns:1fr}}
+.mapbox{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--paper2);box-shadow:0 10px 30px -18px rgba(0,0,0,.45);scroll-margin-top:12px}
+#mapCanvas{position:relative;z-index:0;isolation:isolate;height:clamp(420px,72vh,860px);background:var(--paper2);font-family:var(--fb)}
+@media (max-width:900px){#mapCanvas{height:min(64svh,560px);min-height:360px}}
+@media (max-height:500px){#mapCanvas{height:86svh;min-height:260px}}
+.map-tilemsg{margin:8px 2px 0;font-size:12.5px;color:var(--muted)}
+.map-msg{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:24px;text-align:center;color:var(--muted);font-weight:600}
+.map-legend{position:absolute;left:10px;bottom:24px;z-index:2;display:flex;flex-wrap:wrap;gap:6px 12px;max-width:calc(100% - 20px);padding:7px 11px;border-radius:12px;
+  background:color-mix(in srgb,var(--paper) 92%,transparent);box-shadow:0 2px 10px rgba(0,0,0,.18);font-size:12px;font-weight:600;pointer-events:none}
+.map-legend span{display:inline-flex;align-items:center;gap:5px}
+.lg-pin{width:11px;height:11px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--c,var(--tF));display:inline-block}
+.mapside h2{margin-bottom:4px}
+.map-foot{margin:12px 0 0;font-size:12.5px}
+/* pins: a teardrop in the tier colour with the tier letter, like a map app; plain dots for centres not rated yet */
+.mpin{background:none;border:0}
+.mp{position:absolute;left:1px;top:0;width:28px;height:28px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--c,var(--tF));
+  border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.4);display:grid;place-items:center;transition:transform .15s}
+.mp b{transform:rotate(45deg);color:#fff;font-family:var(--fd);font-weight:900;font-size:15px;line-height:1}
+.mpin:hover .mp,.mpin:focus-visible .mp{transform:rotate(-45deg) scale(1.18)}
+.mpin:focus-visible{outline:none}
+.mpin:focus-visible .mp,.mpin:focus-visible .mdot{box-shadow:0 0 0 3px var(--kaya),0 3px 8px rgba(0,0,0,.4)}
+/* not rated yet: a hollow white dot whose thick ring is its region's colour (rated centres are filled tier pins, so shape tells them apart) */
+.mdot{display:block;width:15px;height:15px;border-radius:50%;background:#fff;border:3.5px solid var(--rc,#6E807B);box-shadow:0 1px 4px rgba(0,0,0,.4);box-sizing:border-box}
+.mdot.closed{background:repeating-linear-gradient(45deg,#8C9995 0 2px,#fff 2px 4px)}
+.map-legend .mdot{display:inline-block;width:12px;height:12px;border-width:3px}
+/* legend: one ring made of all five region colours = "ring colour is the region" */
+.lg-ring{display:inline-block;width:12px;height:12px;border-radius:50%;background:conic-gradient(#D6336C 0 20%,#0C9BAB 0 40%,#EE6A0C 0 60%,#6F4BE0 0 80%,#6FA80F 0);
+  -webkit-mask:radial-gradient(circle,transparent 2.6px,#000 3px);mask:radial-gradient(circle,transparent 2.6px,#000 3px)}
+.rchip i,.rdot{display:inline-block;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--rc);box-sizing:border-box;margin-right:5px;vertical-align:-1px}
+.map-now{margin:-4px 0 12px;font-size:13px;color:var(--muted)}
+.map-now b{color:var(--ink)}
+#mapClear{align-self:center}
+.mpin.ping .mp,.mpin.ping .mdot{animation:ping 1.2s ease 3}
+@keyframes ping{30%{box-shadow:0 0 0 10px color-mix(in srgb,var(--kaya) 60%,transparent)}}
+@media (prefers-reduced-motion:reduce){.mpin.ping .mp,.mpin.ping .mdot{box-shadow:0 0 0 4px var(--kaya),0 3px 8px rgba(0,0,0,.4)}}  /* no pulse: a steady ring instead */
+.mtip{font-family:var(--fb);font-weight:700;font-size:12.5px;border-radius:8px;padding:3px 8px}
+.mpopwrap .leaflet-popup-content-wrapper{border-radius:14px;background:var(--paper);color:var(--ink)}
+.mpopwrap .leaflet-popup-tip{background:var(--paper)}
+.mpopwrap .leaflet-popup-content{margin:12px 14px}
+.mpop{display:grid;gap:3px;font-family:var(--fb);font-size:12.5px;color:var(--muted)}
+.mpop b{font-size:15px;color:var(--ink)}
+.mpop em{font-style:normal;font-weight:700;color:var(--ink)}
+.mpop a{margin-top:4px;font-weight:700;color:var(--red)}
+#mapCanvas .leaflet-control-zoom a{width:36px;height:36px;line-height:36px;font-size:20px}
+#mapCanvas .leaflet-control-attribution{font-size:10.5px}
+/* region battle rows */
+.brow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 8px;border-top:1px solid var(--line);border-radius:10px;cursor:pointer;transition:background .15s}
+.brow:hover{background:var(--paper2)}
+.brow.on{background:color-mix(in srgb,var(--rc,var(--kaya)) 14%,var(--paper));box-shadow:inset 4px 0 0 var(--rc,var(--kaya))}
+.bpl{font-family:var(--fd);font-weight:900;font-size:26px;text-align:center;color:var(--muted)}
+.brow:first-child .bpl{color:var(--kaya)}
+.bmain b{font-size:15.5px}
+.bmain small{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+.bmain .nowrap{white-space:nowrap}
+.bmain small button{border:0;background:none;padding:0;font:inherit;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+.bbar{display:flex;gap:2px;height:8px;margin-top:6px;border-radius:4px;overflow:hidden}
+.bbar i{display:block;min-width:3px}
+.bbar i.left{background:repeating-linear-gradient(90deg,var(--line) 0 4px,transparent 4px 6px)}
+.bavg{font-family:var(--fd);font-weight:900;font-size:26px;text-align:right;line-height:1}
+.bavg small{display:block;font-family:var(--fb);font-size:11px;font-weight:600;color:var(--muted)}
+
 @media (max-width:720px),(max-height:500px){.board{position:static}.brand h1{font-size:36px}.modes{padding-bottom:0}}
 @media (max-height:500px){.tbl-wrap{max-height:none;overflow-y:visible;overflow-x:auto}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -599,6 +703,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">🍜 Dashboard</button>
     <button class="tab" role="tab" data-tab="sheet" aria-selected="false">📋 Full list</button>
+    <button class="tab" role="tab" data-tab="map" aria-selected="false">🗺️ Map<span class="tab-more"> &amp; regions</span></button>
     <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown show</button>
   </nav>
 </header>
@@ -619,6 +724,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
           </div>
           <div class="pbar" id="pbar" role="img"></div>
           <div class="legend" id="legend"></div>
+          <p class="hero-src">Counts come from Zumi's sheet, so her newest visit can take a little while to show up here. <a href="https://www.youtube.com/@twitchzumivod" target="_blank" rel="noopener">Latest VODs →</a></p>
         </div>
         <div class="kpis" id="kpis"></div>
       </div>
@@ -694,6 +800,30 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     <div class="tbl-wrap"><table id="tbl"><thead></thead><tbody></tbody></table></div>
   </section>
 
+  <!-- MAP -->
+  <section class="view" id="v-map">
+    <p class="map-intro" id="mapIntro"></p>
+    <div class="maptools">
+      <div class="chips" id="mapShow" role="group" aria-label="Show"></div>
+      <div class="chips" id="mapRegion" role="group" aria-label="Regions (pick one or more)"></div>
+      <button class="chip clear" id="mapClear" type="button" disabled>✕ Clear filters</button>
+    </div>
+    <p class="map-now" id="mapNow" aria-live="polite"></p>
+    <div class="mapwrap">
+      <div class="mapbox">
+        <div id="mapCanvas" role="region" aria-label="Map of Singapore's hawker centres"><p class="map-msg" id="mapMsg">Loading the map…</p></div>
+        <div class="map-legend" id="mapLegend"></div>
+        <p class="map-tilemsg" id="mapTileMsg" hidden>The map background is loading slowly. The pins are still in the right places.</p>
+      </div>
+      <aside class="panel mapside">
+        <h2><span class="stall">#02-01</span>Region battle</h2>
+        <p class="sub">Singapore's five official regions, ranked by the average of Zumi's scores there. Tap a region to see it on the map.</p>
+        <div id="battle"></div>
+        <p class="also map-foot" id="mapFoot"></p>
+      </aside>
+    </div>
+  </section>
+
   <!-- SLIDES -->
   <section class="view" id="v-slides">
     <div class="deck" data-deck="slides"></div>
@@ -707,10 +837,15 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 const SNAPSHOT = {"updated":"2026-09-23T12:45:20+00:00","centres":[{"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)"},{"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},{"n":4,"name":"Beo Crescent Market","addr":"38A, Beo Crescent, S(169982)","s":[6,7.5,10,9,5],"t":37.5,"rk":"B","best":"AM to 5pm","note":"DYSON DRYER IN TOILET - WOW","d":"2026-04-20"},{"n":5,"name":"Berseh Food Centre","addr":"166, Jalan Besar, S(208877)"},{"n":6,"name":"Bukit Timah Market","addr":"Closed for redevelopment till 2029 (tentative)"},{"n":7,"name":"Chomp Chomp Food Centre","addr":"20, Kensington Park Road, S(557269)"},{"n":8,"name":"Commonwealth Crescent Market","addr":"31, Commonwealth Crescent, S(149644)"},{"n":9,"name":"Dunman Food Centre","addr":"271, Onan Road, S(424768)"},{"n":10,"name":"East Coast Lagoon Food Village","addr":"1220, East Coast Parkway, S(468960)"},{"n":11,"name":"Geylang Serai Market","addr":"Geylang Serai, S(402001)"},{"n":12,"name":"Golden Mile Food Centre","addr":"505, Beach Road, S(199583)","s":[10,8,7.5,8,8],"t":41.5,"rk":"A","best":"morning + lunch","note":"huge variety! highly recommend to visit","d":"2026-07-23"},{"n":13,"name":"Holland Village Market & Food Centre","addr":"1, Lorong Mambong, S(277700)"},{"n":14,"name":"Old Airport Road Food Centre","addr":"17, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42.0,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},{"n":15,"name":"Margaret Drive Hawker Centre","addr":"38A, Margaret Drive, S(142038)"},{"n":16,"name":"Market Street Hawker Centre","addr":"86, Market Street, CapitaSpring Building, S(048947)"},{"n":17,"name":"Marsiling Mall Hawker Centre","addr":"4, Woodlands Street 12, S(738623)"},{"n":18,"name":"Maxwell Food Centre","addr":"1, Kadayanallur Street, S(069184)","s":[9,9,6,6,6.5],"t":36.5,"rk":"B","best":"All Day","note":"Great for people visiting Singapore","d":"2026-04-20"},{"n":19,"name":"Newton Food Centre","addr":"500, Clemenceau Ave North, S(229495)","s":[5,8,4.5,8,8],"t":33.5,"rk":"C","best":"6 pm onwards","note":"Expensive but food quality is good and nice night vibe","d":"2026-07-16"},{"n":20,"name":"North Bridge Road Market & Food Centre","addr":"861, North Bridge Road, S(198783)","s":[6,5.5,5.5,9,6.5],"t":32.5,"rk":"C","best":"Open 24/7 but best in morning till lunch","note":"Great toilet. Food was mid but it might be cuz i went at 3 pm, lots of stalls were closed","d":"2026-08-06"},{"n":21,"name":"Pasir Panjang Food Centre","addr":"121, Pasir Panjang Road, S(118543)"},{"n":22,"name":"Sembawang Hills Food Centre","addr":"590, Upper Thomson Road, S(574419)"},{"n":23,"name":"Serangoon Garden Market","addr":"49A, Serangoon Garden Way, S(555945)"},{"n":24,"name":"Taman Jurong Market & Food Centre","addr":"3, Yung Sheng Road, S(618499)"},{"n":25,"name":"Tanglin Halt Market","addr":"48A, Tanglin Halt Road, S(148813)","s":[6.5,7,8,7.5,5],"t":34.0,"rk":"C","best":"Morning (6 am onwards)","note":"very neighbourhood hawker, food is average BUT the laksa man has aura and super friendly","d":"2026-09-09"},{"n":26,"name":"Tiong Bahru Market","addr":"30, Seng Poh Road, S(168898)","s":[6.5,9,7.5,9,8],"t":40.0,"rk":"A","best":"Morning","note":"My fav hawker :D","d":"2026-06-03"},{"n":27,"name":"Zion Riverside Food Centre","addr":"70, Zion Road, S(247792)"},{"n":28,"name":"ABC Brickworks Market & Food Centre","addr":"Blk 6, Jalan Bukit Merah, S(150006)"},{"n":29,"name":"Albert Centre Market & Food Centre","addr":"Blk 270, Queen Street, S(180270)"},{"n":30,"name":"Alexandra Village Food Centre","addr":"Blk 120, Bukit Merah Lane 1, S(150120)"},{"n":31,"name":"Blk 117 Aljunied Ave 2","addr":"Blk 117, Aljunied Ave 2, S(380117)"},{"n":32,"name":"Blk 226D Ang Mo Kio Ave 1","addr":"Blk 226D, Ang Mo Kio Ave 1, S(564226)"},{"n":33,"name":"Blk 341 Ang Mo Kio Ave 1","addr":"Blk 341, Ang Mo Kio Ave 1, S(560341)"},{"n":34,"name":"Mayflower Market & Food Centre","addr":"Blks 160/162, Ang Mo Kio Ave 4, S(560160/560162)"},{"n":35,"name":"Ang Mo Kio 628","addr":"Blk 628, Ang Mo Kio Ave 4, S(560628)","s":[4.5,9.5,7.5,7.5,5.5],"t":34.5,"rk":"C","best":"Morning till 2 pm","note":"BEST Peanut Pancake, i regret giving 4.5 for variation - should be 6.5 :c","d":"2026-06-09"},{"n":36,"name":"Ang Mo Kio Central Market & Food Center","addr":"Blk 724, Ang Mo Kio Ave 6, S(560724)"},{"n":37,"name":"Blk 409 Ang Mo Kio Ave 10","addr":"Blk 409, Ang Mo Kio Ave 10, S(560409)"},{"n":38,"name":"Chong Boon Market & Food Centre","addr":"Blk 453A, Ang Mo Kio Ave 10, S(561453)","s":[5.5,7.5,7,6.5,5],"t":31.5,"rk":"C","best":"Best to go for lunch - Stalls open till 7 pm","note":"Good Mee Rebeus","d":"2026-06-09"},{"n":39,"name":"Blk 527 Ang Mo Kio Ave 10","addr":"Blk 527, Ang Mo Kio Ave 10, S(560527)"},{"n":40,"name":"Blk 226H Ang Mo Kio Street 22","addr":"Blk 226H, Ang Mo Kio Street 22, S(568226)"},{"n":41,"name":"Blk 216 Bedok North Street 1","addr":"Blk 216, Bedok North Street 1, S(460216)"},{"n":42,"name":"Blk 511 Bedok North Street 3","addr":"Blk 511, Bedok North Street 3, S(460511)"},{"n":43,"name":"Blk 538 Bedok North Street 3","addr":"Blk 538, Bedok North Street 3, S(460538)"},{"n":44,"name":"Blk 85 Bedok North Street 4","addr":"Blk 85, Bedok North Street 4, S(460085)"},{"n":45,"name":"Blk 630 Bedok Reservoir Road","addr":"Blk 630, Bedok Reservoir Road, S(470630)"},{"n":46,"name":"Blk 16 Bedok South Road","addr":"Blk 16, Bedok South Road, S(460016)"},{"n":47,"name":"Bendemeer Market & Food Centre","addr":"Blk 29, Bendemeer Road, S(330029)","s":[6,8.5,7,7,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"generation coffee was good","d":"2026-05-26"},{"n":48,"name":"Blks 221A/B Boon Lay Place","addr":"Blks 221A/B, Boon Lay Place, S(641221/642221)"},{"n":49,"name":"Blk 163 Bukit Merah Central","addr":"Blk 163, Bukit Merah Central, S(150163)"},{"n":50,"name":"Blk 115 Bukit Merah View","addr":"Blk 115, Bukit Merah View, S(151115)"},{"n":51,"name":"Changi Village Hawker Centre","addr":"Blks 2/3, Changi Village Road, S(500002/500003)","s":[6,5.5,8,6,7.5],"t":33.0,"rk":"C","best":"Everything closes by 9 pm weekdays","note":"cool secluded place but the food quality wasnt worth the distance required to travel","d":"2026-07-30"},{"n":52,"name":"Chinatown Complex Market & Hawker Centre","addr":"Blk 335, Smith Street, S(050335)","s":[5.5,8,10,5,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"less stall available after 2 pm. mainly Chinese food","d":"2026-07-16"},{"n":53,"name":"Chong Pang Market & Food Centre","addr":"Blks 104/105, Yishun Ring Road, S(760104/760105)"},{"n":54,"name":"Blks 79/79A Circuit Road","addr":"Blks 79/79A, Circuit Road, S(370079/371079)"},{"n":55,"name":"Blk 80 Circuit Road","addr":"Blk 80, Circuit Road, S(370080)"},{"n":56,"name":"Blk 89 Circuit Road","addr":"Blk 89, Circuit Road, S(370089)"},{"n":57,"name":"Blk 353 Clementi Ave 2","addr":"Blk 353, Clementi Ave 2, S(120353)"},{"n":58,"name":"Blk 448 Clementi Ave 3","addr":"Blk 448, Clementi Ave 3, S(120448)"},{"n":59,"name":"Blk 726 Clementi West Street 2","addr":"Blk 726, Clementi West Street 2, S(120726)"},{"n":60,"name":"Blk 7 Empress Road","addr":"Blk 7, Empress Road, S(260007)"},{"n":61,"name":"Blk 4A Eunos Crescent","addr":"Blk 4A, Eunos Crescent, S(402004)"},{"n":62,"name":"Geylang Bahru Food Centre","addr":"Blk 69, Geylang Bahru, S(330069)","s":[8,9,9,7,5],"t":38.0,"rk":"B","best":"stalls still open after 3 pm","note":"THE FOOD WAS SO GOOD - THE MICHELLIN RECOMMENDED WORTH IT. BEST DUCK RICE!","d":"2026-09-14"},{"n":63,"name":"Ghim Moh Hawker Centre","addr":"Blk 20, Ghim Moh Road, S(270020)","s":[8,9.5,9,7,6.5],"t":40.0,"rk":"A","best":"Morning + Lunch","note":"Everything I ate was delicious!Not a touristy spot - highly recommend.","d":"2026-08-06"},{"n":64,"name":"Blks 13/14 Haig Road","addr":"Blks 13/14, Haig Road, S(430013/430014)"},{"n":65,"name":"Havelock Road Cooked Food Center","addr":"Blks 22A/B, Havelock Road, S(161022/162022)"},{"n":66,"name":"Blk 44 Holland Drive","addr":"Blk 44, Holland Drive, S(270044)"},{"n":67,"name":"Hong Lim Market & Food Centre","addr":"Blk 531A, Upper Cross Street, S(051531)"},{"n":68,"name":"Hougang Hainanese Village Center","addr":"Blk 105, Hougang Ave 1, S(530105)","s":[6.5,9,6.5,8.5,7],"t":37.5,"rk":"B","best":"best to go before 2 pm cuz everything close after that","note":"laksa was so good! mainly Chinese food","d":"2026-07-09"},{"n":69,"name":"Blk 4A Jalan Batu","addr":"Blk 4A, Jalan Batu, S(432004)"},{"n":70,"name":"Blk 112 Jalan Bukit Merah","addr":"Blk 112, Jalan Bukit Merah, S(160112)"},{"n":71,"name":"Blk 1 Jalan Kukoh","addr":"Blk 1, Jalan Kukoh, S(161001)"},{"n":72,"name":"Blk 347 Jurong East Ave 1","addr":"Blk 347, Jurong East Ave 1, S(600347)"},{"n":73,"name":"Blk 254 Jurong East Street 24","addr":"Blk 254, Jurong East Street 24, S(600254)"},{"n":74,"name":"Blk 505 Jurong West Street 52","addr":"Blk 505, Jurong West Street 52, S(640505)"},{"n":75,"name":"209 Kovan Market & Food Centre","addr":"Blk 209, Hougang Street 21, S(530209)","s":[6.5,8,9.5,7,6.5],"t":37.5,"rk":"B","best":"Ideal time: 10 am, everything closes by 2pm","note":"Dont eat the Indonesian Stall - was mid","d":"2026-08-13"},{"n":76,"name":"Blk 84 Marine Parade Central","addr":"Blk 84, Marine Parade Central, S(440084)"},{"n":77,"name":"Blk 50A Marine Terrace","addr":"Blk 50A, Marine Terrace, S(441050)"},{"n":78,"name":"Blks 20/21 Marsiling Lane","addr":"Blks 20/21, Marsiling Lane, S(730020/730021)"},{"n":79,"name":"Blk 159 Mei Chin Road","addr":"Blk 159, Mei Chin Road, S(140159)"},{"n":80,"name":"Blk 58 New Upper Changi Road","addr":"Blk 58, New Upper Changi Road, S(461058)"},{"n":81,"name":"Blk 208B New Upper Changi Road","addr":"Blk 208B, New Upper Changi Road, S(462208)"},{"n":82,"name":"Blk 51 Old Airport Road","addr":"Blk 51, Old Airport Road, S(390051)"},{"n":83,"name":"Pek Kio Market & Food Centre","addr":"Blk 41A, Cambridge Road, S(211041)"},{"n":84,"name":"People's Park Complex Food Centre","addr":"Blk 32, New Market Road, S(050032)","s":[6,8,9.5,7.5,7.5],"t":38.5,"rk":"B","best":"Lunch & Dinner","note":"Duck rice is famous (didnt try) very affordable place","d":"2026-07-23"},{"n":85,"name":"Redhill Market","addr":"Blk 79, Redhill Lane, S(150079)","s":[4,6.5,6.5,6,4],"t":27.0,"rk":"D","best":"AM to 2 pm","note":"Feels like a kopitiam rather than hawker","d":"2026-04-20"},{"n":86,"name":"Redhill Food Center","addr":"Blk 85, Redhill Lane, S(150085)","s":[9,9,8,8,6],"t":40.0,"rk":"A","best":"AM to 2 pm","note":"Great place overall","d":"2026-04-20"},{"n":87,"name":"Blk 320 Shunfu Road","addr":"Blk 320, Shunfu Road, S(570320)"},{"n":88,"name":"Blk 49 Sims Place","addr":"Blk 49, Sims Place, S(380049)"},{"n":89,"name":"Blk 137 Tampines Street 11","addr":"Blk 137, Tampines Street 11, S(521137)"},{"n":90,"name":"Blk 6 Tanjong Pagar Plaza","addr":"Blk 6, Tanjong Pagar Plaza, S(081006)"},{"n":91,"name":"Blk 37A Teban Gardens Road","addr":"Blk 37A, Teban Gardens Road, S(601037)"},{"n":92,"name":"Tekka Market","addr":"Blk 665, Buffalo Road, S(210665)"},{"n":93,"name":"Blk 11 Telok Blangah Crescent","addr":"Blk 11, Telok Blangah Crescent, S(090011)"},{"n":94,"name":"Blk 79 Telok Blangah Drive","addr":"Blk 79, Telok Blangah Drive, S(100079)"},{"n":95,"name":"Blk 82 Telok Blangah Drive","addr":"Blk 82, Telok Blangah Drive, S(100082)"},{"n":96,"name":"Blk 36 Telok Blangah Rise","addr":"Blk 36, Telok Blangah Rise, S(090036)"},{"n":97,"name":"Blk 127 Toa Payoh Lorong 1","addr":"Blk 127, Lorong 1 Toa Payoh, S(310127)"},{"n":98,"name":"Blk 74 Toa Payoh Lorong 4","addr":"Blk 74, Lorong 4 Toa Payoh, S(310074)"},{"n":99,"name":"Blk 93 Toa Payoh Lorong 4","addr":"Blk 93, Lorong 4 Toa Payoh, S(310093)"},{"n":100,"name":"Blk 75 Toa Payoh Lorong 5","addr":"Blk 75, Lorong 5 Toa Payoh, S(310075)"},{"n":101,"name":"Blk 22 Toa Payoh Lorong 7","addr":"Blk 22, Lorong 7 Toa Payoh, S(310022)"},{"n":102,"name":"Toa Payoh Lorong 8","addr":"Blk 210, Lorong 8 Toa Payoh, S(310210)","s":[7.5,9,8.5,7,6],"t":38.0,"rk":"B","best":"Morning + Lunch","note":"East Seafood White Meehoon #01-06 stall is worth it","d":"2026-07-30"},{"n":103,"name":"Blk 17 Upper Boon Keng Road","addr":"Blk 17, Upper Boon Keng Road, S(380017)"},{"n":104,"name":"Blk 502 West Coast Drive","addr":"Blk 502, West Coast Drive, S(120502)"},{"n":105,"name":"Blk 503 West Coast Drive","addr":"Blk 503, West Coast Drive, S(120503)"},{"n":106,"name":"Whampoa Food Centre","addr":"Blk 90, Whampoa Drive, S(320090)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Morning (although half the stall was closed when i went at 9 am)","note":"did both whampoa together","d":"2026-07-09"},{"n":107,"name":"Blks 91/92 Whampoa Drive","addr":"Blks 91/92, Whampoa Drive, S(320091/320092)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Afternoon","note":"was better in the past, nothing really impressed me","d":"2026-07-09"},{"n":108,"name":"Ci Yuan Hawker Centre","addr":"51, Hougang Ave 9, S(538776)"},{"n":109,"name":"Bukit Panjang Hawker Centre & Market","addr":"2, Bukit Panjang Ring Road, S(679947)"},{"n":110,"name":"Hawker Centre @ Our Tampines Hub","addr":"1 Tampines Walk, S(528523)"},{"n":111,"name":"Kampung Admiralty Hawker Centre","addr":"Blk 676, Woodlands Drive 71, #02-44, S(730676)"},{"n":112,"name":"Yishun Park Hawker Centre","addr":"51, Yishun Avenue 11, S(768867)"},{"n":113,"name":"Jurong West Hawker Centre","addr":"50, Jurong West Street 61, S(648202)"},{"n":114,"name":"Pasir Ris Central Hawker Centre","addr":"110, Pasir Ris Central, S(519641)"},{"n":115,"name":"Fernvale Hawker Centre and Market","addr":"21, Sengkang West Avenue, S(797650)"},{"n":116,"name":"One Punggol Hawker Centre","addr":"1, Punggol Drive, S(828629)"},{"n":117,"name":"Senja Hawker Centre","addr":"2, Senja Close, S(677632)"},{"n":118,"name":"Bukit Canberra Hawker Centre","addr":"21, Canberra Link, S(756973)"},{"n":119,"name":"Buangkok Hawker Centre","addr":"70, Compassvale Bow, S(544692)"},{"n":120,"name":"Anchorvale Village Hawker Centre","addr":"339, Anchorvale Road, S(540339)"},{"n":121,"name":"Woodleigh Village Hawker Centre","addr":"202C, Woodleigh Link, S(363202)"},{"n":122,"name":"Bukit Batok West Hawker Centre","addr":"Blk 469, Bukit Batok West Ave 9, S(650469)"},{"n":123,"name":"Punggol Coast Hawker Centre","addr":"84 Punggol Way, S(829911)"}]};
 (async function(){
 let DATA = SNAPSHOT.centres, META = {updated: SNAPSHOT.updated, live:false};
+// map locations (built by scripts/build_geo.py); fetched alongside the ratings. Without it the Map tab says so and the rest works.
+const geoReq = fetch('geo.json').then(r=>r.ok?r.json():null).catch(()=>null);
 if(true) try{
   const r = await fetch('data.json?t='+Date.now(), {cache:'no-store'});
-  if(r.ok){ const j = await r.json(); if(j && Array.isArray(j.centres) && j.centres.length){ DATA=j.centres; META={updated:j.updated, live:true}; } }
+  // only use records that look like hers (number, name, address); anything else keeps the built-in snapshot
+  const okRow = c => c && Number.isInteger(c.n) && typeof c.name==='string' && typeof c.addr==='string' && (!c.s || (Array.isArray(c.s) && c.s.length===5 && typeof c.t==='number' && typeof c.rk==='string'));
+  if(r.ok){ const j = await r.json(); if(j && Array.isArray(j.centres) && j.centres.length && j.centres.every(okRow)){ DATA=j.centres; META={updated:j.updated, live:true}; } }
 }catch(e){}
+const GEO = ((await geoReq)||{}).centres || {};
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
 const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
 DATA.forEach(d=>{ d.sh = SHORT[d.name] || autoShort(d.name); });
@@ -733,7 +868,8 @@ const f1 = v => (Math.round(v*10)/10).toString();
 const ordinal = n => n + (n%100>=11 && n%100<=13 ? 'th' : ({1:'st',2:'nd',3:'rd'}[n%10] || 'th'));
 
 /* ---------- derived data ---------- */
-const BY = {}; DATA.forEach(d=>{BY[d.n]=d; d.closed = /^closed/i.test(d.addr);});
+// "closed" comes from her address text; once she rates a centre it counts as rated, even if the address still says closed
+const BY = {}; DATA.forEach(d=>{BY[d.n]=d; d.closed = !d.s && /^closed/i.test(d.addr);});
 const R = DATA.filter(d=>d.s);
 R.forEach(d=>{ d.pos = 1 + R.filter(o=>o.t>d.t).length; d.tied = R.filter(o=>o.t===d.t).length>1; });
 const ranked = [...R].sort((a,b)=>b.t-a.t || a.name.localeCompare(b.name));
@@ -780,11 +916,12 @@ if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 function setTab(t){
   // #about (and the old #pitch link) open the Dashboard with the intro card shown
   const intro = t==='about' || t==='pitch';
-  if(!['dashboard','sheet','slides'].includes(t)) t='dashboard';
+  if(!['dashboard','sheet','map','slides'].includes(t)) t='dashboard';
   document.body.dataset.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
   if(t==='slides') renderDeck(t);
+  if(t==='map') mapShown();
   try{ history.replaceState(null,'','#'+(intro?'about':t)); }catch(e){}
   if(intro) document.getElementById('intro').open = true;
   // every tab opens fresh at the top of the page (instant: the content has just been swapped, so a smooth
@@ -876,7 +1013,10 @@ document.querySelector('main').addEventListener('click',e=>{
   const el = e.target.closest('[data-n]');
   if(!el) return;
   const d = BY[+el.dataset.n];
-  if(d && d.s){ select(d.n); if(el.closest('#v-dashboard')) scrollToDetail(); }
+  if(!d || !d.s) return;
+  // Find your hawker's picks and the game's scorecard links open a pop-up right there instead of scrolling far away
+  if(el.closest('#picks, #also, #game, #v-map')) return openCard(d.n, el);
+  select(d.n); if(el.closest('#v-dashboard')) scrollToDetail();
 });
 // keyboard: Enter or Space on a focusable centre row/card, or on a sortable column header, works like a click
 document.querySelector('main').addEventListener('keydown',e=>{
@@ -1239,25 +1379,36 @@ function newPair(){
   let a,b; do{ a=R[Math.random()*R.length|0]; b=R[Math.random()*R.length|0]; }while(a===b || a.t===b.t);
   game.pair=[a,b]; game.pick=null; renderGame();
 }
+// confetti for a right answer: bits of kaya, stall red and the winner's tier colour thrown up and out of the card
+function confetti(rk){
+  return `<span class="gburst" aria-hidden="true">${[...Array(28).keys()].map(k=>{
+    const t=-Math.PI/2+(Math.random()-.5)*Math.PI*1.3, dist=90+Math.random()*120;
+    return `<i style="--x:${(Math.cos(t)*dist).toFixed(0)}px;--y:${(Math.sin(t)*dist).toFixed(0)}px;--r:${(Math.random()*720-360).toFixed(0)}deg;background:${['#FFB020','#D42F39',TV(rk)][k%3]};animation-delay:${(Math.random()*.12).toFixed(2)}s"></i>`; }).join('')}</span>`;
+}
 function renderGame(){
-  const [a,b]=game.pair, done=game.pick!=null, hi=a.t>b.t?a:b;
-  const card=(d,k)=>`<button class="dcard${done?(d===hi?' win':' lose'):''}" data-pick="${k}" ${done?'disabled':''}>
-      <div class="dh">${done&&game.pick===k?'Your pick':'Tap if it’s this one'}</div>
+  const [a,b]=game.pair, done=game.pick!=null, hi=a.t>b.t?a:b, right=done && game.pair[game.pick]===hi;
+  const card=(d,k)=>{
+    const mine=done && game.pick===k;
+    return `<button class="dcard${done?(d===hi?' win':' lose'):''}${mine&&!right?' shake':''}" data-pick="${k}" ${done?'disabled':''}>
+      <div class="dh">${!done?'Tap if it’s this one':mine?'Your pick':d===hi?'Zumi scored this higher':'&nbsp;'}</div>
       <div class="dn">${esc(d.sh)}</div>
       <div class="dh">${esc(d.addr)}</div>
       ${done?`<div class="dr"><span class="st t${d.rk}">${d.rk}</span>${f1(d.t)}<small>/50</small></div>`:`<div class="dr q">?</div>`}
-    </button>`;
+      ${mine?`<span class="gstamp ${right?'yes':'no'}" aria-hidden="true">${right?'Makan!':'Meh'}</span>${right?confetti(d.rk):''}`:''}
+    </button>`; };
   const msg = !done ? 'Which one did Zumi score higher?' :
-    game.pair[game.pick]===hi ? '🎉 Makan! You got it.' : `😅 Meh… Zumi scored ${esc(hi.sh)} higher.`;
+    right ? '🎉 Makan! You got it.' : `😅 Meh… Zumi scored ${esc(hi.sh)} higher.`;
+  const streak = done && right && game.streak>=3 ? `<span class="gstreak">🔥 ${game.streak} in a row${game.newBest?' · new best!':''}</span>` : '';
   document.getElementById('game').innerHTML = `<div class="duel">${card(a,0)}<div class="vs">VS</div>${card(b,1)}</div>
-    <div class="gfoot"><span class="gmsg" aria-live="polite">${msg}</span>
+    <div class="gfoot"><span class="gmsg" aria-live="polite">${msg}</span>${streak}
       <span class="gscore">${game.played?`${game.right} of ${game.played} right · best streak ${game.best}`:''}</span>
       ${done?`<p class="also">Scorecards: <button data-n="${a.n}">${esc(a.sh)}</button>, <button data-n="${b.n}">${esc(b.sh)}</button></p>
       <button class="btn solid" id="gameNext" type="button">Next pair →</button>`:''}</div>`;
   document.querySelectorAll('#game [data-pick]').forEach(btn=>btn.onclick=()=>{
     if(game.pick!=null) return;
     game.pick=+btn.dataset.pick; game.played++;
-    if(game.pair[game.pick]===hi){ game.right++; game.streak++; game.best=Math.max(game.best,game.streak); } else game.streak=0;
+    game.newBest=false;
+    if(game.pair[game.pick]===hi){ game.right++; game.streak++; if(game.streak>game.best){ game.best=game.streak; game.newBest=game.streak>=3; } } else game.streak=0;
     renderGame();
   });
   const nx=document.getElementById('gameNext'); if(nx) nx.onclick=newPair;
@@ -1296,20 +1447,28 @@ function dishOf(d){
   return null;
 }
 const roll=document.getElementById('roll');
-let rollRun=0, rollResult=null;
+let rollRun=0, rollResult=null, rollBack=null;   // rollBack: what gets focus back when the pop-up closes
 const easeOutQuart=t=>1-Math.pow(1-t,4);
 function rollShut(){
   rollRun++; roll.hidden=true; roll.innerHTML='';
   document.body.classList.remove('rolling');
   document.querySelectorAll('.board,main,.site-foot').forEach(e=>e.inert=false);
-  document.getElementById('lucky').focus({preventScroll:true});
+  const back = rollBack && rollBack.isConnected ? rollBack : document.getElementById('lucky');
+  rollBack=null; back.focus({preventScroll:true});
 }
-// the wheel: one slice per centre in tier colours (alternate slices a shade darker), names reading outwards, rim bulbs and a noodle hub
+function rollOpen(label){
+  roll.hidden=false; roll.setAttribute('aria-label',label); document.body.classList.add('rolling');
+  holdHover();   // a tap on a pick also shows the dashboard tooltip, which sits above the pop-up: put it away
+  document.querySelectorAll('.board,main,.site-foot').forEach(e=>e.inert=true);
+}
+// the wheel: one slice per centre in two plain hawker-sign colours (red and deep teal, the odd one out in kaya), names reading
+// outwards, rim bulbs and a noodle hub. The colours mean nothing on purpose: tier and score colours would clash with the
+// filter chips, so the ticket at the end is where the tier and scores show.
 function wheelSvg(P){
   const n=P.length, a=360/n, r=94;
   const pt=deg=>{ const t=(deg-90)*Math.PI/180; return `${(r*Math.cos(t)).toFixed(2)} ${(r*Math.sin(t)).toFixed(2)}`; };
   const slices=P.map((d,i)=>{
-    const fill = i%2 ? `color-mix(in srgb,${TV(d.rk)} 74%,#000)` : TV(d.rk);
+    const fill = n%2 && i===n-1 ? '#B8800F' : i%2 ? '#0F4A40' : '#B3232B';   // an odd count would put two reds side by side
     const shape = n===1 ? `<circle r="${r}" style="fill:${fill}"/>` : `<path d="M0 0L${pt(i*a-a/2)}A${r} ${r} 0 0 1 ${pt(i*a+a/2)}Z" style="fill:${fill}"/>`;
     const name = d.sh.length>15 ? d.sh.slice(0,14)+'…' : d.sh;
     return `${shape}<g data-slice="${d.n}" transform="rotate(${i*a})"><text transform="rotate(-90)" x="22" y="3">${esc(name)}</text></g>`;
@@ -1319,7 +1478,8 @@ function wheelSvg(P){
     <circle r="97" fill="none" stroke="#1B1B1B" stroke-width="6"/><g>${bulbs}</g>
     <circle r="17" fill="#0B0B0B" stroke="#FFB020" stroke-width="2"/><text class="hub" y="6" text-anchor="middle">🥢</text></svg>`;
 }
-// states: idle → rolling → slowing → almost → locked → reveal. The winner is chosen fairly at the start but stays hidden until the end.
+// states: idle → rolling → slowing → locked → reveal. The winner is chosen fairly at the start but stays hidden until the end,
+// and the first centre it comes to rest on is always the winner (no fake near-miss).
 // With "reduce motion" switched on, the spinning wheel is left out, but the board still rolls through the names with the same timing.
 function openRoll(){
   const P=rollPool().list; if(!P.length) return;
@@ -1330,9 +1490,7 @@ function openRoll(){
   let W=P; if(n>12){ const others=P.filter(d=>d!==win).sort(()=>Math.random()-.5).slice(0,11); W=P.filter(d=>d===win||others.includes(d)); }
   const m=W.length, wi=W.indexOf(win);
   const useWheel=!REDUCED && m>1;
-  const near = useWheel ? W[(wi+1)%m] : P[(w+1)%n];   // the centre it almost stops on
-  roll.hidden=false; document.body.classList.add('rolling');
-  document.querySelectorAll('.board,main,.site-foot').forEach(e=>e.inert=true);
+  rollOpen('Pick a hawker for me');
   roll.innerHTML=`<div class="roll-stage" id="rollStage" tabindex="-1">
       <button type="button" class="roll-x" data-roll="close" aria-label="Close">✕</button>
       <div class="qb roll-board" id="rollBoard">
@@ -1358,46 +1516,45 @@ function openRoll(){
   setState('rolling','Rolling…');
 
   // timings (ms): the whole journey is about 5.5 s
-  const REEL=useWheel?1400:(n===1?1500:4400), SPIN=3000, PAUSE=450, NUDGE=320, HOLD=useWheel?1800:600;   // with the wheel, linger so people see where it landed
-  const TOTAL=REEL+(useWheel?SPIN:0)+(n>1?PAUSE+NUDGE:0)+HOLD;
+  const REEL=useWheel?1400:(n===1?1500:4400), SPIN=3600, HOLD=useWheel?1800:900;   // with the wheel, linger so people see where it landed
+  const TOTAL=REEL+(useWheel?SPIN:0)+HOLD;
   const t0=performance.now();
   // progress bar and glow follow the whole journey
   const tickBar=now=>{ if(!alive() || done) return; const p=Math.min(1,(now-t0)/TOTAL);
     bar.style.width=(p*100).toFixed(1)+'%'; board.style.setProperty('--glow',(p*20).toFixed(1)+'px'); if(p<1) requestAnimationFrame(tickBar); };
   requestAnimationFrame(tickBar);
 
-  // the last moments, shared by both versions: almost stops on the centre before the winner, jumps once more, locks in
+  // the last moment, shared by both versions: it has come to rest on the winner, which locks in
   const lockIn=()=>{ if(!alive() || done) return;
     setState('locked','Locked in!'); show(win,true); board.classList.add('locked'); bar.style.width='100%';
     setTimeout(()=>{ if(alive()) reveal(); },HOLD); };
 
-  // the board's name reel: starts moderately fast, speeds up; without the wheel it also stays fast, then slows right down
-  let k=(w+2)%n, next=0;
+  // the board's name reel: starts moderately fast, speeds up; without the wheel it also stays fast, then slows right down.
+  // The names shown are worked out in advance and counted back from the winner, so the last one before it stops is the winner.
   const gap=e=> e<1400 ? 150-105*(e/1400)                       // accelerate: 150 → 45 ms per name
             : e<2200 ? 45                                         // stay fast briefly
             : 45+475*Math.pow((e-2200)/2200,2);                   // slow down: 45 → 520 ms per name
+  const times=[]; for(let e=0; e<REEL; e+=gap(e)) times.push(e);
+  const reelEnd = useWheel ? times.length : times.length-1;      // the wheel takes over from the board; without it the last name is the winner
+  let step=0;
   const reelStep=now=>{
     if(!alive() || done) return;
     const e=now-t0;
     if(!useWheel && e>=2200 && roll.dataset.state==='rolling') setState('slowing','Slowing down…');
-    if(e>=REEL){
-      if(useWheel) return startWheel();
-      if(n===1) return lockIn();                                       // only one match: nothing to almost-stop on
-      show(near,true); setState('almost','Almost…');                  // hovers on the one before…
-      return setTimeout(()=>{ if(alive() && !done) lockIn(); },PAUSE+NUDGE);   // …then jumps once more
+    if(e>=REEL){ if(useWheel) return startWheel(); return lockIn(); }
+    while(step<times.length && e>=times[step]){
+      if(step<reelEnd) show(P[useWheel ? (w+1+step)%n : ((w-(times.length-1-step))%n+n)%n], true);   // no wheel: step times.length-1 would be the winner itself
+      step++;
     }
-    if(e>=next){ show(P[k%n],true); k++; next=e+gap(e); }
     requestAnimationFrame(reelStep);
   };
   requestAnimationFrame(reelStep);
 
-  // the Makan wheel: fast from the board's pace, eases right down onto the centre before the winner, pauses, nudges into the winner
+  // the Makan wheel: fast from the board's pace, then eases all the way down and comes to rest on the winner
   const startWheel=()=>{
     const wheel=$('rollWheel'), spin=$('wheelSpin'), ptr=$('rollPtr');
     board.classList.add('mini'); wheel.classList.add('on','spinning');
-    const a=360/m, j1=(Math.random()-.5)*a*.3, j2=(Math.random()-.5)*a*.3;
-    const end0=360*6 - ((wi+1)%m)*a + j1;          // stops on `near` first
-    const end1=end0 + a - j1 + j2;               // one more slice clockwise lands on the winner
+    const a=360/m, end=360*7 - wi*a + (Math.random()-.5)*a*.5;   // lands inside the winner's slice, never on its edge
     let last=-1, t1=null;
     const put=r=>{ spin.setAttribute('transform',`rotate(${r.toFixed(2)})`);
       const idx=Math.round((((-r)%360)+360)%360/a)%m;          // slice under the pointer
@@ -1407,17 +1564,9 @@ function openRoll(){
       if(t1==null) t1=now;
       const p=Math.min(1,(now-t1)/SPIN);
       if(p>.4 && roll.dataset.state==='rolling') setState('slowing','Slowing down…');
-      put(end0*easeOutQuart(p));
+      put(end*easeOutQuart(p));
       if(p<1) return requestAnimationFrame(spinStep);
-      setState('almost','Almost…');
-      setTimeout(()=>{ if(!alive() || done) return;
-        let t2=null;
-        const nudge=now=>{ if(!alive() || done) return; if(t2==null) t2=now;
-          const q=Math.min(1,(now-t2)/NUDGE), back=1+2.2*Math.pow(q-1,3)+1.2*Math.pow(q-1,2);   // ease out with a small overshoot
-          put(end0+(end1-end0)*back);
-          if(q<1) requestAnimationFrame(nudge); else { put(end1); wheel.classList.remove('spinning'); lockIn(); } };
-        requestAnimationFrame(nudge);
-      },PAUSE);
+      wheel.classList.remove('spinning'); lockIn();
     };
     requestAnimationFrame(spinStep);
   };
@@ -1439,19 +1588,88 @@ function showTicket(d){
       <div class="roll-meta"><span class="st t${d.rk}">${d.rk}</span><span>${f1(d.t)}/50 · ${TIER_WORD[d.rk]}</span></div>
       <div class="roll-pills">${ks.map(i=>`<span>${CRIT[i].e} ${CRIT[i].s} ${f1(d.s[i])}/10</span>`).join('')}</div>
       <p class="roll-best">Best time: ${esc(d.best)}</p>
-      <div class="roll-acts"><button type="button" class="btn solid" data-roll="go">Take me there →</button><button type="button" class="btn" data-roll="again">🎲 Roll again</button></div>
+      <div class="roll-acts"><button type="button" class="btn solid" data-roll="go">See details →</button><button type="button" class="btn" data-roll="again">🎲 Roll again</button></div>
     </div>`;
   stage.querySelector('[data-roll="close"]').onclick=rollShut;
   stage.querySelector('[data-roll="again"]').onclick=openRoll;
   rollResult = d.n;   // the latest roll's result, by the centre's stable serial number (never its rank)
-  stage.querySelector('[data-roll="go"]').onclick=()=>{
-    const n = rollResult; if(!BY[n]) return;
-    rollShut(); holdHover(); select(n); scrollToDetail();
-    document.querySelectorAll(`#detail, .lbr[data-n="${n}"]`).forEach(e=>{ e.classList.remove('flash'); void e.offsetWidth; e.classList.add('flash'); });
-  };
+  stage.querySelector('[data-roll="go"]').onclick=()=>{ if(BY[rollResult]) openCard(rollResult); };
   stage.querySelector('[data-roll="go"]').focus();
 }
 document.getElementById('lucky').onclick=openRoll;
+
+// close the pop-up and show the centre's scorecard next to the leaderboard, with a flash so the eye finds it
+// "See it on the leaderboard": the row itself is scrolled to the middle of the screen and glows kaya for about 4 s
+// (three soft pulses; a steady outline with reduced motion), then settles back to the normal selected style
+let spotTimer=0;
+function goToScorecard(n){
+  rollShut(); setTab('dashboard'); holdHover(); select(n);
+  const row=document.querySelector(`.lbr[data-n="${n}"]`);
+  // select() may move the row (pinned under the top 10), so scroll once it has settled, and again in case Safari dropped it
+  // aim for the row and the top of its scorecard together (side by side on desktop); if both can't fit, the row wins
+  const toRow=smooth=>{
+    const r=row.getBoundingClientRect(), dt=document.getElementById('detail').getBoundingClientRect().top;
+    const hb=Math.max(0,document.querySelector('.board').getBoundingClientRect().bottom);
+    let y=Math.min(r.top,dt)-hb-12;
+    if(r.bottom-y>innerHeight-12) y=r.top-innerHeight/2+r.height/2;
+    if(Math.abs(y)>4) scrollTo({top:scrollY+y, behavior:smooth?'smooth':'auto'}); };
+  setTimeout(()=>{ toRow(!REDUCED); if(!REDUCED) setTimeout(()=>toRow(false),700); }, 60);
+  document.querySelectorAll('.lbr.spot').forEach(e=>e.classList.remove('spot'));
+  void row.offsetWidth; row.classList.add('spot'); clearTimeout(spotTimer);
+  spotTimer=setTimeout(()=>row.classList.remove('spot'), 4000);
+  const det=document.getElementById('detail'); det.classList.remove('flash'); void det.offsetWidth; det.classList.add('flash');
+}
+// stall unit numbers exactly as Zumi wrote them in her note, e.g. "#01-128"
+const stallsOf = d => [...new Set(String(d.note||'').match(/#\d{2}-\d{2,4}[A-Z]?\b/g) || [])];
+// Google Maps opens on the place itself, searched by name, rather than on bare coordinates.
+// Which wording lands on each centre was checked on Google Maps for all 123 (1 Oct 2026): the official NEA name + postal code
+// finds most; for GM_HER_NAME her own name + address finds it; for GM_COORDS neither lands on a single place, so those
+// (and closed centres, whose name now finds the interim market) keep the exact coordinates.
+const GM_HER_NAME = new Set(['277700','564226','560160','560724','560409','330069','530209','730020','210665','320091']);
+const GM_COORDS = new Set(['641221','370079','570320','320090']);
+function gmapsUrl(d, g){
+  const pc = (/S\((\d{6})/.exec(d.addr||'')||[])[1], street = String(d.addr||'').replace(/,?\s*S\([\d\/]+\)\s*$/,'').trim();
+  const q = d.closed || !pc || GM_COORDS.has(pc) ? `${g.lat},${g.lng}`
+    : GM_HER_NAME.has(pc) ? `${d.name}, ${street}, Singapore ${pc}` : `${g.nea||d.name}, Singapore ${pc}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+}
+// the full scorecard as a pop-up, in the same queue-ticket style as the roll. Used by Find your hawker, the game and the map.
+// from: the element to give focus back to when it closes (the roll's own ticket passes nothing and focus goes to the roll button)
+function openCard(n, from){
+  const d=BY[n]; if(!d || !d.s) return;
+  if(roll.hidden){ rollRun++; rollBack=from||null; rollOpen(`Scorecard: ${d.name}`); }
+  else roll.setAttribute('aria-label',`Scorecard: ${d.name}`);
+  const g=geoOf(d), stalls=stallsOf(d);
+  roll.innerHTML=`<div class="roll-stage" id="rollStage" tabindex="-1">
+    <button type="button" class="roll-x" data-roll="close" aria-label="Close">✕</button>
+    <div class="roll-ticket card-pop">
+      <div class="qb"><span class="lbl">Scorecard · #${d.pos} of ${R.length}${d.tied?' (tied)':''}</span></div>
+      <h3>${esc(d.name)}</h3>
+      <div class="roll-meta"><span class="st t${d.rk}">${d.rk}</span><span>${f1(d.t)}/50 · ${TIER_WORD[d.rk]}</span></div>
+      <p class="cp-addr">${esc(d.addr)}${g?`<br><span>${esc(g.region)} region · ${esc(g.area)}</span>`:''}</p>
+      <div class="cp-scores">${CRIT.map((c,i)=>`<div class="krow"><span class="em">${c.e}</span>
+        <div class="kn">${c.s}${vsAvg(d.s[i],i)}</div>
+        <span class="kv">${f1(d.s[i])}<small>/10</small></span>
+        ${meter(d.s[i],CV(i))}</div>`).join('')}</div>
+      ${d.note?`<p class="quote">“${esc(d.note)}”</p>`:''}
+      <div class="facts cp-facts">
+        <div><b>Visited</b>${fmtD(d.d)}</div>
+        <div><b>Best time to go</b>${esc(d.best)||'Not recorded'}</div>
+        ${stalls.length?`<div><b>Stalls in her notes</b>${stalls.map(esc).join(', ')}</div>`:''}
+      </div>
+      <div class="roll-acts">
+        <button type="button" class="btn solid" data-roll="lb">See it on the leaderboard</button>
+        ${g?`<button type="button" class="btn" data-roll="map">📍 Show on map</button>
+        <a class="btn" href="${gmapsUrl(d,g)}" target="_blank" rel="noopener">Open in Google Maps ↗</a>`:''}
+      </div>
+    </div></div>`;
+  const stage=document.getElementById('rollStage');
+  stage.querySelector('[data-roll="close"]').onclick=rollShut;
+  stage.querySelector('[data-roll="lb"]').onclick=()=>goToScorecard(n);
+  const mb=stage.querySelector('[data-roll="map"]'); if(mb) mb.onclick=()=>{ rollShut(); showOnMap(n); };
+  roll.onclick=e=>{ if(e.target===roll) rollShut(); };
+  stage.querySelector('[data-roll="lb"]').focus({preventScroll:true});
+}
 document.addEventListener('keydown',e=>{
   if(roll.hidden) return;
   if(e.key==='Escape'){ e.preventDefault(); rollShut(); }
@@ -1745,6 +1963,207 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="next"]').click(); }
   if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); host.querySelector('.deck-bar [data-act="prev"]').click(); }
 });
+
+/* ---------- map ---------- */
+// geo.json is keyed like scripts/build_geo.py's geo_key(): the first postal code in her address, else her name for the centre
+const normName = n => String(n||'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9 ]/g,' ').replace(/\bcenter\b/g,'centre').split(/\s+/).filter(Boolean).join(' ');
+const geoKey = d => { const m=/S\((\d{6})/.exec(d.addr||''); return m ? m[1] : normName(d.name); };
+// falls back to her name for the centre, so a centre that reopens with a new postal code in its address keeps its official pin
+function geoOf(d){ return GEO[geoKey(d)] || GEO[normName(d.name)] || null; }
+const REGION_ORDER = ['Central','North-East','East','West','North'];
+const ON_MAP = DATA.filter(geoOf), OFF_MAP = DATA.filter(d=>!geoOf(d));
+// the map's one filter state: a status (all / rated / todo) and any number of regions (none picked = every region).
+// Pins, chip counts, Region battle rows, the "showing" line and Clear filters all read from this.
+const mapState = {show:'all', regions:new Set()};
+// region colours for the to-visit rings, region buttons and battle rows (kept clear of the tier colours by shape: tiers are filled pins)
+const REGION_COLOR = {'Central':'#D6336C','North-East':'#0C9BAB','East':'#EE6A0C','West':'#6F4BE0','North':'#6FA80F'};
+let MAP=null, mapTiles=null, mapPins={}, leafletReq=null;
+
+// Leaflet is only fetched the first time someone opens the Map tab
+function loadLeaflet(){
+  if(window.L) return Promise.resolve();
+  return leafletReq ||= new Promise((ok,fail)=>{
+    const css=document.createElement('link'); css.rel='stylesheet';
+    css.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+    css.integrity='sha384-c6Rcwz4e4CITMbu/NBmnNS8yN2sC3cUElMEMfP3vqqKFp7GOYaaBBCqmaWBjmkjb'; css.crossOrigin='anonymous';
+    document.head.appendChild(css);
+    const js=document.createElement('script');
+    js.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+    js.integrity='sha384-NElt3Op+9NBMCYaef5HxeJmU4Xeard/Lku8ek6hoPTvYkQPh3zLIrJP7KiRocsxO'; js.crossOrigin='anonymous';
+    js.onload=ok; js.onerror=()=>{ leafletReq=null; fail(); };
+    document.head.appendChild(js);
+  });
+}
+// OneMap (Singapore Land Authority) base map: its Default style by day, its Night style for Night market
+const darkNow = () => (root.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
+function setTiles(){
+  if(!MAP) return;
+  const style = darkNow() ? 'Night' : 'Default';
+  if(mapTiles && mapTiles.options.style===style) return;
+  if(mapTiles) MAP.removeLayer(mapTiles);
+  mapTiles = L.tileLayer(`https://www.onemap.gov.sg/maps/tiles/${style}/{z}/{x}/{y}.png`, {style, minZoom:11, maxZoom:19, detectRetina:true,
+    attribution:'<img src="https://www.onemap.gov.sg/web-assets/images/logo/om_logo.png" alt="" style="height:20px;width:20px;vertical-align:middle"> <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">OneMap</a> © contributors | <a href="https://www.sla.gov.sg/" target="_blank" rel="noopener">Singapore Land Authority</a>'}).addTo(MAP);
+  // OneMap only draws Singapore: tiles over Johor at the top edge always come back empty, so a few errors are normal.
+  // Only say something when more tiles fail than load.
+  let ok=0, bad=0; const note=document.getElementById('mapTileMsg');
+  mapTiles.on('tileload', ()=>{ ok++; if(note && ok>bad) note.hidden=true; });
+  mapTiles.on('tileerror', ()=>{ bad++; if(note && bad>8 && bad>ok) note.hidden=false; });
+  paintCover();
+}
+// OneMap's zoomed-out tiles (tile zoom 11 and 12) draw SLA's "Inset, Not to Scale" box for Pedra Branca in the sea off
+// Marine Parade. It is part of the tile picture, so CSS can't move it and it gets cut off at the map's edge; Pedra Branca is
+// outside this map's area and has no hawker centres. It is covered with patches of OneMap's own sea colour, measured from
+// their tiles (1 Oct 2026); the patches hug the frame and each label so the coastline beside it is untouched.
+const SEA = {Default:'#6da8e4', Night:'#003753'};
+const COVER = {12:[[[1.2949,103.91624],[1.24342,103.99246]],[[1.29078,103.908],[1.25166,103.91693]],[[1.29216,103.99178],[1.25371,104.00002]],
+                   [[1.30245,103.93478],[1.29422,103.96912]],[[1.24273,103.93684],[1.23381,103.97049]]],
+               11:[[[1.24548,103.96088],[1.13564,104.10782]]]};
+let coverLayers=null;
+function paintCover(){
+  if(!MAP || !mapTiles) return;
+  if(!coverLayers){
+    MAP.createPane('cover'); const pane=MAP.getPane('cover'); pane.style.zIndex=250; pane.style.pointerEvents='none';   // above tiles, below pins
+    coverLayers={}; for(const z in COVER) coverLayers[z]=L.layerGroup(COVER[z].map(b=>L.rectangle(b,{pane:'cover',stroke:false,fillOpacity:1,interactive:false})));
+    MAP.on('zoomend', paintCover);
+  }
+  const tz=Math.round(MAP.getZoom())+(mapTiles.options.zoomOffset||0), fill=SEA[mapTiles.options.style];   // tile zoom actually loaded (retina adds one)
+  for(const z in coverLayers){
+    coverLayers[z].eachLayer(r=>r.setStyle({fillColor:fill}));
+    if(+z===tz) coverLayers[z].addTo(MAP); else coverLayers[z].remove();
+  }
+}
+new MutationObserver(setTiles).observe(root, {attributes:true, attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTiles);
+
+const mapStatus = d => d.s ? 'rated' : d.closed ? 'closed' : 'todo';
+function pinIcon(d){
+  const k=mapStatus(d);
+  if(k==='rated') return L.divIcon({className:'mpin', iconSize:[30,36], iconAnchor:[15,34], tooltipAnchor:[0,-32],
+    html:`<span class="mp t${d.rk}"><b>${d.rk}</b></span>`});
+  return L.divIcon({className:'mpin', iconSize:[16,16], iconAnchor:[8,8], tooltipAnchor:[0,-9], html:`<span class="mdot ${k}" style="--rc:${REGION_COLOR[geoOf(d).region]}"></span>`});
+}
+function smallPopup(d){
+  const g=geoOf(d);
+  return `<div class="mpop"><b>${esc(d.name)}</b><span>${esc(d.addr)}</span><span>${esc(g.region)} region · ${esc(g.area)}</span>
+    <em>${d.closed?'Closed for redevelopment':'Not rated yet'}</em><a href="${gmapsUrl(d,g)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></div>`;
+}
+function initMap(){
+  const box=document.getElementById('mapCanvas');
+  MAP = L.map(box, {minZoom:11, maxZoom:19, zoomSnap:.5, maxBounds:[[1.12,103.55],[1.50,104.12]], maxBoundsViscosity:1, attributionControl:true});
+  MAP.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+  setTiles();
+  // rated pins sit on top of the to-visit dots
+  ON_MAP.forEach(d=>{
+    const g=geoOf(d), m=L.marker([g.lat,g.lng], {icon:pinIcon(d), title:d.name, alt:d.name, keyboard:true, riseOnHover:true, zIndexOffset:d.s?1000+Math.round(d.t*10):0});
+    m.bindTooltip(esc(d.sh), {direction:'top', className:'mtip'});
+    if(d.s) m.on('click', ()=>openCard(d.n, m.getElement()));
+    else m.bindPopup(smallPopup(d), {className:'mpopwrap', maxWidth:260});
+    mapPins[d.n]=m;
+  });
+  document.getElementById('mapMsg').remove();
+  paintMap(true);
+}
+function mapVisible(d){
+  const k=mapStatus(d);
+  return (mapState.show==='all' || mapState.show===k)
+      && (!mapState.regions.size || mapState.regions.has(geoOf(d).region));
+}
+function fitVisible(){
+  const pts=ON_MAP.filter(mapVisible).map(d=>{ const g=geoOf(d); return [g.lat,g.lng]; });
+  if(pts.length) MAP.fitBounds(pts, {padding:[40,40], maxZoom:15, animate:!REDUCED});
+}
+function paintMap(fit){
+  renderMapChips(); renderBattle();
+  if(!MAP) return;
+  ON_MAP.forEach(d=>{ const m=mapPins[d.n], on=mapVisible(d); if(on && !MAP.hasLayer(m)) m.addTo(MAP); else if(!on && MAP.hasLayer(m)) MAP.removeLayer(m); });
+  if(fit) fitVisible();
+}
+const inRegions = d => !mapState.regions.size || mapState.regions.has(geoOf(d).region);
+const filtersOn = () => mapState.show!=='all' || mapState.regions.size>0;
+function renderMapChips(){
+  const cnt=k=>ON_MAP.filter(d=>inRegions(d) && (k==='all' || mapStatus(d)===k)).length;
+  document.getElementById('mapShow').innerHTML = [['all','All'],['rated','Rated'],['todo','Still to visit']]
+    .map(([k,l])=>`<button class="chip" type="button" data-mshow="${k}" aria-pressed="${mapState.show===k}">${l} <small>${cnt(k)}</small></button>`).join('');
+  // each region button shows how many pins it adds under the current status; any number can be on at once
+  const rc=r=>ON_MAP.filter(d=>geoOf(d).region===r && (mapState.show==='all' || mapStatus(d)===mapState.show)).length;
+  document.getElementById('mapRegion').innerHTML =
+    `<button class="chip" type="button" data-mregion="" aria-pressed="${!mapState.regions.size}">All regions</button>`
+    + REGION_ORDER.map(r=>`<button class="chip rchip" type="button" data-mregion="${esc(r)}" aria-pressed="${mapState.regions.has(r)}" style="--rc:${REGION_COLOR[r]}"><i aria-hidden="true"></i>${esc(r)} <small>${rc(r)}</small></button>`).join('');
+  document.querySelectorAll('[data-mshow]').forEach(b=>b.onclick=()=>{ mapState.show=b.dataset.mshow; paintMap(false); });
+  document.querySelectorAll('[data-mregion]').forEach(b=>b.onclick=()=>{ const r=b.dataset.mregion;
+    if(!r) mapState.regions.clear(); else if(mapState.regions.has(r)) mapState.regions.delete(r); else mapState.regions.add(r);
+    paintMap(true); });
+  const clear=document.getElementById('mapClear'); clear.disabled=!filtersOn(); clear.classList.toggle('on', filtersOn());
+  const n=ON_MAP.filter(mapVisible).length, st={all:'all centres',rated:'rated centres',todo:'centres still to visit'}[mapState.show];
+  const regs=[...mapState.regions].sort((a,b)=>REGION_ORDER.indexOf(a)-REGION_ORDER.indexOf(b));
+  document.getElementById('mapNow').innerHTML = `Showing <b>${n}</b> ${n===1?st.replace('centres','centre'):st} in ${regs.length?regs.map(esc).join(' + '):'every region'}.`
+    + (n?'':' Nothing matches that combination yet.');
+}
+document.getElementById('mapClear').onclick=()=>{
+  mapState.show='all'; mapState.regions.clear();
+  if(MAP){ MAP.closePopup(); ON_MAP.forEach(d=>{ const m=mapPins[d.n]; m.closeTooltip(); const el=m.getElement(); if(el) el.classList.remove('ping'); }); }
+  paintMap(true);
+};
+// Region battle: every number is worked out from her scores and the official region of each centre, so it follows her sheet
+function renderBattle(){
+  const rows = REGION_ORDER.map(r=>{
+    const all=ON_MAP.filter(d=>geoOf(d).region===r), rated=all.filter(d=>d.s);
+    const avg = rated.length ? rated.reduce((a,d)=>a+d.t,0)/rated.length : null;
+    // joint best when two centres share the top score, so neither is left out
+    const top = rated.length ? Math.max(...rated.map(d=>d.t)) : null;
+    const best = rated.filter(d=>d.t===top).sort((a,b)=>a.name.localeCompare(b.name));
+    return {r, all, rated, avg, best};
+  }).sort((a,b)=>(b.avg??-1)-(a.avg??-1) || b.rated.length-a.rated.length);
+  let place=0;
+  document.getElementById('battle').innerHTML = rows.map(x=>{
+    const tiers = TIERS.map(([t])=>[t, x.rated.filter(d=>d.rk===t).length]).filter(([,n])=>n);
+    if(x.avg!=null) place++;
+    const on=mapState.regions.has(x.r);
+    return `<div class="brow${on?' on':''}" data-bregion="${esc(x.r)}" role="button" tabindex="0" aria-pressed="${on}" style="--rc:${REGION_COLOR[x.r]}">
+      <span class="bpl">${x.avg!=null?place:'–'}</span>
+      <div class="bmain"><b><i class="rdot" aria-hidden="true"></i>${esc(x.r)}</b>
+        <small>${x.rated.length} of ${x.all.length} rated${x.best.length?` · ${x.best.length>1?'joint best':'best'}: ${x.best.map(d=>`<button type="button" data-n="${d.n}">${esc(d.sh)}</button>`).join(' &amp; ')}&nbsp;<span class="nowrap">${f1(x.best[0].t)}</span>`:''}</small>
+        <div class="bbar">${tiers.map(([t,n])=>`<i style="flex:${n};background:${TV(t)}" title="${n} ${t}"></i>`).join('')}${x.all.length-x.rated.length?`<i class="left" style="flex:${x.all.length-x.rated.length}"></i>`:''}</div>
+      </div>
+      <span class="bavg">${x.avg!=null?`${f1(x.avg)}<small>/50 avg</small>`:'<small>No ratings yet</small>'}</span>
+    </div>`; }).join('');
+  document.querySelectorAll('[data-bregion]').forEach(el=>{
+    const pick=()=>{ const r=el.dataset.bregion; if(mapState.regions.has(r)) mapState.regions.delete(r); else mapState.regions.add(r); paintMap(true);
+      if(matchMedia('(max-width:900px)').matches) document.querySelector('.mapbox').scrollIntoView({behavior:REDUCED?'auto':'smooth', block:'start'}); };
+    el.onclick=e=>{ if(!e.target.closest('button')) pick(); };
+    el.onkeydown=e=>{ if((e.key==='Enter'||e.key===' ') && e.target===el){ e.preventDefault(); pick(); } };
+  });
+  const few = rows.some(x=>x.rated.length && x.rated.length<3);
+  document.getElementById('mapFoot').innerHTML =
+    (few ? 'Early days: a region with only one or two ratings can move a lot with her next visit. ' : '')
+    + `Regions are URA's official planning regions. Locations come from NEA's hawker centre list, checked against OneMap.`
+    + (OFF_MAP.length ? ` Not on the map yet: ${OFF_MAP.map(d=>esc(d.name)).join(', ')}.` : '');
+}
+function mapShown(){
+  paintMap(false);
+  if(!Object.keys(GEO).length){ document.getElementById('mapMsg').textContent="The map couldn't load its locations just now. Try refreshing."; return Promise.resolve(); }
+  if(MAP){ MAP.invalidateSize(); return Promise.resolve(); }
+  return loadLeaflet().then(()=>{ if(!MAP) initMap(); })
+    .catch(()=>{ const m=document.getElementById('mapMsg'); if(m) m.textContent="The map couldn't load just now. The region battle still works, and refreshing usually brings the map back."; });
+}
+// from a scorecard: open the Map tab on the centre's own region (from its official location, not whatever was picked before),
+// so the region chip, the Region battle row and the pin all point at the same place, then fly to the pin
+function showOnMap(n){
+  const d=BY[n]; if(!d || !geoOf(d)) return;
+  mapState.regions = new Set([geoOf(d).region]);   // its own region only, so it is never shown under a region picked earlier
+  if(!mapVisible(d)) mapState.show='all';
+  setTab('map');
+  mapShown().then(()=>{ if(!MAP) return;
+    paintMap(false); const g=geoOf(d), m=mapPins[n];
+    // listen first: with reduced motion setView finishes (and fires moveend) straight away
+    MAP.once('moveend',()=>{ m.openTooltip(); const el=m.getElement(); if(el){ el.classList.remove('ping'); void el.offsetWidth; el.classList.add('ping'); el.focus({preventScroll:true}); } });
+    if(REDUCED) MAP.setView([g.lat,g.lng],16); else MAP.flyTo([g.lat,g.lng],16,{duration:1.2});
+  });
+}
+document.getElementById('mapIntro').innerHTML =
+  `Every hawker centre on Zumi's list, at its official location. <b>Coloured pins</b> are the ${R.length} she has rated, with their tier letter: tap one for her scorecard. <b>Rings</b> are still to visit, in their region's colour. Pick one or more regions and a status to narrow it down; the <b>Region battle</b> ranks the regions by her average score.`;
+document.getElementById('mapLegend').innerHTML =
+  `${SHOWN_TIERS.map(([t])=>`<span><i class="lg-pin t${t}"></i>${t}</span>`).join('')}<span><i class="lg-ring"></i>Still to visit (ring = region)</span>${CLOSED?`<span><i class="mdot closed"></i>Closed</span>`:''}`;
 
 /* ---------- init ---------- */
 renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); newPair();
