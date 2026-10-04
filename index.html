@@ -75,6 +75,84 @@ button{font:inherit;color:inherit;cursor:pointer}
 .seg{display:inline-flex;background:rgba(0,0,0,.18);border-radius:999px;padding:3px}
 .seg button{border:0;background:transparent;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;color:inherit;opacity:.8}
 .seg button[aria-pressed="true"]{background:#fff;color:var(--red2);opacity:1}
+
+/* ---------- Search (header, every tab except the Full list, which keeps its own box) ---------- */
+.hs{position:relative;flex:0 1 320px;min-width:220px;margin-left:auto;margin-bottom:4px;display:flex;align-items:center}
+.hs-ic{position:absolute;left:13px;color:var(--muted);pointer-events:none}
+#hsQ{width:100%;border:0;border-radius:999px;background:var(--paper);color:var(--ink);font:inherit;font-size:14px;padding:9px 14px 9px 38px;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+#hsQ::placeholder{color:var(--muted)}
+#hsQ:focus{outline:3px solid var(--kaya);outline-offset:1px}
+#hsQ::-webkit-search-cancel-button{cursor:pointer}
+.hs-btn{display:none;width:38px;height:38px;border:0;border-radius:50%;background:rgba(0,0,0,.18);color:#fff;place-items:center;padding:0}
+.hs-btn[aria-expanded="true"]{background:#fff;color:var(--red2)}
+.hs-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* the Full list has its own search box: keep the header one out of the way there, without moving anything */
+body[data-tab="sheet"] .hs,body[data-tab="sheet"] .hs-btn{visibility:hidden}
+.hs-pop{position:absolute;right:0;top:calc(100% + 10px);z-index:5;width:min(460px,calc(100vw - 28px));max-height:min(72vh,600px);overflow-y:auto;overscroll-behavior:contain;
+  background:var(--paper);color:var(--ink);border-radius:18px;padding:10px;box-shadow:0 18px 50px rgba(0,0,0,.35),0 0 0 1px var(--line);text-align:left}
+.hs-pop[hidden]{display:none}
+.hs-chips{display:flex;flex-wrap:wrap;gap:6px;padding:2px 2px 8px}
+.hs-chips:empty{display:none}
+.hs-chips .chip{padding:4px 10px;font-size:12px}
+.hs-grp{margin:6px 6px 4px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hs-opt{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:4px 10px;padding:8px 10px;border-radius:12px;cursor:pointer}
+.hs-opt:hover{background:var(--paper2)}
+.hs-opt[aria-selected="true"]{background:var(--paper2);box-shadow:inset 0 0 0 2px var(--kaya)}
+.hs-opt .st{justify-self:center}
+.hs-ring{justify-self:center;width:16px;height:16px;border-radius:50%;border:3px solid var(--rc,var(--line2))}
+.hs-x{justify-self:center;font-size:15px;color:var(--muted)}
+.hs-nm{font-weight:700;font-size:14.5px;line-height:1.25;overflow-wrap:anywhere}
+.hs-sc{font-family:var(--fd);font-weight:800;font-size:18px;white-space:nowrap;text-align:right}
+.hs-sc small{display:block;font-family:var(--fb);font-size:11px;font-weight:600;color:var(--muted)}
+.hs-why{grid-column:2/-1;font-size:12.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+.hs-why b{color:var(--ink);font-weight:600}
+.hs-opt mark{background:color-mix(in srgb,var(--kaya) 45%,transparent);color:inherit;border-radius:3px;padding:0 1px}
+.hs-more{margin:2px 10px 6px;font-size:12.5px;color:var(--muted)}
+.hs-none{margin:8px 8px 6px;font-size:14px;line-height:1.45}
+.hs-sug{display:flex;flex-wrap:wrap;gap:6px;margin:8px 8px 4px}
+.hs-foot:empty{display:none}
+.hs-foot{border-top:1px solid var(--line);margin-top:6px;padding:8px 6px 2px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.hs-foot button{border:0;background:none;padding:0;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.hs-list.fresh{animation:hsFresh .3s ease}
+@keyframes hsFresh{from{opacity:.35;transform:translateY(3px)}}
+/* "looking it up": a wok being tossed while the queue ticket flicks through every centre's number */
+.hs-show{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:6px 14px;padding:14px 14px 12px;border-radius:14px;margin-bottom:6px;
+  background:linear-gradient(180deg,#FFF3CC,#FFFBEF);color:#0F2E29;
+  background-image:linear-gradient(180deg,rgba(255,243,204,.92),rgba(255,251,239,.96)),linear-gradient(90deg,#E9DFC5 1px,transparent 1px),linear-gradient(#E9DFC5 1px,transparent 1px);
+  background-size:auto,18px 18px,18px 18px}
+.hs-show[hidden]{display:none}
+.hs-show svg{grid-row:1/3;width:104px;height:88px;overflow:visible}
+.hs-tkt{justify-self:start;display:inline-flex;align-items:baseline;gap:8px;padding:5px 11px 4px;border-radius:8px;background:#fff;border:1.5px dashed #C8232C;color:#C8232C}
+.hs-tkt small{font:800 9.5px/1 var(--fb);letter-spacing:.12em}
+.hs-tkt b{font-family:'Doto',var(--fd);font-weight:900;font-size:28px;line-height:1;min-width:2.2em}
+.hs-line{margin:0;font-size:13.5px;font-weight:600;min-height:1.4em}
+.hs-skip{grid-column:1/-1;justify-self:end;border:0;background:none;padding:2px 4px;font-size:12px;font-weight:700;color:inherit;opacity:.7;text-decoration:underline;text-underline-offset:3px}
+.hs-show .lan,.hs-show .glow{display:none}
+.hs-show .noodles{transform-origin:52px 50px;animation:hsToss .7s cubic-bezier(.3,0,.4,1) infinite}
+.hs-show .wok{transform-origin:52px 60px;animation:hsTilt .7s ease-in-out infinite}
+.hs-show .steam path{animation:hsSteam 1.4s ease-out infinite;opacity:0}
+.hs-show .steam path:nth-child(2){animation-delay:.45s}.hs-show .steam path:nth-child(3){animation-delay:.9s}
+.hs-show .flame{transform-origin:52px 80px;animation:hsFlame .35s ease-in-out infinite alternate}
+@keyframes hsToss{0%,100%{transform:none}45%{transform:translateY(-17px) rotate(-10deg)}}
+@keyframes hsTilt{0%,100%{transform:none}40%{transform:rotate(-7deg) translateX(-2px)}}
+@keyframes hsSteam{0%{opacity:0;transform:translateY(6px)}30%{opacity:.85}100%{opacity:0;transform:translateY(-16px)}}
+@keyframes hsFlame{from{transform:scaleY(.8)}to{transform:scaleY(1.12)}}
+@keyframes hsSway{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+/* Night market: lanterns on a string, the fire glows and the ticket lights up like the queue board */
+.hs-show.night{background:radial-gradient(120% 90% at 25% 100%,rgba(255,120,40,.22),transparent 60%),linear-gradient(180deg,#14100C,#1E1611);color:#FBEFD8}
+.hs-show.night .lan,.hs-show.night .glow{display:inline}
+.hs-show.night .lan g{transform-box:fill-box;transform-origin:50% 0;animation:hsSway 2.4s ease-in-out infinite}
+.hs-show.night .lan g:nth-child(odd){animation-delay:-1.2s}
+.hs-show.night .steam path{stroke:#FFB37A}
+.hs-show.night .hs-tkt{background:#0B0B0B;border:1.5px solid #3A3A3A;color:#FFB020;text-shadow:0 0 10px rgba(255,176,32,.55)}
+@media (max-width:720px){
+  .hs{display:none;order:5;flex:1 1 100%;margin:0 0 12px}
+  .board.hs-open .hs{display:flex}
+  .hs-btn{display:inline-grid}
+  .hs-pop{left:0;right:0;width:auto;max-height:min(68dvh,560px)}
+}
+@media print{.hs,.hs-btn{display:none}}
 .tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
@@ -97,6 +175,11 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .g-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
 .g-two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:16px}
 .g-main + .g-two{margin-top:24px}   /* Leaderboard/scorecard row to Find your hawker */
+.g-two.g-even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+/* only ever shown when index.html is opened from disk (file://), never to visitors */
+.filewarn{margin:0 0 16px;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--kaya) 22%,var(--paper));border:1px solid var(--kaya);font-size:14px;line-height:1.45}
+.filewarn code{font-size:13px;background:var(--paper);padding:1px 6px;border-radius:5px}
+@media (max-width:1080px){.g-two.g-even{grid-template-columns:1fr}}
 @media (max-width:1080px){.g-hero,.g-main,.g-two{grid-template-columns:1fr}.g-three{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){.g-three{grid-template-columns:1fr}}
 
@@ -411,6 +494,45 @@ svg text{font-family:var(--fb);fill:var(--muted)}
 .tiercol .rng{font-size:11px;color:var(--muted)}
 .supers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .sup{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--paper2)}
+/* Worth a return trip: queue tickets, the stub lit like the NOW SERVING board */
+.tix{display:grid;gap:10px}
+.tick{position:relative;display:grid;grid-template-columns:80px minmax(0,1fr);border:1px solid var(--line);border-radius:14px;background:var(--paper2);cursor:pointer}
+.tick:hover{border-color:var(--ink)}
+.tick::before,.tick::after{content:"";position:absolute;left:73px;width:14px;height:14px;border-radius:50%;background:var(--paper);border:1px solid var(--line)}
+.tick::before{top:-8px}.tick::after{bottom:-8px}
+.tick .stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;background:#0B0B0B;color:#FFB020;
+  border-radius:13px 0 0 13px;border-right:2px dashed rgba(255,176,32,.45);text-align:center}
+.tick .stub small{font-size:8.5px;font-weight:800;letter-spacing:.12em;line-height:1.15;opacity:.85}
+.tick .stub b{font-family:'Doto',var(--fd);font-weight:900;font-size:30px;line-height:1;text-shadow:0 0 10px rgba(255,176,32,.55)}
+.tick .body{display:grid;gap:4px;padding:10px 14px 11px 16px;min-width:0}
+.tick .top{display:flex;align-items:center;gap:8px}
+.tick .nm{flex:1;min-width:0;font-weight:700;font-size:15px;line-height:1.2}
+.tick .tt{font-family:var(--fd);font-weight:800;font-size:20px;white-space:nowrap}
+.tick .tt small{font-family:var(--fb);font-size:11px;font-weight:600;color:var(--muted)}
+.tick q{font-style:italic;font-size:13.5px;line-height:1.4;overflow-wrap:anywhere}
+.tick .when{font-size:12px;color:var(--muted)}
+.tix-more{margin:2px 0 0}
+/* Hawker turf war: the leading side holds the Golden Ladle */
+.belt{position:relative;border-radius:16px;padding:16px 18px 15px;color:#fff;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.35);
+  background:linear-gradient(135deg,color-mix(in srgb,var(--rc) 80%,#000) 0%,var(--rc) 55%,color-mix(in srgb,var(--rc) 78%,#fff) 100%);
+  box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--kaya) 85%,transparent),0 4px 14px rgba(0,0,0,.18)}
+.belt-l{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#FFE08A}
+.belt-r{font-family:var(--fd);font-weight:900;font-size:40px;line-height:.95;text-transform:uppercase;margin-top:6px;padding-right:96px}
+.belt-n{position:absolute;right:18px;top:16px;text-align:right;font-family:var(--fd);font-weight:900;font-size:40px;line-height:1}
+.belt-n small{display:block;font-family:var(--fb);font-size:11px;font-weight:700;opacity:.9}
+.belt-s{margin-top:9px;font-size:13px;font-weight:600}
+.belt-s button{border:0;background:rgba(255,255,255,.2);color:#fff;border-radius:999px;padding:2px 9px;font-weight:700;text-shadow:inherit}
+.belt-s button:hover{background:rgba(255,255,255,.32)}
+.belt.none{background:var(--paper2);color:var(--ink);text-shadow:none;box-shadow:inset 0 0 0 2px var(--line2);cursor:default}
+.belt.none .belt-l{color:var(--muted)}
+.turf-rest{margin-top:10px}
+.turf-rest .brow:first-child .bpl{color:var(--muted)}
+.ttag{display:inline-block;font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:2px 7px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.ttag.contender{background:color-mix(in srgb,var(--tA) 18%,var(--paper));color:var(--tA)}
+.ttag.warm{background:color-mix(in srgb,var(--kaya) 24%,var(--paper));color:color-mix(in srgb,var(--kaya) 45%,var(--ink))}
+.ttag.out{background:var(--paper2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line2)}
+.turf-foot{margin-top:12px}
+@media (max-width:420px){.belt-r{font-size:32px;padding-right:84px}.belt-n{font-size:34px}.tick{grid-template-columns:70px minmax(0,1fr)}.tick::before,.tick::after{left:63px}}
 .sup .e{font-size:26px;line-height:1}
 .sup .t{font-size:12.5px;color:var(--muted);margin-top:8px}
 .sup .w{font-weight:700;font-size:15px;line-height:1.25;margin-top:2px}
@@ -692,7 +814,20 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
       <h1 class="logo" aria-label="Makan or Meh?"><span class="mk">Makan</span><span class="or">or</span><span class="meh">Meh?</span></h1>
       <p>Zumi rates every official hawker centre in Singapore, all <span id="totalN">123</span> of them <span id="fresh"></span></p>
     </div>
+    <div class="hs" id="hs">
+      <svg class="hs-ic" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      <input id="hsQ" type="search" role="combobox" aria-expanded="false" aria-controls="hsList" aria-autocomplete="list" autocomplete="off" spellcheck="false"
+        enterkeyhint="search" maxlength="80" placeholder="Search hawkers, areas, notes…" aria-label="Search hawker centres, areas and Zumi's notes">
+      <div class="hs-pop" id="hsPop" hidden>
+        <div class="hs-show" id="hsShow" hidden></div>
+        <div class="hs-chips" id="hsChips"></div>
+        <div class="hs-list" id="hsList" role="listbox" aria-label="Search results"></div>
+        <div class="hs-foot" id="hsFoot"></div>
+      </div>
+      <span class="hs-sr" id="hsStatus" role="status" aria-live="polite"></span>
+    </div>
     <div class="modes">
+      <button type="button" class="hs-btn" id="hsBtn" aria-label="Search hawker centres" aria-controls="hs" aria-expanded="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
       <button id="newData" type="button">New ratings are in. Refresh</button>
       <div class="seg" role="group" aria-label="Colour mode">
         <button data-theme-btn="light" aria-pressed="false">☀️ Day market</button>
@@ -709,6 +844,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 </header>
 
 <main>
+  <p class="filewarn" id="fileWarn" hidden>This page was opened straight from the folder, so your browser blocks its live ratings and the region details. To see everything, run <code>python -m http.server 8000</code> in the project folder and open <b>http://localhost:8000</b>.</p>
   <!-- DASHBOARD -->
   <section class="view on dim-scope" id="v-dashboard">
     <details class="panel intro" id="intro" open>
@@ -762,27 +898,40 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
       </div>
     </div>
 
+    <div class="grid g-two g-even">
+      <div class="panel">
+        <h2><span class="stall">#01-04</span>Worth a return trip</h2>
+        <p class="sub">Every centre Zumi graded A or above ("Must makan"), in her own words. Updates as she rates more.</p>
+        <div class="tix" id="revisit"></div>
+      </div>
+      <div class="panel">
+        <h2><span class="stall">#01-05</span>Hawker turf war</h2>
+        <p class="sub">Which side of the island makans best? Ranked by the average of Zumi's scores in each of Singapore's official regions.</p>
+        <div id="turf"></div>
+      </div>
+    </div>
+
     <div class="panel trailpanel" style="margin-top:16px">
-      <h2><span class="stall">#01-04</span>The journey so far</h2>
+      <h2><span class="stall">#01-06</span>The journey so far</h2>
       <p class="sub">Zumi's food diary: where she ate, day by day, newest first. Tap any centre to see its scorecard.</p>
       <div id="trail"></div>
       <div class="days" id="days"></div>
     </div>
 
     <div class="panel gamepanel" id="gamePanel" style="margin-top:16px">
-      <h2><span class="stall">#01-05</span>Makan or Meh? The game</h2>
+      <h2><span class="stall">#01-07</span>Makan or Meh? The game</h2>
       <p class="sub">Two hawker centres. Tap the one you think Zumi scored higher, then see if you were right.</p>
       <div id="game"></div>
     </div>
 
     <div class="grid g-two">
       <div class="panel">
-        <h2><span class="stall">#01-06</span>Zumi's highlights</h2>
+        <h2><span class="stall">#01-08</span>Zumi's highlights</h2>
         <p class="sub">Straight from her scores and notes.</p>
         <div class="supers" id="supers"></div>
       </div>
       <div class="panel">
-        <h2><span class="stall">#01-07</span>Tier count</h2>
+        <h2><span class="stall">#01-09</span>Tier count</h2>
         <p class="sub">One square per rated centre.</p>
         <div class="tiercols" id="tiers"></div>
       </div>
@@ -792,7 +941,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   <!-- SHEET -->
   <section class="view" id="v-sheet">
     <div class="sheet-tools">
-      <input class="search" id="q" type="search" placeholder="Search centre, address or notes" aria-label="Search">
+      <input class="search" id="q" type="search" placeholder="Search centre, area, address or notes" aria-label="Search">
       <div class="chips" id="sheetChips" style="margin:0"></div>
       <span class="count" id="count"></span>
     </div>
@@ -917,6 +1066,7 @@ function setTab(t){
   // #about (and the old #pitch link) open the Dashboard with the intro card shown
   const intro = t==='about' || t==='pitch';
   if(!['dashboard','sheet','map','slides'].includes(t)) t='dashboard';
+  hsTab(t);
   document.body.dataset.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
@@ -1015,7 +1165,7 @@ document.querySelector('main').addEventListener('click',e=>{
   const d = BY[+el.dataset.n];
   if(!d || !d.s) return;
   // Find your hawker's picks and the game's scorecard links open a pop-up right there instead of scrolling far away
-  if(el.closest('#picks, #also, #game, #v-map')) return openCard(d.n, el);
+  if(el.closest('#picks, #also, #game, #v-map, #revisit, #turf')) return openCard(d.n, el);
   select(d.n); if(el.closest('#v-dashboard')) scrollToDetail();
 });
 // keyboard: Enter or Space on a focusable centre row/card, or on a sortable column header, works like a click
@@ -1372,6 +1522,78 @@ function renderSupers(){
   document.getElementById('supers').innerHTML=h;
 }
 
+/* ---------- Worth a return trip: every centre she graded A or above ---------- */
+const REVISIT_SHOW = 6;
+const revisitList = () => ranked.filter(d=>d.rk==='S' || d.rk==='A');
+function renderRevisit(){
+  const list=revisitList(), el=document.getElementById('revisit');
+  if(!list.length){ el.innerHTML=`<p class="also">No "Must makan" yet. Her first A is still out there.</p>`; return; }
+  const trim = t => t.length>110 ? t.slice(0,107).replace(/\s+\S*$/,'')+'…' : t;
+  el.innerHTML = list.slice(0,REVISIT_SHOW).map(d=>`<div class="tick" data-n="${d.n}" tabindex="0" role="button" aria-label="${esc(d.name)}, ${f1(d.t)} out of 50, tier ${d.rk}. Open scorecard">
+      <div class="stub" aria-hidden="true"><small>QUEUE<br>AGAIN</small><b>${d.pos}</b><small>OF ${R.length}</small></div>
+      <div class="body">
+        <div class="top"><span class="st t${d.rk}">${d.rk}</span><span class="nm">${esc(d.sh)}</span><span class="tt">${f1(d.t)}<small>/50</small></span></div>
+        ${d.note?`<q>${esc(trim(d.note))}</q>`:''}
+        ${d.best?`<span class="when">Best time to go: ${esc(d.best)}</span>`:''}
+      </div></div>`).join('')
+    + (list.length>REVISIT_SHOW ? `<p class="also tix-more">Plus ${list.length-REVISIT_SHOW} more graded A or above. <button type="button" data-golb>See them on the Leaderboard</button></p>` : '');
+}
+document.getElementById('revisit').addEventListener('click',e=>{
+  if(e.target.closest('[data-golb]')) document.querySelector('.lbcard').scrollIntoView({behavior:REDUCED?'auto':'smooth', block:'start'});
+});
+
+/* ---------- Hawker turf war: which side of the island makans best ---------- */
+// A side needs TURF_MIN rated centres to hold the Golden Ladle, so one good (or bad) meal can't decide a whole region.
+const TURF_MIN = 3;
+function turfData(){
+  const rows=regionRows();
+  const status = x => x.rated.length>=TURF_MIN ? 'contender' : x.rated.length ? 'warm' : 'out';
+  const champ = rows.filter(x=>status(x)==='contender').sort((a,b)=>b.avg-a.avg || b.rated.length-a.rated.length)[0] || null;
+  const order = {contender:0, warm:1, out:2};
+  const rest = rows.filter(x=>x!==champ).sort((a,b)=>order[status(a)]-order[status(b)] || (b.avg??-1)-(a.avg??-1) || b.rated.length-a.rated.length);
+  return {champ, rest, status};
+}
+const TURF_LABEL = {contender:'Contender', warm:'Warming up', out:'Not in the ring yet'};
+function renderTurf(){
+  if(!ON_MAP.length){ document.getElementById('turf').innerHTML='<p class="also">The region details couldn\'t load just now, so the turf war can\'t be scored. Refreshing the page usually brings them back.</p>'; return; }
+  const {champ, rest, status} = turfData();
+  const bests = x => x.best.map(d=>`<button type="button" data-n="${d.n}">${esc(d.sh)}</button>`).join(' &amp; ');
+  const head = champ
+    ? `<div class="belt" style="--rc:${REGION_COLOR[champ.r]}" data-turf="${esc(champ.r)}" role="button" tabindex="0" aria-label="${esc(champ.r)} holds the Golden Ladle. See it on the map">
+        <div class="belt-l">🏆 Holds the Golden Ladle</div>
+        <div class="belt-r">${esc(champ.r)}</div>
+        <div class="belt-n">${f1(champ.avg)}<small>/50 average</small></div>
+        <div class="belt-s">${champ.rated.length} of ${champ.all.length} rated · ${champ.best.length>1?'joint best':'best'}: ${bests(champ)}</div></div>`
+    : `<div class="belt none"><div class="belt-l">🏆 The Golden Ladle is up for grabs</div>
+        <div class="belt-s">No champion yet. A side needs ${TURF_MIN} rated centres to fight for the ladle.</div></div>`;
+  let place = champ ? 1 : 0;
+  const rows = rest.map(x=>{
+    const k=status(x); if(k==='contender') place++;
+    const tiers = TIERS.map(([t])=>[t, x.rated.filter(d=>d.rk===t).length]).filter(([,n])=>n);
+    const note = k==='contender' ? `${x.rated.length} of ${x.all.length} rated · ${x.best.length>1?'joint best':'best'}: ${bests(x)}&nbsp;<span class="nowrap">${f1(x.best[0].t)}</span>`
+      : k==='warm' ? `${x.rated.length} of ${x.all.length} rated · needs ${TURF_MIN} to fight for the ladle`
+      : `${x.all.length} centres waiting for her`;
+    return `<div class="brow" data-turf="${esc(x.r)}" role="button" tabindex="0" style="--rc:${REGION_COLOR[x.r]}" aria-label="${esc(x.r)}: ${TURF_LABEL[k]}. See it on the map">
+      <span class="bpl">${k==='contender'?place:'–'}</span>
+      <div class="bmain"><b><i class="rdot" aria-hidden="true"></i>${esc(x.r)}<span class="ttag ${k}">${TURF_LABEL[k]}</span></b>
+        <small>${note}</small>
+        <div class="bbar">${tiers.map(([t,n])=>`<i style="flex:${n};background:${TV(t)}" title="${n} ${t}"></i>`).join('')}${x.all.length-x.rated.length?`<i class="left" style="flex:${x.all.length-x.rated.length}"></i>`:''}</div>
+      </div>
+      <span class="bavg">${x.avg!=null?`${f1(x.avg)}<small>/50 avg</small>`:'<small>No ratings yet</small>'}</span>
+    </div>`; }).join('');
+  document.getElementById('turf').innerHTML = head + `<div class="turf-rest">${rows}</div>
+    <p class="also turf-foot">Singapore's five official regions. There's no South region: the south coast is part of Central. <button type="button" data-turf="">See the sides on the map →</button></p>`;
+}
+// a side (or the footnote) opens the Map tab on that region, like a scorecard's "Show on map"
+function turfToMap(r){
+  mapState.regions = r ? new Set([r]) : new Set(); mapState.show='all';
+  setTab('map');
+  mapShown().then(()=>{ if(MAP) paintMap(true); });
+}
+const turfEl = document.getElementById('turf');
+turfEl.addEventListener('click',e=>{ if(e.target.closest('[data-n]')) return; const t=e.target.closest('[data-turf]'); if(t) turfToMap(t.dataset.turf); });
+turfEl.addEventListener('keydown',e=>{ const t=e.target.closest('[data-turf][tabindex]'); if(t && t===e.target && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); turfToMap(t.dataset.turf); } });
+
 /* ---------- Makan or Meh game: which did Zumi score higher? ---------- */
 const game = {pair:null, pick:null, right:0, played:0, streak:0, best:0};
 function newPair(){
@@ -1701,12 +1923,13 @@ function renderSheetChips(){
 }
 function heat(v,i){ if(v==null) return ''; const a = Math.max(0,(v-4)/6); return `background:color-mix(in srgb,var(--c${i}) ${Math.round(8+a*42)}%,var(--paper))`; }
 function renderSheet(){
-  const q=state.q.trim().toLowerCase();
+  // same matcher as the header search, so both boxes always find the same centres
+  const sr = state.q.trim() ? searchCentres(state.q) : null, hits = sr && sr.terms.length ? new Set(sr.all.map(x=>x.d.n)) : null;
   let rows = DATA.filter(d=>{
     if(state.filter==='rated' && !d.s) return false;
     if(state.filter==='todo' && (d.s||d.closed)) return false;
     if(state.filter.length===1 && d.rk!==state.filter) return false;
-    if(q && !(`${d.name} ${d.addr} ${d.note||''} ${d.best||''}`.toLowerCase().includes(q))) return false;
+    if(hits && !hits.has(d.n)) return false;
     return true;
   });
   const {k,dir}=state.sort;
@@ -2105,8 +2328,9 @@ document.getElementById('mapClear').onclick=()=>{
   paintMap(true);
 };
 // Region battle: every number is worked out from her scores and the official region of each centre, so it follows her sheet
-function renderBattle(){
-  const rows = REGION_ORDER.map(r=>{
+// per-region numbers, shared by the Map tab's Region battle and the Dashboard's Hawker turf war so they always agree
+function regionRows(){
+  return REGION_ORDER.map(r=>{
     const all=ON_MAP.filter(d=>geoOf(d).region===r), rated=all.filter(d=>d.s);
     const avg = rated.length ? rated.reduce((a,d)=>a+d.t,0)/rated.length : null;
     // joint best when two centres share the top score, so neither is left out
@@ -2114,6 +2338,10 @@ function renderBattle(){
     const best = rated.filter(d=>d.t===top).sort((a,b)=>a.name.localeCompare(b.name));
     return {r, all, rated, avg, best};
   }).sort((a,b)=>(b.avg??-1)-(a.avg??-1) || b.rated.length-a.rated.length);
+}
+function renderBattle(){
+  if(!ON_MAP.length){ document.getElementById('battle').innerHTML='<p class="also">The region details couldn\'t load just now. Refreshing the page usually brings them back.</p>'; return; }
+  const rows = regionRows();
   let place=0;
   document.getElementById('battle').innerHTML = rows.map(x=>{
     const tiers = TIERS.map(([t])=>[t, x.rated.filter(d=>d.rk===t).length]).filter(([,n])=>n);
@@ -2165,8 +2393,284 @@ document.getElementById('mapIntro').innerHTML =
 document.getElementById('mapLegend').innerHTML =
   `${SHOWN_TIERS.map(([t])=>`<span><i class="lg-pin t${t}"></i>${t}</span>`).join('')}<span><i class="lg-ring"></i>Still to visit (ring = region)</span>${CLOSED?`<span><i class="mdot closed"></i>Closed</span>`:''}`;
 
+/* ---------- search: one matcher for the header box and the Full list box ---------- */
+// Everything shown comes straight from DATA and geo.json, the same objects the leaderboard, scorecards and map use.
+// Every word typed must appear somewhere in a centre's text: name, short name, NEA's name, area, region, address,
+// Zumi's notes or best time. Common abbreviations count as the full word ("rd" = road), and tier or status words
+// ("S tier", "Must makan", "unrated", "closed") also match centres with that tier or status. Near-misses are only
+// ever offered as "Did you mean" buttons, never mixed into the results.
+const normQ = s => String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/&/g,' and ').replace(/[^a-z0-9]+/g,' ').trim();
+const SYN = [['road','rd'],['avenue','ave'],['street','st'],['drive','dr'],['lorong','lor'],['block','blk','blks'],['centre','center','ctr'],
+  ['market','mkt'],['ang mo kio','amk'],['upper','upp'],['jalan','jln'],['bukit','bt'],['tanjong','tg']];
+const STATUS = [['still to visit','todo'],['yet to visit','todo'],['to visit','todo'],['not visited','todo'],['unvisited','todo'],['not rated','todo'],
+  ['unrated','todo'],['visited','rated'],['rated','rated'],['closed','closed']];
+const statusOf = d => d.s ? 'rated' : d.closed ? 'closed' : 'todo';
+const FIELD_RANK = {name:2, area:3, region:4, addr:5, best:6, note:7};
+let SIDX = null;
+function searchIndex(){
+  if(SIDX) return SIDX;
+  SIDX = DATA.map(d=>{ const g=geoOf(d)||{};
+    const names=[d.name, d.sh, g.nea].filter(Boolean).map(normQ);
+    return { d, g, names, f:[['name',names.join(' | ')],['area',normQ(g.area)],['region',normQ(g.region)],['addr',normQ(d.addr)],['best',normQ(d.best)],['note',normQ(d.note)]] };
+  });
+  return SIDX;
+}
+// a typed word becomes a term: the text it may match (w = whole word only) and, for tier/status words, who else counts
+function parseQ(raw){
+  let q = normQ(raw).replace(/\bnortheast\b/g,'north east');
+  const terms=[];
+  const take=(rx, mk)=>{ q=q.replace(rx,(...m)=>{ terms.push(mk(m)); return ' '; }); };
+  take(/\b(?:([sabcdf]) tier|tier ([sabcdf]))\b/g, m=>{ const t=(m[1]||m[2]).toUpperCase(); return {lit:[{s:m[0]}], pred:d=>d.rk===t}; });
+  Object.entries(TIER_WORD).forEach(([t,w])=>take(new RegExp(`\\b${normQ(w)}\\b`,'g'), m=>({lit:[{s:m[0]}], pred:d=>d.rk===t})));
+  STATUS.forEach(([p,k])=>take(new RegExp(`\\b${p}\\b`,'g'), m=>({lit:[{s:m[0]}], pred:d=>statusOf(d)===k})));
+  take(/\bnorth east\b/g, m=>({lit:[{s:m[0]}]}));
+  take(/\bang mo kio\b/g, m=>({lit:[{s:m[0]},{s:'amk',w:1}]}));
+  q.split(' ').filter(Boolean).forEach(w=>{
+    const lit=[{s:w}], grp=SYN.find(g=>g.includes(w));
+    // the full word also finds its abbreviation, but only as a whole word ("street" must not match every "st" in "best")
+    if(grp) grp.filter(x=>x!==w).forEach(x=>lit.push(x.length<w.length ? {s:x,w:1} : {s:x}));
+    terms.push({lit});
+  });
+  return terms;
+}
+const hasAlt = (text,a) => a.w ? (' '+text.replace(/ \| /g,'  ')+' ').includes(' '+a.s+' ') : text.includes(a.s);
+function searchCentres(raw){
+  const terms=parseQ(raw), qn=normQ(raw), out=[];
+  if(!terms.length) return {raw, terms, all:out};
+  searchIndex().forEach(e=>{
+    let worst=0, why=null;
+    for(const t of terms){
+      const at=e.f.find(([,txt])=>txt && t.lit.some(a=>hasAlt(txt,a)));
+      if(at){ const r=FIELD_RANK[at[0]]; if(r>worst){ worst=r; why=[at[0],t]; } }
+      else if(t.pred && t.pred(e.d)){ if(!worst) worst=2; }
+      else return;
+    }
+    const cls = e.names.includes(qn) ? 0 : e.names.some(n=>n.startsWith(qn)) ? 1 : worst;
+    out.push({d:e.d, g:e.g, cls, why: cls>2 ? why : null});
+  });
+  const G={rated:0,todo:1,closed:2};
+  out.sort((a,b)=>G[statusOf(a.d)]-G[statusOf(b.d)] || a.cls-b.cls || (a.d.s ? a.d.pos-b.d.pos : 0) || a.d.name.localeCompare(b.d.name));
+  return {raw, terms, all:out};
+}
+// near-misses for "Did you mean": every word typed must be within one letter (short words) or two (longer ones)
+// of a word in a centre's name, an area or a region
+function editDist(a,b){
+  const m=a.length, n=b.length; let p=Array.from({length:n+1},(_,j)=>j);
+  for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1, c[j-1]+1, p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; }
+  return p[n];
+}
+function suggest(raw){
+  const toks=normQ(raw).split(' ').filter(w=>w.length>=3); if(!toks.length) return [];
+  const cands=[];
+  searchIndex().forEach(e=>cands.push({label:e.d.sh, words:e.names.join(' ').split(/[ |]+/), pri:e.d.s?0:1}));
+  [...new Set(searchIndex().map(e=>e.g.area).filter(Boolean))].forEach(a=>cands.push({label:a, words:normQ(a).split(' '), pri:2}));
+  REGION_ORDER.forEach(r=>cands.push({label:r, words:normQ(r).split(' '), pri:2}));
+  const scored=cands.map(c=>{ let sum=0;
+    for(const t of toks){ const lim=t.length<=5?1:2;
+      const best=Math.min(...c.words.filter(Boolean).map(w=>Math.min(editDist(t,w), w.length>t.length?editDist(t,w.slice(0,t.length)):99)));
+      if(best>lim) return null; sum+=best; }
+    return sum>0 ? {...c, sum} : null; }).filter(Boolean);
+  scored.sort((a,b)=>a.sum-b.sum || a.pri-b.pri || a.label.localeCompare(b.label));
+  return [...new Set(scored.map(c=>c.label))].slice(0,3);
+}
+// highlight what matched, on the original text (always escaped)
+function hlRx(terms){
+  const pats=[]; terms.forEach(t=>t.lit.forEach(a=>{ if(a.s.length>=2) pats.push((a.w?'\\b':'')+a.s.split(' ').map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('[^A-Za-z0-9]+')+(a.w?'\\b':'')); }));
+  return pats.length ? new RegExp(pats.sort((a,b)=>b.length-a.length).join('|'),'gi') : null;
+}
+function hl(raw, rx){
+  raw=String(raw||''); if(!rx) return esc(raw);
+  let out='', i=0; rx.lastIndex=0;
+  for(const m of raw.matchAll(rx)){ if(!m[0]) continue; out+=esc(raw.slice(i,m.index))+'<mark>'+esc(m[0])+'</mark>'; i=m.index+m[0].length; }
+  return out+esc(raw.slice(i));
+}
+function snippet(raw, rx){
+  raw=String(raw||''); rx.lastIndex=0; const m=raw.match(new RegExp(rx.source,'i')); if(!m) return hl(raw, rx);
+  const a=Math.max(0,m.index-45), b=Math.min(raw.length,m.index+m[0].length+45);
+  return (a?'…':'')+hl(raw.slice(a,b).trim(), rx)+(b<raw.length?'…':'');
+}
+
+const hsEl=document.getElementById('hs'), hsQ=document.getElementById('hsQ'), hsPop=document.getElementById('hsPop'), hsShow=document.getElementById('hsShow'),
+  hsList=document.getElementById('hsList'), hsChips=document.getElementById('hsChips'), hsFoot=document.getElementById('hsFoot'),
+  hsStatus=document.getElementById('hsStatus'), hsBtn=document.getElementById('hsBtn'), board=document.querySelector('.board');
+const HS_ROWS = 8;
+const hs = {res:null, chip:'all', played:false, act:-1, timer:0, showing:false, showTimers:[]};
+const pad = (v,n) => String(v).padStart(n,'0');
+const plural = (n,w) => `${n} ${w}${n===1?'':/(ch|sh|s|x)$/.test(w)?'es':'s'}`;
+
+function hsChipOf(x){ return hs.chip==='all' || hs.chip===statusOf(x.d) || hs.chip==='r:'+x.g.region; }
+function hsRow(x, rx){
+  const d=x.d, g=x.g, place=[g.area,g.region].filter(Boolean).join(', ');
+  const icon = d.s ? `<span class="st t${d.rk}">${d.rk}</span>`
+    : d.closed ? `<span class="hs-x" aria-hidden="true">✕</span>` : `<span class="hs-ring" style="--rc:${REGION_COLOR[g.region]||'var(--line2)'}" aria-hidden="true"></span>`;
+  let why;
+  if(x.why){ const [f]=x.why;
+    why = f==='area' ? `Area: <b>${hl(g.area,rx)}</b>${g.region?`, ${esc(g.region)}`:''}`
+      : f==='region' ? `Region: <b>${hl(g.region,rx)}</b>${g.area?` · ${esc(g.area)}`:''}`
+      : f==='addr' ? `Address: ${hl(d.addr,rx)}`
+      : f==='best' ? `Best time to go: <b>${hl(d.best,rx)}</b>`
+      : `Her notes: “${snippet(d.note,rx)}”`;
+  } else why = d.s ? `${TIER_WORD[d.rk]}${place?` · ${esc(place)}`:''}` : d.closed ? `Closed · ${esc(d.addr)}` : `Still to visit${place?` · ${esc(place)}`:''}`;
+  const right = d.s ? `<span class="hs-sc">${f1(d.t)}<small>/50 · #${d.pos} of ${R.length}</small></span>` : '<span></span>';
+  const label = `${d.name}. ${d.s ? `${d.rk} tier, ${f1(d.t)} out of 50, ranked ${d.pos} of ${R.length}` : d.closed ? 'Closed' : 'Still to visit'}`;
+  return `<div class="hs-opt" role="option" id="hsO${d.n}" data-n="${d.n}" aria-selected="false" aria-label="${esc(label)}">${icon}
+    <span class="hs-nm">${hl(d.name,rx)}</span>${right}<span class="hs-why">${why}</span></div>`;
+}
+function hsRender(fresh){
+  const res=hs.res; if(!res) return;
+  hsStopShow();
+  const all=res.all, rx=hlRx(res.terms), shown=all.filter(hsChipOf);
+  const by = k => all.filter(x=>statusOf(x.d)===k).length;
+  const regs = REGION_ORDER.map(r=>[r, all.filter(x=>x.g.region===r).length]).filter(([,n])=>n);
+  // a chip only when it narrows something: no "Rated 0", and no region chip when everything is in that one region
+  const chips = [['all',`All ${all.length}`]].concat([['rated','Rated'],['todo','To visit'],['closed','Closed']].filter(([k])=>by(k) && by(k)<all.length).map(([k,l])=>[k,`${l} ${by(k)}`]))
+    .concat(regs.filter(([,n])=>n<all.length).map(([r,n])=>['r:'+r,`${r} ${n}`]));
+  if(hs.chip!=='all' && !chips.some(([k])=>k===hs.chip)) hs.chip='all';
+  hsChips.innerHTML = chips.length>1 ? chips.map(([k,l])=>`<button type="button" class="chip" data-hc="${esc(k)}" aria-pressed="${hs.chip===k}">${esc(l)}</button>`).join('') : '';
+  if(!all.length){
+    const sug=suggest(res.raw);
+    hsList.innerHTML = `<p class="hs-none">No centre on Zumi's list matches “${esc(res.raw.trim())}”.${sug.length?' Did you mean:':' Try a centre, an area like Bedok, or a word from her notes.'}</p>`
+      + (sug.length?`<div class="hs-sug">${sug.map(s=>`<button type="button" class="chip" data-sug="${esc(s)}">${esc(s)}</button>`).join('')}</div>`:'');
+    hsFoot.innerHTML=''; hsStatus.textContent = `No matches.${sug.length?` Did you mean ${sug.join(', ')}?`:''}`;
+  } else {
+    const groups=[['rated','Rated'],['todo','Still to visit'],['closed','Closed']];
+    hsList.innerHTML = groups.map(([k,l])=>{ const g=shown.filter(x=>statusOf(x.d)===k); if(!g.length) return '';
+      return `<div role="group" aria-label="${l}"><p class="hs-grp" aria-hidden="true">${l} (${g.length})</p>${g.slice(0,HS_ROWS).map(x=>hsRow(x,rx)).join('')}
+        ${g.length>HS_ROWS?`<p class="hs-more">Plus ${g.length-HS_ROWS} more. Narrow it down or see them all in the Full list.</p>`:''}</div>`; }).join('');
+    // the Full list can filter Rated / To visit, not regions, so its count is worked out for what it will really show
+    const lf = hs.chip==='rated'||hs.chip==='todo' ? hs.chip : 'all', ln = lf==='all' ? all.length : by(lf);
+    hsFoot.innerHTML = `<span>${plural(shown.length,'match')}${hs.chip!=='all'?` (of ${all.length})`:''}</span><button type="button" data-hsall="${lf}">See all ${ln} in the Full list</button>`;
+    hsStatus.textContent = `${plural(shown.length,'centre')} found.`;
+  }
+  hsList.hidden=false; hs.act=-1; hsQ.removeAttribute('aria-activedescendant');
+  if(fresh){ hsList.classList.remove('fresh'); void hsList.offsetWidth; hsList.classList.add('fresh'); }
+}
+// the looking-it-up moment: purely for feel, the results are already worked out underneath
+function hsStartShow(){
+  hs.showing=true; hs.played=true;
+  hsList.hidden=true; hsChips.innerHTML=''; hsFoot.innerHTML=''; hsStatus.textContent='Searching…';
+  hsShow.classList.toggle('night', darkNow());
+  hsShow.innerHTML = `<svg viewBox="0 0 104 88" aria-hidden="true">
+    <g class="lan"><path d="M-4 5 Q52 22 108 5" stroke="#8A6A45" stroke-width="1.2" fill="none"/>
+      ${[[14,8],[40,13],[66,13],[92,8]].map(([x,y])=>`<g><line x1="${x}" y1="${y}" x2="${x}" y2="${y+3}" stroke="#8A6A45"/><ellipse cx="${x}" cy="${y+9}" rx="6" ry="7" fill="#E0322B"/><rect x="${x-3}" y="${y+1.5}" width="6" height="2" fill="#F2B01E"/><rect x="${x-3}" y="${y+15}" width="6" height="2" fill="#F2B01E"/></g>`).join('')}</g>
+    <g class="steam" stroke="#B9A98A" stroke-width="2.2" fill="none" stroke-linecap="round"><path d="M38 42q-4-6 0-11t0-11"/><path d="M52 40q-4-6 0-11t0-11"/><path d="M66 42q-4-6 0-11t0-11"/></g>
+    <ellipse class="glow" cx="52" cy="84" rx="36" ry="7" fill="#FF7A1A" opacity=".4"/>
+    <g class="flame"><path d="M38 87q3-11 8-3q3-10 6-1q3-10 7 1q4-9 7 3z" fill="#FF8A1F"/><path d="M45 87q3-6 6-2q3-6 6 0q2-5 4 2z" fill="#FFD23F"/></g>
+    <g class="wok"><path d="M88 60l15-7" stroke="#6B4423" stroke-width="5" stroke-linecap="round"/><path d="M16 60q36 32 72 0z" fill="#2B2B2B"/><path d="M15 60h74" stroke="#5C5C5C" stroke-width="3" stroke-linecap="round"/>
+      <g class="noodles" fill="none" stroke-linecap="round" stroke-width="3"><path d="M32 57q6-12 12 0t12 0t12 0" stroke="#F4C54A"/><path d="M36 53q5-9 10 0t10 0t10 0" stroke="#E2A23A"/>
+        <circle cx="44" cy="47" r="2.8" fill="#3E9B4F" stroke="none"/><circle cx="61" cy="46" r="2.8" fill="#E0573B" stroke="none"/></g></g>
+  </svg>
+  <span class="hs-tkt"><small id="hsTl">CHECKING</small><b id="hsTn">000</b></span>
+  <p class="hs-line" id="hsLine">Flipping through Zumi's scoresheet…</p>
+  <button type="button" class="hs-skip" data-skip>Skip</button>`;
+  hsShow.hidden=false;
+  const tn=document.getElementById('hsTn'), line=document.getElementById('hsLine'), tl=document.getElementById('hsTl');
+  let k=0; const tick=setInterval(()=>{ k=(k+7)%TOTAL; tn.textContent=pad(DATA[k].n,3); },70);
+  hs.showTimers=[
+    ()=>clearInterval(tick),
+    setTimeout(()=>{ line.textContent=`Checking all ${TOTAL} centres…`; },520),
+    setTimeout(()=>{ clearInterval(tick); const n=hs.res?hs.res.all.length:0; tl.textContent='FOUND'; tn.textContent=pad(n,2);
+      line.textContent = n ? `Found ${plural(n,'match')}.` : 'No exact match.'; },1050),
+    setTimeout(()=>hsRender(false),1450)
+  ];
+}
+function hsStopShow(){
+  if(!hs.showing) return;
+  hs.showTimers.forEach(t=>typeof t==='function'?t():clearTimeout(t)); hs.showTimers=[]; hs.showing=false;
+  hsShow.hidden=true; hsShow.innerHTML='';
+}
+function hsOpen(){ hsPop.hidden=false; hsQ.setAttribute('aria-expanded','true'); }
+function hsClose(){
+  clearTimeout(hs.timer); hsStopShow();
+  hsPop.hidden=true; hsQ.setAttribute('aria-expanded','false'); hsQ.removeAttribute('aria-activedescendant');
+  hs.played=false; hs.chip='all'; hs.act=-1; hsStatus.textContent='';
+}
+function hsRun(){
+  clearTimeout(hs.timer);
+  const raw=hsQ.value; if(!raw.trim()){ hsClose(); return; }
+  hs.res=searchCentres(raw); hsOpen();
+  if(hs.showing) return;   // the show picks up the latest results when it ends
+  if(!hs.played && !REDUCED) hsStartShow(); else hsRender(true);
+}
+// the results on screen are not for what's in the box yet (closed, or still waiting for a pause in typing)
+const hsStale = () => hsPop.hidden || !hs.res || hs.res.raw!==hsQ.value;
+function hsMove(step){
+  const opts=[...hsList.querySelectorAll('.hs-opt')]; if(!opts.length) return;
+  hs.act = hs.act<0 ? (step>0?0:opts.length-1) : (hs.act+step+opts.length)%opts.length;
+  opts.forEach((o,i)=>o.setAttribute('aria-selected', i===hs.act));
+  hsQ.setAttribute('aria-activedescendant', opts[hs.act].id); opts[hs.act].scrollIntoView({block:'nearest'});
+}
+function hsPick(n){
+  const d=BY[n]; if(!d) return;
+  hsClose();
+  if(d.s) openCard(n, hsQ);
+  else if(geoOf(d)){ board.classList.remove('hs-open'); hsBtn.setAttribute('aria-expanded','false'); showOnMap(n); }
+  else hsToSheet(d.name, 'all');
+}
+function hsToSheet(q, filter){
+  const box=document.getElementById('q');
+  box.value=q; state.q=q; state.filter=filter;
+  renderSheetChips(); renderSheet(); setTab('sheet'); box.focus({preventScroll:true});
+}
+// called by setTab: the Full list has its own box, so the header search steps aside (taking what was typed with it)
+function hsTab(t){
+  const was=!hsPop.hidden && hsQ.value.trim();
+  hsClose();
+  if(t==='sheet'){ board.classList.remove('hs-open'); hsBtn.setAttribute('aria-expanded','false');
+    if(was){ const box=document.getElementById('q'); box.value=hsQ.value; state.q=hsQ.value; renderSheet(); } }
+}
+function hsPhone(open){
+  board.classList.toggle('hs-open', open); hsBtn.setAttribute('aria-expanded', open);
+  if(open) hsQ.focus(); else hsClose();
+}
+hsQ.addEventListener('input',()=>{
+  clearTimeout(hs.timer);
+  if(!hsQ.value.trim()){ hsClose(); return; }
+  // the first search waits for a pause in typing, then plays the show; after that results follow every key
+  if(hs.played) hsRun(); else hs.timer=setTimeout(hsRun,250);
+});
+hsQ.addEventListener('focus',()=>{ if(hsQ.value.trim() && hsPop.hidden){ hs.played=true; hsRun(); } });
+hsQ.addEventListener('keydown',e=>{
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    if(hsStale()){ if(!hsQ.value.trim()) return; hs.played=true; hsRun(); }
+    if(hs.showing) hsRender(false);
+    e.preventDefault(); hsMove(e.key==='ArrowDown'?1:-1);
+  } else if(e.key==='Enter'){
+    e.preventDefault();
+    if(hsStale()){ if(hsQ.value.trim()){ hs.played=true; hsRun(); } return; }
+    if(hs.showing){ hsRender(false); return; }
+    const o = hs.act>=0 ? hsList.querySelectorAll('.hs-opt')[hs.act] : hsList.querySelector('.hs-opt');
+    if(o) hsPick(+o.dataset.n);
+  } else if(e.key==='Escape'){
+    e.preventDefault();
+    if(!hsPop.hidden) hsClose();
+    else if(hsQ.value){ hsQ.value=''; }
+    else if(board.classList.contains('hs-open')){ hsPhone(false); hsBtn.focus(); }
+  }
+});
+hsPop.addEventListener('pointerdown',e=>{ if(e.target.closest('button')) e.preventDefault(); });   // keep typing focus in the box
+hsPop.addEventListener('click',e=>{
+  const o=e.target.closest('.hs-opt'); if(o) return hsPick(+o.dataset.n);
+  if(e.target.closest('[data-skip]')) return hsRender(false);
+  const c=e.target.closest('[data-hc]'); if(c){ hs.chip=c.dataset.hc; hsRender(true); return; }
+  const s=e.target.closest('[data-sug]'); if(s){ hsQ.value=s.dataset.sug; hs.played=true; hsRun(); hsQ.focus(); return; }
+  const a=e.target.closest('[data-hsall]'); if(a){ const q=hsQ.value; hsClose(); hsToSheet(q, a.dataset.hsall); }
+});
+hsBtn.onclick=()=>hsPhone(!board.classList.contains('hs-open'));
+// a tap anywhere else closes the results (a tab tap is left to setTab, so the Full list can take the words over)
+document.addEventListener('pointerdown',e=>{ if(!hsPop.hidden && !hsEl.contains(e.target) && !e.target.closest('.tab')) hsClose(); });
+// "/" jumps to search from anywhere (to the Full list's own box on that tab)
+document.addEventListener('keydown',e=>{
+  if(e.key!=='/' || e.ctrlKey || e.metaKey || e.altKey || !roll.hidden) return;
+  const a=document.activeElement; if(a && (/INPUT|TEXTAREA|SELECT/.test(a.tagName) || a.isContentEditable)) return;
+  e.preventDefault();
+  if(document.body.dataset.tab==='sheet') return document.getElementById('q').focus();
+  if(matchMedia('(max-width:720px)').matches) hsPhone(true); else hsQ.focus();
+});
+
 /* ---------- init ---------- */
-renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); newPair();
+renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); renderRevisit(); renderTurf(); newPair();
+if(location.protocol==='file:') document.getElementById('fileWarn').hidden=false;
 countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
 select(state.sel);
