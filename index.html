@@ -650,6 +650,70 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .food-kpis .v.tx{font-size:21px;line-height:1.15;font-family:var(--fb);font-weight:800}
 .food-credit{margin:12px 0 0;font-size:13px;color:var(--muted)}
 .food-credit b{color:var(--ink)}
+/* Latest visits: a poster-style carousel of narrow portrait tiles; arrows sit over the row's edges at the photo's middle */
+.lv{margin-bottom:16px}
+.lv-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:10px}
+.lv-head h3{margin:0;white-space:nowrap;font-family:var(--fd);font-weight:800;font-size:24px;text-transform:uppercase;letter-spacing:.02em}
+.lv-head .linkbtn{font-size:14px;white-space:nowrap}
+.lv-note{margin:-4px 0 12px;font-size:13px;color:var(--muted)}
+.lv-note[hidden]{display:none}
+.lv-wrap{position:relative;--lv-mid:40%}
+/* the row bleeds 16px into the panel's padding so each tile's hover panel has room; photos still line up with the heading */
+.lv-row{--gap:6px;display:flex;gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;list-style:none;margin:-6px -16px -8px;padding:6px 8px 8px;scroll-padding-inline:8px}
+.lv-row::-webkit-scrollbar{display:none}
+.lv-card{position:relative;flex:0 0 clamp(150px,calc((100% - 5*var(--gap))/6),198px);min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;padding:8px;border-radius:14px;
+  transition:background-color .2s ease-out,transform .2s ease-out,box-shadow .2s ease-out}
+@media (max-width:720px){.lv-card{flex-basis:clamp(140px,40%,190px)}}
+@media (max-width:560px){.lv-card{flex-basis:44%}}
+.lv-open{display:flex;flex-direction:column;flex:1;border:0;background:none;padding:0;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.lv-open:focus-visible{outline:3px solid var(--kaya);outline-offset:4px;border-radius:10px}
+.lv-pic{position:relative;display:block;aspect-ratio:2/3;overflow:hidden;background:var(--paper2);border:1px solid var(--line);border-radius:10px}
+.lv-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;transition:transform .2s ease-out}
+.lv-vid{position:absolute;top:8px;right:8px;z-index:3;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(0,0,0,.66);color:#fff}
+.lv-body{display:flex;flex-direction:column;gap:3px;padding:9px 2px 0}
+.lv-nm{font-weight:800;font-size:15px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
+.lv-meta{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.lv-grade{font-size:11px;padding:1px 6px;min-width:0}
+.lv-stats{display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.lv-stats .fg-c{display:inline-flex;align-items:center;gap:3px}
+.lv-stats .lv-sp{margin-left:auto;white-space:nowrap}
+.lv-stats sup{font-size:10px;color:var(--muted)}
+.lv-credits{margin-top:10px;font-size:12px;color:var(--muted)}
+.lv-credits summary{display:inline-block;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.lv-credits summary::-webkit-details-marker{display:none}
+.lv-credits summary:focus-visible{outline:3px solid var(--kaya);outline-offset:2px;border-radius:4px}
+.lv-credits ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:2px 16px}
+.lv-credits a{color:inherit}
+.lv-credits[hidden]{display:none}
+/* hover or keyboard focus: a soft panel comes up behind the whole tile, the photo zooms a touch and a strip
+   slides up with the first dishes from her list (mouse only; taps just open) */
+.lv-peek{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;gap:2px;padding:34px 10px 10px;color:#fff;
+  z-index:2;background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,.62) 65%,transparent);transform:translateY(100%);opacity:0;transition:transform .2s ease-out,opacity .2s ease-out}
+.lv-peek small{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--kaya)}
+.lv-peek-d{font-size:12.5px;font-weight:700;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lv-peek em{font-style:normal;font-size:11.5px;font-weight:700;opacity:.85}
+@media (hover:hover) and (pointer:fine){
+  .lv-card:hover{background:color-mix(in srgb,var(--ink) 6%,var(--paper));box-shadow:0 0 0 1px var(--line);transform:translateY(-2px)}
+  .lv-card:hover .lv-pic{border-color:var(--kaya)}
+  .lv-open:hover .lv-pic img{transform:scale(1.04)}
+  .lv-open:hover .lv-peek{transform:none;opacity:1}
+}
+@media (hover:none),(pointer:coarse){.lv-peek{transform:none;opacity:1}}  /* touch: the preview is always there; one tap opens */
+.lv-card:focus-within{background:color-mix(in srgb,var(--ink) 6%,var(--paper))}
+.lv-open:focus-visible .lv-peek{transform:none;opacity:1}
+/* arrows: translucent squares over the row's left and right edges, level with the middle of the photos */
+.lv-arrow{position:absolute;top:var(--lv-mid);z-index:5;width:40px;height:40px;margin-top:-20px;border-radius:7px;border:1px solid color-mix(in srgb,var(--paper) 25%,transparent);
+  background:color-mix(in srgb,var(--ink) 72%,transparent);color:var(--paper);display:grid;place-items:center;padding:0;cursor:pointer;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 2px 8px rgba(0,0,0,.25);transition:background-color .15s,opacity .15s}
+.lv-arrow.prev{left:-6px}.lv-arrow.next{right:-6px}
+.lv-arrow svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.lv-arrow:hover{background:color-mix(in srgb,var(--ink) 88%,transparent)}
+.lv-arrow:focus-visible{outline:3px solid var(--kaya);outline-offset:2px}
+.lv-arrow:disabled{opacity:0;visibility:hidden}
+.lv[hidden]{display:none}
+.lv-wrap.fits .lv-arrow{display:none}
+@media (hover:none),(pointer:coarse),(max-width:560px){.lv-arrow{display:none}}
+@media (prefers-reduced-motion:reduce){.lv-row{scroll-behavior:auto}.lv-pic img,.lv-card,.lv-peek,.lv-arrow{transition:none}.lv-open:hover .lv-pic img,.lv-card:hover{transform:none}.lv-peek{transform:none}}
 .fgrp{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
 .fgrp summary{display:grid;grid-template-columns:auto minmax(0,1fr) 64px 64px minmax(170px,auto) 68px 22px;align-items:center;gap:14px;padding:12px 16px;cursor:pointer;list-style:none}
 /* collapsed row: badge · name/date · food · drinks · spend · video thumb · chevron (two lines on phones) */
@@ -1199,7 +1263,18 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
       <p class="food-credit">Dish list compiled by <b>Maskedsound</b> from Zumi's stream VODs. Prices are what Zumi paid on the day.</p>
       <p class="food-credit" id="vidCredit" hidden></p>
     </div>
-    <div class="sheet-tools">
+    <section class="panel lv" id="latest" aria-labelledby="lvTitle" hidden>
+      <div class="lv-head"><h3 id="lvTitle">Latest dishes logged</h3>
+        <button type="button" class="linkbtn" id="lvAll">View all centres ↓</button></div>
+      <p class="lv-note" id="lvNote" hidden></p>
+      <div class="lv-wrap" id="lvWrap">
+        <ol class="lv-row" id="lvRow" aria-labelledby="lvTitle"></ol>
+        <button type="button" class="lv-arrow prev" data-lvgo="-1" aria-label="Scroll to earlier centres" aria-controls="lvRow" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+        <button type="button" class="lv-arrow next" data-lvgo="1" aria-label="Scroll to more centres" aria-controls="lvRow"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+      </div>
+      <details class="lv-credits" id="lvCredits" hidden><summary>Photo credits</summary><ul id="lvCreditList"></ul></details>
+    </section>
+    <div class="sheet-tools" id="foodTools">
       <input class="search" id="fq" type="search" placeholder="Search dishes, stalls or centres" aria-label="Search dishes, stalls or centres">
       <div class="chips" id="foodChips" style="margin:0"></div>
       <button class="chip" id="foodAll" type="button">Open visible</button>
@@ -1228,6 +1303,8 @@ const geoReq = fetch('geo.json').then(r=>r.ok?r.json():null).catch(()=>null);
 const foodReq = fetch('food.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
 // 4ever's hawker edits (built by scripts/build_videos.py): one YouTube video per centre visit. Without it nothing shows.
 const vidReq = fetch('videos.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
+// Optional centre photos (hand-kept, only openly licensed ones, each with its credit). A centre without one is left out of Latest visits.
+const photoReq = fetch('photos.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
 if(true) try{
   const r = await fetch('data.json?t='+Date.now(), {cache:'no-store'});
   // only use records that look like hers (number, name, address); anything else keeps the built-in snapshot
@@ -1246,6 +1323,12 @@ const okVid = v => v && typeof v.id==='string' && /^[\w-]{11}$/.test(v.id) && ty
   && (v.len==null || Number.isInteger(v.len)) && (v.s==null || (typeof v.s==='object' && Object.values(v.s).every(Number.isInteger))) && (v.c==null || (Array.isArray(v.c) && v.c.every(c=>Array.isArray(c) && Number.isInteger(c[0]) && typeof c[1]==='string')));
 const VIDS = VIDJ && Array.isArray(VIDJ.videos) ? VIDJ.videos.filter(okVid) : [];
 const VID_CREDIT = VIDJ && typeof VIDJ.credit==='string' ? VIDJ.credit.trim() : '';
+// a photo is used only with its credit, licence and source page, and only from this site's own photo folder
+const PHOTOJ = await photoReq;
+const okPhoto = p => p && typeof p.src==='string' && /^assets\/photos\/[\w.-]+\.(jpe?g|png|webp)$/i.test(p.src)
+  && ['credit','licence'].every(k=>typeof p[k]==='string' && p[k].trim()) && typeof p.url==='string' && /^https:\/\//.test(p.url);
+const okPos = v => typeof v==='string' && /^(?:(?:\d{1,3}%|left|center|right|top|bottom) ?){1,2}$/.test(v.trim());   // optional focal point, e.g. "50% 30%"
+const PHOTOS = {}; if(PHOTOJ && PHOTOJ.photos && typeof PHOTOJ.photos==='object') Object.entries(PHOTOJ.photos).forEach(([n,p])=>{ if(okPhoto(p)) PHOTOS[n]=p; });
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
 const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
 DATA.forEach(d=>{ d.sh = SHORT[d.name] || autoShort(d.name); });
@@ -3406,6 +3489,90 @@ renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderRe
 if(location.protocol==='file:') document.getElementById('fileWarn').hidden=false;
 countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
+// Latest dishes logged: her newest centres from Masked's list (FOOD_GROUPS is already newest first) that have a real photo,
+// as poster tiles. A centre without a photo isn't shown here (it's still in the list below), and a photo that fails to
+// load takes its tile out. Each tile holds one button that opens that centre in the list below. Photo credits sit in
+// one list under the row.
+const LV_COUNT = 12;
+function lvTile(e){
+  const d = e.d, ph = PHOTOS[d.n], sp = spanOf(e.items), unknown = e.items.length - sp.n;
+  const nDrink = e.items.filter(isDrink).length, nFood = e.items.length - nDrink, dishW = unknown===1 ? 'dish' : 'dishes';
+  const spend = sp.n ? `${fmtSpan(sp)}${unknown ? `<sup title="Total excludes ${unknown} ${dishW} without a known price" aria-hidden="true">+${unknown}</sup><span class="hs-sr"> (excludes ${unknown} ${dishW} without a known price)</span>` : ''}` : '<span class="fg-na">No prices</span>';
+  return `<li class="lv-card" data-k="${d.n}">
+    <button type="button" class="lv-open" data-lv="${d.n}">
+      <span class="lv-pic">
+        <img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async"${okPos(ph.pos) ? ` style="object-position:${ph.pos.trim()}"` : ''}>
+        ${VID_BY[d.n] ? '<span class="lv-vid">▶ Video</span>' : ''}
+        <span class="lv-peek" aria-hidden="true"><small>She ate ${plural(e.items.length,'item')}</small><span class="lv-peek-d">${e.items.slice(0,3).map(x=>esc(x.d)).join(' · ')}</span>
+          <em>${e.items.length>3 ? `and ${e.items.length-3} more · ` : ''}See all →</em></span>
+      </span>
+      <span class="lv-body">
+        <span class="lv-nm">${esc(d.name)}</span>
+        <span class="lv-meta"><span class="st t${d.rk} lv-grade" title="${TIER_WORD[d.rk]}"><span class="hs-sr">Grade </span>${d.rk}</span><span>${fmtD(d.d)}</span></span>
+        <span class="lv-stats">
+          <span class="fg-c${nFood?'':' zero'}" title="Food items">${ICON_FOOD}<span class="hs-sr">Food items: </span>${nFood}</span>
+          <span class="fg-c${nDrink?'':' zero'}" title="Drinks">${ICON_DRINK}<span class="hs-sr">Drinks: </span>${nDrink}</span>
+          <span class="lv-sp"><span class="hs-sr">Spent: </span>${spend}</span>
+        </span>
+      </span>
+    </button>
+  </li>`;
+}
+function renderLatest(){
+  const row = document.getElementById('lvRow');
+  const list = FOOD_GROUPS.filter(e=>e.d && e.d.s && PHOTOS[e.d.n]).slice(0, LV_COUNT);
+  document.getElementById('latest').hidden = !list.length;
+  row.innerHTML = list.map(lvTile).join('');
+  // the row follows Masked's dish list, which can trail Zumi's own ratings: name the newer rated visits still waiting for dishes
+  const logged = FOOD_GROUPS.find(e=>e.d && e.d.s), note = document.getElementById('lvNote');
+  const waiting = logged ? R.filter(d=>d.d && d.d > logged.d.d && !FOOD_BY[d.n]).sort((a,b)=>b.d.localeCompare(a.d) || a.n-b.n) : [];
+  const names = waiting.map(d=>d.sh);
+  note.hidden = !waiting.length;
+  note.textContent = waiting.length ? `Newer ${waiting.length===1 ? 'visit' : 'visits'} (${names.length>1 ? names.slice(0,-1).join(', ')+' and '+names[names.length-1] : names[0]}) will show here once ${waiting.length===1 ? 'its' : 'their'} dishes are logged.` : '';
+  // one credits list under the row instead of a line on every tile; the licences ask for the photographer's name and a link
+  document.getElementById('lvCredits').hidden = !list.length;
+  document.getElementById('lvCreditList').innerHTML = list.map(e=>{ const ph = PHOTOS[e.d.n];
+    return `<li data-k="${e.d.n}">${esc(e.d.name)}: <a href="${esc(ph.url)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>, ${esc(ph.licence)}</li>`; }).join('');
+  // an image that was already broken before this listener could see it
+  row.querySelectorAll('img').forEach(i=>{ if(i.complete && !i.naturalWidth) lvNoImg(i); });
+  lvArrows();
+}
+// a photo that won't load: its tile and its credit go, rather than leave an empty frame
+function lvNoImg(img){
+  const c = img.closest('.lv-card'); if(!c) return;
+  const li = document.querySelector(`#lvCreditList [data-k="${c.dataset.k}"]`); if(li) li.remove();
+  c.remove();
+  if(!document.querySelector('#lvRow .lv-card')) document.getElementById('latest').hidden = true;
+  if(!document.getElementById('lvCreditList').children.length) document.getElementById('lvCredits').hidden = true;
+  lvArrows();
+}
+function lvArrows(){
+  const row = document.getElementById('lvRow'), wrap = document.getElementById('lvWrap'), max = row.scrollWidth - row.clientWidth;
+  if(!row.clientWidth) return;   // tab not shown yet: measured again when it is
+  const pic = row.querySelector('.lv-pic');   // arrows sit level with the middle of the photos
+  if(pic) wrap.style.setProperty('--lv-mid', (pic.getBoundingClientRect().top - wrap.getBoundingClientRect().top + pic.offsetHeight/2) + 'px');
+  wrap.classList.toggle('fits', max <= 4);
+  wrap.querySelector('.lv-arrow.prev').disabled = row.scrollLeft <= 4;
+  wrap.querySelector('.lv-arrow.next').disabled = row.scrollLeft >= max - 4;
+}
+(()=>{
+  const row = document.getElementById('lvRow'), smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+  row.addEventListener('error', e=>{ if(e.target.tagName==='IMG') lvNoImg(e.target); }, true);   // a photo that fails to load
+  row.addEventListener('click', e=>{ const b = e.target.closest('[data-lv]'); if(b) foodGo(+b.dataset.lv); });
+  row.addEventListener('scroll', lvArrows, {passive:true});
+  if(window.ResizeObserver) new ResizeObserver(lvArrows).observe(row); else addEventListener('resize', lvArrows);
+  document.querySelectorAll('[data-lvgo]').forEach(b=>b.onclick=()=>{
+    // a page at a time, keeping one tile from the last view in sight so the jump is easy to follow
+    const card = row.querySelector('.lv-card'), w = card ? card.offsetWidth + (parseFloat(getComputedStyle(row).columnGap) || 6) : row.clientWidth;
+    const step = card ? Math.max(1, Math.floor(row.clientWidth / w) - 1) * w : row.clientWidth;
+    row.scrollBy({left: +b.dataset.lvgo * step, behavior: smooth()});
+  });
+  document.getElementById('lvAll').onclick = ()=>{
+    const t = document.getElementById('foodTools'), hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+    scrollTo({top: scrollY + t.getBoundingClientRect().top - hb - 12, behavior: smooth()});
+  };
+})();
+renderLatest();
 renderFoodKpis(); renderFoodChips(); renderFood();
 select(state.sel);
 setTab((location.hash||'').slice(1));
