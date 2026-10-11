@@ -993,6 +993,12 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 /* the board "switches on" when a slide appears: digits are right from the first frame, only the glow settles */
 .led{animation:ledOn .9s ease-out both}
 @keyframes ledOn{from{filter:brightness(1.7) drop-shadow(0 0 .12em rgba(255,59,48,.85))}}
+/* the queue number turning over: a two-digit strip (old above new) slides up inside the digit's own box */
+.led .dg.flip{overflow:hidden}
+.led .dg.flip .fl{display:flex;flex-direction:column;animation:qRoll .25s cubic-bezier(.3,.7,.3,1) both}
+.led .dg.flip .fl span{display:block;height:1em;line-height:1}
+@keyframes qRoll{from{transform:translateY(0)}to{transform:translateY(-1em)}}
+@media (prefers-reduced-motion:reduce){.led .dg.flip .fl{animation:none;transform:translateY(-1em)}}
 /* the countdown slides */
 .tchip{display:inline-block;vertical-align:middle;margin-left:.5em;padding:.18em .5em .12em;border-radius:.35em;background:var(--kaya);color:#1A1A1A;
   font-family:var(--fd);font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1}
@@ -2339,7 +2345,7 @@ function ledNum(v, digits=0, size){
 }
 // "NOW SERVING #07" badge used on each centre's slide (the number is its leaderboard rank)
 function qcall(d, px){
-  return `<div class="qb" style="display:inline-flex;flex-direction:column;gap:${px*.12}px;padding:${px*.16}px ${px*.22}px">
+  return `<div class="qb qcall" style="display:inline-flex;flex-direction:column;gap:${px*.12}px;padding:${px*.16}px ${px*.22}px">
     <span class="lbl" style="font-size:${px*.17}px">Now serving</span>${ledNum(d.pos, Math.max(2,String(R.length).length), px)}</div>`;
 }
 // how far through the quest: always out of all the official centres, the same as the 023/123 board
@@ -2554,6 +2560,22 @@ function nextUpSlide(f){
 
 // a control focused with the keyboard (Tab), not just clicked with a mouse or finger
 const kbFocus = el => { try{ return ['BUTTON','SELECT','A'].includes(el.tagName) && el.matches(':focus-visible'); }catch(e){ return false; } };
+// Flip the queue number: going from one centre's slide straight to another's, each digit that changed rolls the old
+// digit up and out while the new one comes in from below (250ms), like a stall's number board turning over. The slide
+// is drawn with the right number first; the roll is laid over it afterwards and removed when it ends, so a quick
+// click mid-roll just draws the next slide plainly and nothing is ever left half-turned. No roll with reduced motion.
+let qPrev = null;
+function qFlip(host){
+  const led = host.querySelector('.canvas .qcall .led'), now = led ? [...led.querySelectorAll('.dg')].map(d=>d.textContent) : null;
+  const was = qPrev; qPrev = now;
+  if(!now || !was || was.length!==now.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  led.querySelectorAll('.dg').forEach((d,k)=>{
+    if(was[k]===now[k]) return;
+    d.classList.add('flip');
+    d.innerHTML = `<span class="fl" aria-hidden="true"><span>${was[k]}</span><span>${now[k]}</span></span><span class="hs-sr">${now[k]}</span>`;
+    d.querySelector('.fl').addEventListener('animationend', ()=>{ d.classList.remove('flip'); d.textContent = now[k]; }, {once:true});
+  });
+}
 function renderDeck(kind){
   const host = document.querySelector(`[data-deck="${kind}"]`);
   state.fmt = autoFmt();
@@ -2587,6 +2609,7 @@ function renderDeck(kind){
       <button class="fsx" data-act="exitfs" type="button">✕ Exit full screen</button>
       <span class="fscount">${i+1} / ${slides.length}</span></div>
     <div class="rail">${slides.map((s,k)=>`<button data-go="${k}" aria-current="${k===i}"${s.ch?' class="ch"':''}${(s.tier||s.grade)?` style="--tc:${TV(s.tier||s.grade)}"`:''}><b>${k+1}</b>${(s.tier||s.grade)?`<i class="rt">${s.tier||s.grade}</i>`:''}${esc(s.t)}</button>`).join('')}</div>`;
+  qFlip(host);
   const go = k=>{ state.idx[kind]=Math.max(0,Math.min(slides.length-1,k)); renderDeck(kind); };
   host.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{ if(state.mode===b.dataset.mode) return; state.mode=b.dataset.mode; store('hk-mode',state.mode); state.idx.slides=0; renderDeck(kind); });
   const jump = host.querySelector('[data-jump]'); if(jump) jump.onchange=()=>{ if(jump.value!=='') go(+jump.value); };
