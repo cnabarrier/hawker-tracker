@@ -13,7 +13,7 @@
 <style>
 :root{
   color-scheme:light;
-  --bg:#E3EDE8;--paper:#FFFFFF;--paper2:#F1F7F4;--ink:#0F2E29;--muted:#57706A;--line:#D3E2DB;--line2:#B7CEC4;--grid:rgba(15,46,41,.045);
+  --vi-food:#1B7A63;--bg:#E3EDE8;--paper:#FFFFFF;--paper2:#F1F7F4;--ink:#0F2E29;--muted:#57706A;--line:#D3E2DB;--line2:#B7CEC4;--grid:rgba(15,46,41,.045);
   --red:#C8232C;--red2:#A21A22;--kaya:#F2B01E;--onred:#FFFFFF;
   --c0:#D8453C;--c1:#12836A;--c2:#D9960E;--c3:#2A7DB4;--c4:#8757C6;
   --tS:#8757C6;--tA:#12836A;--tB:#2A7DB4;--tC:#D9960E;--tD:#D8453C;--tF:#7B8A86;
@@ -27,7 +27,7 @@
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
+    --vi-food:#3DBF98;--bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
     --red:#D42F39;--red2:#AE222B;--kaya:#FFC53D;
     --c0:#FF6F61;--c1:#34C997;--c2:#FFC53D;--c3:#5AAEE6;--c4:#B28CF2;
     --tS:#B28CF2;--tA:#34C997;--tB:#5AAEE6;--tC:#FFC53D;--tD:#FF6F61;--tF:#6E807B;
@@ -36,7 +36,7 @@
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
+  --vi-food:#3DBF98;--bg:#081A17;--paper:#0F2622;--paper2:#0B1F1B;--ink:#EAF4F0;--muted:#8FAAA2;--line:#1D3B34;--line2:#2B5148;--grid:rgba(234,244,240,.03);
   --red:#D42F39;--red2:#AE222B;--kaya:#FFC53D;
   --c0:#FF6F61;--c1:#34C997;--c2:#FFC53D;--c3:#5AAEE6;--c4:#B28CF2;
   --tS:#B28CF2;--tA:#34C997;--tB:#5AAEE6;--tC:#FFC53D;--tD:#FF6F61;--tF:#6E807B;
@@ -156,9 +156,12 @@ body[data-tab="sheet"] .hs,body[data-tab="sheet"] .hs-btn{visibility:hidden}
 .tabs{display:flex;gap:4px;margin-top:14px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{border:0;background:transparent;padding:10px 16px 12px;font-family:var(--fd);font-weight:800;font-size:20px;text-transform:uppercase;letter-spacing:.03em;color:var(--onred);opacity:.72;border-radius:10px 10px 0 0;white-space:nowrap}
-@media (max-width:860px){.tab-more{display:none}}  /* the Map tab says "& regions" only where there is room */
-@media (min-width:561px) and (max-width:720px){.tab{font-size:17px;padding:10px 12px 12px}}
-@media (max-width:560px){.tabs{gap:2px}.tab{font-size:clamp(11px,3.1vw,16px);padding:9px clamp(3px,1.2vw,10px) 10px}}  /* phones: all four tabs fit without swiping */
+@media (max-width:1000px){.tab-more{display:none}}  /* "& regions" and "she ate" only where there is room */
+@media (max-width:720px){.tab-show{display:none}}  /* "Countdown" on phones and small tablets */
+@media (min-width:721px) and (max-width:860px){.tab{font-size:17px;padding:10px 12px 12px}}
+@media (min-width:561px) and (max-width:720px){.tab{font-size:16px;padding:10px 8px 12px}}
+@media (max-width:560px){.tabs{gap:2px}.tab{font-size:clamp(10px,3.1vw,16px);padding:9px clamp(3px,1.2vw,10px) 10px}}  /* phones: all five tabs fit without swiping */
+@media (max-width:359px){.tabs{gap:0}.tab{padding-left:2px;padding-right:2px}}
 .tab:hover{opacity:1}
 .tab[aria-selected="true"]{background:var(--bg);color:var(--ink);opacity:1}
 
@@ -409,7 +412,7 @@ body.rolling{overflow:hidden}
 .lbr{position:absolute;left:0;right:0;height:38px;border-bottom:1px solid var(--line);
   transition:top .55s cubic-bezier(.2,.8,.2,1),opacity .25s;cursor:pointer}
 .lbr.off{opacity:0;visibility:hidden;pointer-events:none}
-.lbdots{position:absolute;left:0;right:0;height:22px;display:grid;place-items:center;color:var(--muted);letter-spacing:.3em;font-weight:700;transition:top .55s,opacity .25s}
+.lbdots{position:absolute;left:0;right:0;height:22px;display:grid;place-items:center;color:var(--muted);letter-spacing:.3em;font-weight:700;transition:top .55s,opacity .25s;pointer-events:none}
 .lbfoot{display:grid;justify-items:center;gap:6px;margin-top:10px}
 .lbfoot .note{font-size:12.5px;color:var(--muted)}
 .lbmore{border:0;background:none;font-weight:700;font-size:13px;color:var(--ink);padding:6px 12px;border-radius:99px;cursor:pointer}
@@ -641,6 +644,204 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .swipe-hint{margin:-4px 0 8px;font-size:13px;font-weight:600;color:var(--muted);text-align:right}
 @media (min-width:721px) and (min-height:501px){.swipe-hint{display:none}}
 
+/* ---------- dishes (Maskedsound's list of what Zumi ate) ---------- */
+.food-head{margin-bottom:16px}
+.food-kpis{margin-top:14px}
+.food-kpis .v.tx{font-size:21px;line-height:1.15;font-family:var(--fb);font-weight:800}
+.food-credit{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.food-credit b{color:var(--ink)}
+.fgrp{background:var(--paper);border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.fgrp summary{display:grid;grid-template-columns:auto minmax(0,1fr) 64px 64px minmax(170px,auto) 68px 22px;align-items:center;gap:14px;padding:12px 16px;cursor:pointer;list-style:none}
+/* collapsed row: badge · name/date · food · drinks · spend · video thumb · chevron (two lines on phones) */
+.fg-l2{display:contents}
+.fg-date{display:none}
+.fg-c{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink);font-size:14px}
+.fg-c.zero{color:var(--muted);opacity:.55}
+.fg-ic{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.fg-sp{justify-self:end;white-space:nowrap;font-family:var(--fd);font-weight:800;font-size:18px;font-variant-numeric:tabular-nums}
+.fg-sp sup{font-family:var(--fb);font-size:11px;font-weight:700;color:var(--muted);margin-left:3px;cursor:help}
+.fg-na{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--muted)}
+.fg-thumb.none{visibility:hidden}
+.fg-tog{width:10px;height:10px;justify-self:center;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:translateY(-3px) rotate(45deg);transition:transform .15s}
+.fgrp[open] .fg-tog{transform:translateY(2px) rotate(-135deg)}
+.fgrp summary:focus-visible{outline:3px solid var(--kaya);outline-offset:-3px;border-radius:16px}
+.food-more{display:flex;justify-content:center;gap:10px;margin-top:6px}
+.food-more .btn[hidden]{display:none}
+@media (max-width:699px){
+  .fgrp summary{grid-template-columns:auto minmax(0,1fr) auto 22px;gap:4px 12px}
+  .fgrp summary .st{grid-row:1/3;align-self:start;margin-top:2px}
+  .fg-id .fg-meta{display:none}
+  .fg-l2{display:flex;grid-column:2/-1;grid-row:2;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:13px;color:var(--muted)}
+  .fg-date{display:inline}
+  .fg-sp{font-size:16px;color:var(--ink)}
+  .fg-thumb{grid-column:3;grid-row:1}
+  .fg-thumb.none{display:none}
+  .fg-tog{grid-column:4;grid-row:1}
+}
+.fgrp summary::-webkit-details-marker{display:none}
+.fgrp summary:hover{background:var(--paper2)}
+.fg-nm{display:block;font-weight:800;font-size:16px;line-height:1.2}
+.fg-meta{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.st.fg-none{--c:var(--line2)}
+.fdl{list-style:none;margin:0;padding:0 16px;border-top:1px solid var(--line)}
+.fdl li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;padding:10px 0;border-bottom:1px solid var(--line)}
+.fdl li:last-child{border-bottom:0}
+.fd-d{font-weight:700}
+.fd-p{font-family:var(--fd);font-weight:800;font-size:17px;text-align:right;white-space:nowrap;display:inline-flex;align-items:center;justify-content:flex-end;gap:8px}
+/* food or drink, by the same isDrink() rule as the filters; teal and amber like Visit Insights */
+.fd-cat{font-family:var(--fb);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;line-height:1;padding:3px 6px;border-radius:5px;min-width:3.6em;text-align:center}
+.fd-cat.food{color:var(--vi-food);background:color-mix(in srgb,var(--vi-food) 12%,var(--paper));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--vi-food) 35%,transparent)}
+.fd-cat.drink{color:color-mix(in srgb,var(--kaya) 50%,var(--ink));background:color-mix(in srgb,var(--kaya) 18%,var(--paper));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kaya) 55%,transparent)}
+.fd-s{grid-column:1/-1;font-size:12.5px;color:var(--muted)}
+.fd-s i{color:var(--ink)}
+.fg-foot{margin:0;padding:10px 16px 14px;border-top:1px solid var(--line);font-size:13.5px}
+.food-none{padding:30px;text-align:center;color:var(--muted)}
+.nw{white-space:nowrap}
+.fdl mark,.fgrp mark{background:color-mix(in srgb,var(--kaya) 45%,transparent);color:inherit;border-radius:3px}
+/* The video of a visit, styled like a stall's lit sign: YouTube's thumbnail with the title set on it, the length on
+   a red dot-matrix queue display, then the player in its place after a tap. Chapters are chits with the same digits. */
+.vid{margin:16px 0 0}
+.vid-screen{container-type:inline-size;position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#0B1512;
+  box-shadow:0 0 0 1px var(--line),0 10px 26px -12px rgba(8,26,23,.45)}
+.vid-face{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:pointer;color:#fff;text-align:left}
+.vid-face img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.vid-shade{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,rgba(6,18,15,0) 55%,rgba(6,18,15,.38) 100%)}
+/* the title sits under the picture: the thumbnails already carry their own lettering */
+.vid-t{margin:12px 0 0;font-family:var(--fd);font-weight:800;text-transform:uppercase;letter-spacing:.015em;line-height:1;font-size:22px;
+  color:var(--ink);text-wrap:balance}
+.vid-len{position:absolute;right:clamp(10px,3.4cqi,18px);bottom:clamp(10px,3.4cqi,18px);padding:5px 8px 4px;border-radius:7px;
+  background:#0A0A0A;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);font-family:'Doto',var(--fd);font-weight:900;font-size:clamp(14px,3.6cqi,18px);
+  line-height:1;letter-spacing:.04em;color:#FF3B30;text-shadow:0 0 6px rgba(255,59,48,.55)}
+.vid-play{position:absolute;left:50%;top:50%;width:clamp(52px,15cqi,72px);aspect-ratio:1;translate:-50% -50%;border-radius:50%;background:var(--red);
+  box-shadow:0 0 0 4px var(--kaya),0 12px 26px rgba(0,0,0,.45);transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s}
+.vid-play::after{content:"";position:absolute;inset:0;margin:auto;translate:9% 0;width:34%;aspect-ratio:1;background:#fff;clip-path:polygon(0 0,100% 50%,0 100%)}
+.vid-face:hover img,.vid-face:focus-visible img{transform:scale(1.035)}
+.vid-face:hover .vid-play,.vid-face:focus-visible .vid-play{transform:translateY(-3px) scale(1.05);box-shadow:0 0 0 4px var(--kaya),0 18px 30px rgba(0,0,0,.5)}
+.vid-face:focus-visible{outline:3px solid var(--kaya);outline-offset:-3px;border-radius:14px}
+.vid-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;transition:opacity .35s ease}
+.vid-screen iframe.on{opacity:1}
+/* chapters: a rail of chits that scrolls sideways, fading at the edge while there's more */
+/* the chapter rail: one row that scrolls sideways (wheel, drag, swipe, arrows, keyboard); each edge fades, and shows
+   an arrow, only while there are more chapters that way */
+.vid-rail{position:relative;margin-top:6px;min-width:0}
+.rail-label{margin:12px 0 0;font:800 11px/1 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vid-ch{display:flex;gap:8px;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px;
+  --fl:0px;--fr:0px;mask-image:linear-gradient(90deg,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%)}
+.vid-rail.can-l .vid-ch{--fl:44px}
+.vid-rail.can-r .vid-ch{--fr:44px}
+.vid-ch.dragging{cursor:grabbing;scroll-snap-type:none;user-select:none}
+.vid-ch.dragging .vid-chip{pointer-events:none}
+.rail-arrow{position:absolute;top:50%;z-index:1;display:grid;place-items:center;width:30px;height:30px;margin-top:-15px;padding:0;border-radius:50%;
+  border:1px solid var(--line2);background:var(--paper);color:var(--ink);cursor:pointer;box-shadow:0 2px 8px rgba(8,26,23,.18);
+  transition:border-color .15s,color .15s,transform .15s}
+.rail-arrow[hidden]{display:none}
+.rail-arrow.prev{left:-6px}
+.rail-arrow.next{right:-6px}
+.rail-arrow svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.rail-arrow:hover{border-color:var(--red);color:var(--red);transform:scale(1.06)}
+.rail-arrow:focus-visible{outline:3px solid var(--kaya);outline-offset:2px}
+@media (pointer:coarse){.rail-arrow{width:36px;height:36px;margin-top:-18px}}
+/* "tap the ▶ time": one quiet line above a dish list that has moments */
+.w-hint{display:flex;align-items:center;gap:9px;margin:0;padding:8px 11px;border-radius:10px;font-size:12.5px;line-height:1.35;
+  background:color-mix(in srgb,var(--kaya) 14%,var(--paper));color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kaya) 45%,transparent)}
+.w-hint b{color:var(--red);white-space:nowrap}
+.w-hint-ic{flex:none;width:20px;height:20px;border-radius:50%;background:var(--red) no-repeat 58% 50%/8px 9px;box-shadow:0 0 0 2px var(--kaya);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 8'%3E%3Cpath d='M0 0l7 4-7 4z' fill='%23fff'/%3E%3C/svg%3E")}
+.w-tap{display:none}
+@media (hover:none){.w-click{display:none}.w-tap{display:inline}}
+.fg-hint{padding:0 16px 10px}
+.ate-box .w-hint,.cp-facts .w-hint{margin:6px 0 4px}
+.vid-ch::-webkit-scrollbar{display:none}
+.vid-chip{flex:none;scroll-snap-align:start;display:inline-flex;align-items:center;gap:8px;max-width:300px;padding:4px 12px 4px 4px;border-radius:10px;
+  border:1px solid var(--line2);background:var(--paper);color:var(--ink);font:600 13px/1.2 var(--fb);text-decoration:none;cursor:pointer;
+  transition:border-color .15s,background .15s,transform .15s}
+.vid-chip b{flex:none;padding:5px 7px 4px;border-radius:7px;background:#0A0A0A;color:#FF3B30;font:900 13px/1 'Doto',var(--fd);letter-spacing:.03em;
+  text-shadow:0 0 5px rgba(255,59,48,.5)}
+.vid-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vid-chip:hover{border-color:var(--red);transform:translateY(-1px)}
+.vid-chip:focus-visible{outline:3px solid var(--kaya);outline-offset:1px}
+.vid-chip[aria-pressed="true"]{border-color:var(--red);background:color-mix(in srgb,var(--red) 9%,var(--paper));box-shadow:inset 0 0 0 1px var(--red)}
+.vid-from{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.vid-from b{font-family:'Doto',var(--fd);font-weight:900;color:var(--red);letter-spacing:.03em}
+/* "watch" on a dish row: jumps the video to the moment she tastes it */
+.w-chit{display:inline-flex;align-items:center;gap:5px;margin-left:8px;padding:2px 3px 2px 7px;vertical-align:2px;border-radius:7px;
+  border:1px solid var(--line2);background:var(--paper);color:var(--red);font:700 11px/1 var(--fb);cursor:pointer;
+  transition:border-color .15s,transform .15s,background .15s}
+.w-chit b{padding:3px 5px 2px;border-radius:5px;background:#0A0A0A;color:#FF3B30;font:900 11.5px/1 'Doto',var(--fd);letter-spacing:.03em;
+  text-shadow:0 0 5px rgba(255,59,48,.5)}
+.w-chit{position:relative}
+.w-chit::before{content:"";position:absolute;inset:-7px -4px}   /* a bigger target for fingers without a bigger button */
+.w-chit:hover{border-color:var(--red);transform:translateY(-1px);background:color-mix(in srgb,var(--red) 6%,var(--paper));box-shadow:0 3px 8px -3px rgba(200,35,44,.45)}
+.w-chit:focus-visible{outline:3px solid var(--kaya);outline-offset:1px}
+.w-chit[aria-pressed="true"]{border-color:var(--red);background:color-mix(in srgb,var(--red) 9%,var(--paper));box-shadow:inset 0 0 0 1px var(--red)}
+.ate .w-chit{margin-left:6px}
+/* credit */
+.vid-by{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:10px;font-size:12.5px;color:var(--muted)}
+.vid-by b{color:var(--ink)}
+.vid-yt{width:18px;height:13px;flex:none}
+.vid-by a{margin-left:auto;font-weight:700;color:var(--red);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.vid-by .vid-more{flex-basis:100%;margin-left:0;white-space:normal}
+.cp-vid{margin:6px 20px 0}
+.cp-vid .vid{margin-top:12px}
+.fg-vid .vid{margin-top:0}
+/* an open centre on the Dishes tab: video on the left, visit insights on the right (stacked on narrow screens) */
+.fg-top{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:2px 16px 16px}
+@media (min-width:880px){
+  .fg-top{grid-template-columns:minmax(0,55fr) minmax(300px,45fr);gap:22px;align-items:start}
+  .fg-top.no-vid{grid-template-columns:minmax(0,520px)}
+  .vi-above{display:none}
+}
+@media (max-width:879px){.vi-left{display:none}}
+.vi{background:var(--paper2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.vi-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 10px}
+.vi-whole{font-size:12px;font-weight:600;color:var(--muted)}
+.vi-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.vi-stats>div{background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.vi-v{display:block;font-family:var(--fd);font-weight:900;font-size:32px;line-height:.95;font-variant-numeric:tabular-nums}
+.vi-v.rng{font-size:24px;line-height:1.1}
+.vi-l{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.vi-note{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.vi-bar{display:flex;gap:2px;height:10px;margin-top:14px;border-radius:99px;overflow:hidden;background:var(--line)}
+.vi-seg{flex:1 1 0;min-width:4px;transition:opacity .15s}
+.vi-seg.food{background:var(--vi-food)}
+.vi-seg.drink{background:var(--kaya)}
+.vi-bar:has(.vi-seg.on) .vi-seg:not(.on){opacity:.3}
+.vi-kinds{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:4px}
+.vi-k{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;font-size:13px;transition:opacity .15s}
+.vi-k i{width:10px;height:10px;border-radius:3px;flex:none}
+.vi-k.food i{background:var(--vi-food)}
+.vi-k.drink i{background:var(--kaya)}
+.vi-k span{color:var(--muted)}
+.vi-k.dim{opacity:.45}
+.vi-ctx{margin:10px 0 0;padding:7px 10px;border-radius:9px;font-size:12.5px;font-weight:600;background:var(--paper);border:1px dashed var(--line2)}
+.vi-hls{list-style:none;margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--line);display:grid;gap:6px}
+.vi-hls li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:baseline;gap:8px;font-size:13px}
+.vi-hl{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.vi-dn{font-weight:600;overflow-wrap:anywhere}
+.vi-hls b{font-family:var(--fd);font-weight:800;font-size:16px}
+.vi-foot{display:flex;align-items:flex-start;gap:9px;margin-top:12px;padding:9px 11px;border-radius:10px;font-size:12.5px;line-height:1.35;
+  background:color-mix(in srgb,var(--kaya) 14%,var(--paper));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--kaya) 45%,transparent)}
+.vi-foot p{margin:0}
+.vi-foot .vi-red{color:var(--red);white-space:nowrap}
+@media (prefers-reduced-motion:reduce){.vi-seg,.vi-k{transition:none}}
+/* the small one on a Dishes row, so a centre with a video stands out in the list */
+.fg-thumb{position:relative;display:block;width:68px;aspect-ratio:16/9;border-radius:7px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.fg-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.fg-thumb::after{content:"";position:absolute;right:4px;bottom:4px;width:16px;height:16px;border-radius:50%;
+  background:var(--red) no-repeat 58% 50%/7px 8px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 8'%3E%3Cpath d='M0 0l7 4-7 4z' fill='%23fff'/%3E%3C/svg%3E");
+  box-shadow:0 0 0 2px var(--kaya)}
+.fgrp[open] .fg-thumb{visibility:hidden}
+@media (max-width:420px){.fg-thumb{width:56px}.vid-chip{max-width:250px}.vid-t{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.vid-face img,.vid-play,.vid-chip,.vid-screen iframe{transition:none}.vid-face:hover img{transform:none}}
+/* the "What she ate" list on a scorecard */
+.ate{list-style:none;margin:4px 0 0;padding:0}
+.ate li{display:flex;justify-content:space-between;gap:10px;padding:3px 0}
+.ate li span:last-child{white-space:nowrap;font-weight:700}
+.ate small{display:block;color:var(--muted);font-size:11.5px}
+.ate-more{margin-top:6px}
+.detail .ate-box{margin-top:12px;border-top:1px solid var(--line);padding-top:8px;font-size:13px}
+.detail .ate-box > b{display:block;font-size:12px;color:var(--muted);font-weight:500}
+
 /* ---------- slides ---------- */
 .deck{display:grid;grid-template-rows:auto auto 1fr auto;gap:12px}
 .deck-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -694,14 +895,29 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .qb .lbl{font-family:'Doto',var(--fd);font-weight:900;text-transform:uppercase;letter-spacing:.06em;line-height:1;color:#FFB020;text-shadow:0 0 10px rgba(255,176,32,.55)}
 .led{font-family:'Doto',var(--fd);font-weight:900;line-height:1;color:#FF3B30;display:inline-flex;align-items:flex-start;
   text-shadow:0 0 4px rgba(255,59,48,.9),0 0 22px rgba(255,59,48,.6)}
-.led .dg{display:inline-block;position:relative;height:1em;overflow:hidden}
+.led .dg{display:inline-block;position:relative;height:1em}
 .led .dg::before{content:"8";position:absolute;left:0;top:0;opacity:.1;text-shadow:none}
-.led .col{display:flex;flex-direction:column;animation:roll 1.3s cubic-bezier(.2,.8,.2,1) backwards}
-.led .col span{height:1em}
-@keyframes roll{from{transform:translateY(0)}}
+/* the board "switches on" when a slide appears: digits are right from the first frame, only the glow settles */
+.led{animation:ledOn .9s ease-out both}
+@keyframes ledOn{from{filter:brightness(1.7) drop-shadow(0 0 .12em rgba(255,59,48,.85))}}
+/* the countdown slides */
+.tchip{display:inline-block;vertical-align:middle;margin-left:.5em;padding:.18em .5em .12em;border-radius:.35em;background:var(--kaya);color:#1A1A1A;
+  font-family:var(--fd);font-weight:800;letter-spacing:.06em;text-transform:uppercase;line-height:1}
+.sl .chip2{display:inline-flex;align-items:baseline;gap:.4em;background:var(--paper);border:2px solid var(--line);border-radius:99px;padding:.35em .9em;color:var(--muted)}
+.sl .chip2 b{color:var(--ink)}
+.sl .tword{display:inline-block;font-family:var(--fd);font-weight:800;text-transform:uppercase;letter-spacing:.02em;border-bottom:.14em solid var(--tc);padding-bottom:.08em;line-height:1}
+.sl .lbrow{display:grid;align-items:center;background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:0 18px 0 14px;position:relative}
+.sl .lbrow.medal{border-left:10px solid var(--mc);padding-left:8px}
+.sl .lbrow.medal .qb{box-shadow:inset 0 0 0 3px var(--mc)}
+.sl .mini{display:flex;align-items:center;gap:8px}
+.sl .mini .tr{flex:1;height:14px;border-radius:99px;background:var(--paper2);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.sl .mini .tr i{display:block;height:100%;border-radius:99px}
+.sl .mini span{font-family:var(--fd);font-weight:800;min-width:1.6em;text-align:right}
+.sl .mtile{font-family:var(--fd);font-weight:800;font-size:38px;line-height:1;text-align:center;padding:6px 0 4px;border-radius:10px;
+  background:color-mix(in srgb,var(--cc) 16%,var(--paper));border-bottom:6px solid var(--cc)}
 .sl .pbar{margin:0;box-shadow:inset 0 0 0 2px var(--tileLine)}
 .sl .pbar .pseg{cursor:default}
-.sl .plg{display:flex;flex-wrap:wrap;gap:10px 30px;color:var(--muted)}
+.sl .plg{display:flex;flex-wrap:wrap;gap:10px 30px;color:color-mix(in srgb,var(--ink) 78%,var(--muted));font-weight:500}
 .sl .plg i{display:inline-block;width:.8em;height:.8em;border-radius:.2em;margin-right:.35em;vertical-align:-.05em}
 .sl .plg b{color:var(--ink)}
 .deck-bar .seg{background:var(--paper2);border:1px solid var(--line2)}
@@ -817,7 +1033,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     <div class="hs" id="hs">
       <svg class="hs-ic" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
       <input id="hsQ" type="search" role="combobox" aria-expanded="false" aria-controls="hsList" aria-autocomplete="list" autocomplete="off" spellcheck="false"
-        enterkeyhint="search" maxlength="80" placeholder="Search hawkers, areas, notes…" aria-label="Search hawker centres, areas and Zumi's notes">
+        enterkeyhint="search" maxlength="80" placeholder="Search hawkers, dishes, areas…" aria-label="Search hawker centres, dishes, areas and Zumi's notes">
       <div class="hs-pop" id="hsPop" hidden>
         <div class="hs-show" id="hsShow" hidden></div>
         <div class="hs-chips" id="hsChips"></div>
@@ -839,7 +1055,8 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">🍜 Dashboard</button>
     <button class="tab" role="tab" data-tab="sheet" aria-selected="false">📋 Full list</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">🗺️ Map<span class="tab-more"> &amp; regions</span></button>
-    <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown show</button>
+    <button class="tab" role="tab" data-tab="food" aria-selected="false">🍽️ Dishes<span class="tab-more"> she ate</span></button>
+    <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown<span class="tab-show"> show</span></button>
   </nav>
 </header>
 
@@ -973,6 +1190,25 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
     </div>
   </section>
 
+  <!-- DISHES -->
+  <section class="view" id="v-food">
+    <div class="panel food-head">
+      <h2><span class="stall">#03-01</span>What Zumi ate</h2>
+      <p class="sub">Every dish from her hawker streams, centre by centre, newest visit first. Open a centre to see what she ordered.</p>
+      <div class="kpis food-kpis" id="foodKpis"></div>
+      <p class="food-credit">Dish list compiled by <b>Maskedsound</b> from Zumi's stream VODs. Prices are what Zumi paid on the day.</p>
+      <p class="food-credit" id="vidCredit" hidden></p>
+    </div>
+    <div class="sheet-tools">
+      <input class="search" id="fq" type="search" placeholder="Search dishes, stalls or centres" aria-label="Search dishes, stalls or centres">
+      <div class="chips" id="foodChips" style="margin:0"></div>
+      <button class="chip" id="foodAll" type="button">Open visible</button>
+      <span class="count" id="foodCount" aria-live="polite"></span>
+    </div>
+    <div id="foodList"></div>
+    <div class="food-more"><button class="btn" id="foodMore" type="button" hidden>Show 10 more</button><button class="btn" id="foodFewer" type="button" hidden>Show fewer</button></div>
+  </section>
+
   <!-- SLIDES -->
   <section class="view" id="v-slides">
     <div class="deck" data-deck="slides"></div>
@@ -988,6 +1224,10 @@ const SNAPSHOT = {"updated":"2026-09-23T12:45:20+00:00","centres":[{"n":1,"name"
 let DATA = SNAPSHOT.centres, META = {updated: SNAPSHOT.updated, live:false};
 // map locations (built by scripts/build_geo.py); fetched alongside the ratings. Without it the Map tab says so and the rest works.
 const geoReq = fetch('geo.json').then(r=>r.ok?r.json():null).catch(()=>null);
+// Maskedsound's dish list (built by scripts/build_food.py). Without it the Dishes tab says so and the rest works.
+const foodReq = fetch('food.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
+// 4ever's hawker edits (built by scripts/build_videos.py): one YouTube video per centre visit. Without it nothing shows.
+const vidReq = fetch('videos.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
 if(true) try{
   const r = await fetch('data.json?t='+Date.now(), {cache:'no-store'});
   // only use records that look like hers (number, name, address); anything else keeps the built-in snapshot
@@ -995,6 +1235,17 @@ if(true) try{
   if(r.ok){ const j = await r.json(); if(j && Array.isArray(j.centres) && j.centres.length && j.centres.every(okRow)){ DATA=j.centres; META={updated:j.updated, live:true}; } }
 }catch(e){}
 const GEO = ((await geoReq)||{}).centres || {};
+const FOODJ = await foodReq;
+// only dishes shaped like build_food.py writes them; anything else is left out rather than shown wrong
+const okDish = x => x && Array.isArray(x.n) && x.n.every(Number.isInteger) && ['h','st','d','pt','no'].every(k=>typeof x[k]==='string') && (x.p===null || typeof x.p==='number')
+  && (x.pr===undefined || (Array.isArray(x.pr) && x.pr.length===2 && x.pr.every(v=>typeof v==='number') && x.pr[0]<=x.pr[1]))
+  && (x.w===undefined || (Array.isArray(x.w) && x.w.length===2 && /^[\w-]{11}$/.test(x.w[0]) && Number.isInteger(x.w[1]) && x.w[1]>=0));
+const FOOD = FOODJ && Array.isArray(FOODJ.dishes) ? FOODJ.dishes.filter(okDish) : [];
+const VIDJ = await vidReq;
+const okVid = v => v && typeof v.id==='string' && /^[\w-]{11}$/.test(v.id) && typeof v.t==='string' && Array.isArray(v.n) && v.n.every(Number.isInteger) && typeof v.e==='boolean'
+  && (v.len==null || Number.isInteger(v.len)) && (v.s==null || (typeof v.s==='object' && Object.values(v.s).every(Number.isInteger))) && (v.c==null || (Array.isArray(v.c) && v.c.every(c=>Array.isArray(c) && Number.isInteger(c[0]) && typeof c[1]==='string')));
+const VIDS = VIDJ && Array.isArray(VIDJ.videos) ? VIDJ.videos.filter(okVid) : [];
+const VID_CREDIT = VIDJ && typeof VIDJ.credit==='string' ? VIDJ.credit.trim() : '';
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
 const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
 DATA.forEach(d=>{ d.sh = SHORT[d.name] || autoShort(d.name); });
@@ -1065,7 +1316,7 @@ if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 function setTab(t){
   // #about (and the old #pitch link) open the Dashboard with the intro card shown
   const intro = t==='about' || t==='pitch';
-  if(!['dashboard','sheet','map','slides'].includes(t)) t='dashboard';
+  if(!['dashboard','sheet','map','food','slides'].includes(t)) t='dashboard';
   hsTab(t);
   document.body.dataset.tab=t;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===t));
@@ -1329,6 +1580,8 @@ function select(n){
       <div><b>Visited</b>${fmtD(d.d)}</div>
       <div><b>Best time to go</b>${esc(d.best)}</div>
     </div>
+    ${vidBlock(d.n)}
+    ${FOOD_BY[d.n]?`<div class="ate-box"><b>What she ate</b>${ateList(d.n)}</div>`:''}
     <p class="sub" style="margin:10px 0 0">"Average" compares against all ${R.length} centres Zumi has rated. Click any centre on the page to see its scorecard.</p>`;
   renderLB();
   document.querySelectorAll('#tbl tbody tr').forEach(e=>e.classList.toggle('sel', +e.dataset.n===n));
@@ -1869,6 +2122,7 @@ function openCard(n, from){
       <h3>${esc(d.name)}</h3>
       <div class="roll-meta"><span class="st t${d.rk}">${d.rk}</span><span>${f1(d.t)}/50 · ${TIER_WORD[d.rk]}</span></div>
       <p class="cp-addr">${esc(d.addr)}${g?`<br><span>${esc(g.region)} region · ${esc(g.area)}</span>`:''}</p>
+      ${VID_BY[d.n]?`<div class="cp-vid">${vidBlock(d.n)}</div>`:''}
       <div class="cp-scores">${CRIT.map((c,i)=>`<div class="krow"><span class="em">${c.e}</span>
         <div class="kn">${c.s}${vsAvg(d.s[i],i)}</div>
         <span class="kv">${f1(d.s[i])}<small>/10</small></span>
@@ -1878,6 +2132,7 @@ function openCard(n, from){
         <div><b>Visited</b>${fmtD(d.d)}</div>
         <div><b>Best time to go</b>${esc(d.best)||'Not recorded'}</div>
         ${stalls.length?`<div><b>Stalls in her notes</b>${stalls.map(esc).join(', ')}</div>`:''}
+        ${FOOD_BY[d.n]?`<div><b>What she ate</b>${ateList(d.n)}</div>`:''}
       </div>
       <div class="roll-acts">
         <button type="button" class="btn solid" data-roll="lb">See it on the leaderboard</button>
@@ -1957,27 +2212,62 @@ document.getElementById('q').addEventListener('input',e=>{ state.q=e.target.valu
 
 /* ---------- decks ---------- */
 const SIZES = {w:[1920,1080], v:[1080,1920], sq:[1080,1080]};
-// LED digits for the queue board. Each digit is a 0–9 column that rolls up to its value whenever the slide is drawn
-// (the deck re-renders on every move). Non-digits such as "." are drawn as-is.
+// LED digits for the queue board. The real digits are drawn from the very first frame, so flicking quickly between
+// slides never shows a wrong or half-rolled number; only the light animates (a short warm-up glow, once).
+// Non-digits such as "." are drawn as-is.
 function ledNum(v, digits=0, size){
   const s = String(v).padStart(digits,'0');
-  let k = 0;
   return `<span class="led" style="font-size:${size}px">${[...s].map(ch=>/\d/.test(ch)
-    ? `<span class="dg"><span class="col" style="transform:translateY(-${ch}em);animation-delay:${(k++)*110}ms">${[...'0123456789'].map(x=>`<span>${x}</span>`).join('')}</span></span>`
+    ? `<span class="dg">${ch}</span>`
     : `<span>${ch}</span>`).join('')}</span>`;
 }
-// "NOW SERVING #07" badge used on each centre's reveal (the number is its leaderboard rank)
+// "NOW SERVING #07" badge used on each centre's slide (the number is its leaderboard rank)
 function qcall(d, px){
   return `<div class="qb" style="display:inline-flex;flex-direction:column;gap:${px*.12}px;padding:${px*.16}px ${px*.22}px">
-    <span class="lbl" style="font-size:${px*.17}px">Now serving${d.tied?' · tied':''}</span>${ledNum(d.pos, Math.max(2,String(R.length).length), px)}</div>`;
+    <span class="lbl" style="font-size:${px*.17}px">Now serving</span>${ledNum(d.pos, Math.max(2,String(R.length).length), px)}</div>`;
 }
+// how far through the quest: always out of all the official centres, the same as the 023/123 board
+const questPct = () => Math.round(R.length / TOTAL * 100);
+const questLine = () => `${R.length} of ${TOTAL} rated · ${questPct()}% of the way${CLOSED?` · ${CLOSED} closed`:''}`;
+const tiedChip = px => `<span class="tchip" style="font-size:${px}px">Tied</span>`;
+// gold, silver, bronze by rank position (a tie at #3 gives every #3 bronze; two at #1 means no #2)
+const MEDAL = {1:'#C9A227', 2:'#9AA5AD', 3:'#B0713A'};
 const daysAgo = iso => { const n=Math.round((Date.parse(new Date(Date.now()+8*36e5).toISOString().slice(0,10))-Date.parse(iso))/864e5);
   return n<=0?'today':n===1?'yesterday':`${n} days ago`; };
 const LATEST = DATES.length ? R.filter(d=>d.d===DATES[DATES.length-1]).sort((a,b)=>a.t-b.t || b.name.localeCompare(a.name)) : [];
 function foot(l,r){ return `<div class="foot"><span>${l}</span><span>${r}</span></div>`; }
 function stk(t,px){ const r=Math.round(px*.2); return `<span class="st t${t}" style="width:${px}px;height:${px}px;font-size:${px*.7}px;border-radius:${r}px;box-shadow:inset 0 0 0 ${px*.055}px var(--paper),inset 0 0 0 ${px*.09}px var(--c)">${t}</span>`; }
 
-function centreSlide(d,f){
+// One centre's slide, read in three seconds: who (queue number, name), how good (the big score and tier), then the
+// detail (five scores, her quote, best time, visit date). ctx is the label on top: "Newest review · 14 Sep 2026" in
+// the quick recap, "#17 of 23 in the countdown" in the full countdown.
+function centreSlide(d,f,ctx){
+  if(f==='sq') return centreSlideSq(d,f);
+  const v=f==='v', g=geoOf(d), where = g ? `${g.region} region · ${g.area}` : d.addr;
+  const label = ctx || `#${R.length-ranked.indexOf(d)} of ${R.length} in the countdown`;
+  const nm = d.name.length, nfs = v ? (nm>30?78:nm>20?92:108) : (nm>30?74:nm>20?88:104);
+  const bars = CRIT.map((c,i)=>`<div style="display:grid;grid-template-columns:${v?'60px 230px 1fr 80px':'52px 200px 1fr 70px'};align-items:center;gap:${v?20:18}px">
+      <span style="font-size:${v?46:40}px;line-height:1">${c.e}</span><span style="font-size:${v?32:29}px;font-weight:600">${c.s}</span>
+      <div class="slbar" style="height:${v?32:28}px"><i style="width:${d.s[i]*10}%;background:${CV(i)}"></i></div>
+      <span class="num" style="font-size:${v?56:50}px;font-weight:900;text-align:right">${f1(d.s[i])}</span></div>`).join('');
+  const score = `<div style="display:flex;align-items:flex-end;gap:${v?28:24}px;flex-wrap:wrap">
+      <div style="display:flex;align-items:baseline;gap:10px"><span class="h num" style="font-size:${v?230:210}px;line-height:.8">${f1(d.t)}</span><span class="h" style="font-size:${v?76:70}px;color:var(--muted)">/50</span></div>
+      <span class="tword" style="--tc:${TV(d.rk)};font-size:${v?54:48}px;margin-bottom:${v?14:12}px">${d.rk} · ${TIER_WORD[d.rk]}</span></div>`;
+  const quote = `<div class="card" style="font-size:${d.note.length>70?(v?34:31):(v?40:36)}px;font-style:italic;line-height:1.3;border-left:14px solid var(--kaya);padding:${v?'26px 32px':'22px 28px'}">“${esc(d.note)}”</div>`;
+  const chips = `<div style="display:flex;flex-wrap:wrap;gap:14px;font-size:${v?28:25}px">
+      <span class="chip2">Best time <b>${esc(d.best)||'Not recorded'}</b></span><span class="chip2">Visited <b>${fmtD(d.d)}</b></span></div>`;
+  const id = `<div style="display:flex;align-items:center;gap:${v?30:26}px">${qcall(d,v?140:118)}${stk(d.rk,v?150:124)}${d.tied?tiedChip(v?34:30):''}</div>
+      <div><h2 class="h" style="font-size:${nfs}px">${esc(d.name)}</h2><p class="lead" style="margin-top:12px;font-size:${v?32:28}px">${esc(where)}</p></div>`;
+  if(v) return `<div class="sl"><div class="strip"></div><div class="pad" style="inset:96px 80px 80px;display:flex;flex-direction:column;gap:34px">
+      <div><span class="kick">${esc(label)}</span></div>${id}${score}
+      <div class="card" style="display:grid;gap:18px;padding:28px 32px">${bars}</div>${quote}${chips}
+    </div></div>`;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="inset:84px 110px 70px;display:grid;grid-template-columns:minmax(0,1fr) 700px;gap:70px">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-width:0"><div><span class="kick">${esc(label)}</span></div>${id}${score}${chips}</div>
+      <div style="display:flex;flex-direction:column;gap:24px;min-width:0"><div class="card" style="display:grid;gap:16px;padding:30px 32px;flex:1;align-content:space-evenly">${bars}</div>${quote}</div>
+    </div></div>`;
+}
+function centreSlideSq(d,f){
   const v=f==='v', sq=f==='sq';
   const bars = CRIT.map((c,i)=>`<div style="display:grid;grid-template-columns:${sq?'54px 190px 1fr 76px':'70px 240px 1fr 96px'};align-items:center;gap:${sq?16:22}px">
       <span style="font-size:${sq?40:52}px">${c.e}</span><span style="font-size:${sq?28:34}px;font-weight:600">${c.s}</span>
@@ -2014,40 +2304,66 @@ function centreSlide(d,f){
     </div>${foot(`Makan or Meh? · ${TIER_WORD[d.rk]}`,`${R.length-ranked.indexOf(d)} of ${R.length} in the countdown`)}</div>`;
 }
 
+// The Top 10 as a leaderboard. Every size comes from the space left after the title, the criteria header and the
+// gaps, so ten rows always fit the slide (40px names and 44px for medal places are targets, never forced).
+// Medals follow rank position, not row order. Each criterion gets its own column so rows compare at a glance.
 function leaderboardSlide(f, n){
-  const v=f==='v', sq=f==='sq';
+  const v=f==='v';
   const list = ranked.slice(0,n);
-  const rh = v?108:sq?66:60, fs = v?40:sq?30:32;
-  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${v?50:30}px">
-    <div><span class="kick">Leaderboard</span><h2 class="h" style="font-size:${v?150:sq?96:100}px;margin-top:22px">Top ${n} so far</h2></div>
-    <div style="display:grid;gap:${v?14:8}px">${list.map(d=>`<div style="display:grid;grid-template-columns:${v?'120px 1fr 110px 80px':'100px 480px 1fr 110px 64px'};gap:24px;align-items:center;height:${rh}px">
-      <span class="qb" style="padding:${rh*.12}px ${rh*.2}px;border-radius:${rh*.2}px;justify-self:start;box-shadow:inset 0 0 0 3px #3A3A3A">${ledNum(d.pos,2,rh*.6)}</span>
-      <span style="font-size:${fs}px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.sh)}${d.tied?' <span style="font-size:.85em">🤝</span>':''}</span>
-      ${v?'':`<div style="display:flex;gap:4px;height:${rh*.42}px">${d.s.map((s,i)=>`<span style="flex:0 0 calc(${s/50*100}% - 4px);background:${CV(i)};border-radius:6px"></span>`).join('')}</div>`}
-      <span class="num" style="font-size:${fs*1.6}px;font-weight:900;text-align:right">${f1(d.t)}</span>${stk(d.rk,v?72:56)}</div>`).join('')}</div>
-    </div>${v||sq?'':foot('Stacked bars show the five criteria',CRIT.map((c,i)=>`<span style="color:${CV(i)}">■</span> ${c.s}`).join('  '))}</div>`;
+  const PAD = v ? [90,80,80] : [70,110,60], H = v ? 1920 : 1080;
+  const head = v ? 196 : 92, crit = v ? 82 : 40, gapHead = v ? 26 : 20, gapCrit = v ? 12 : 10, gap = v ? 14 : 10;
+  const rh = Math.floor((H - PAD[0] - PAD[2] - head - gapHead - crit - gapCrit - gap*(list.length-1)) / list.length);
+  const nameFs = d => Math.min(MEDAL[d.pos] ? 44 : 40, Math.round(rh*(v?.3:.6)));
+  const totFs = Math.min(v?64:54, Math.round(rh*(v?.42:.76))), stamp = Math.round(rh*(v?.46:.7)), led = Math.round(rh*(v?.34:.5));
+  const cols = v ? '110px minmax(0,1fr) 140px 70px' : '120px minmax(0,1fr) repeat(5,128px) 110px 56px';
+  // portrait shows each score as a coloured number tile (on a phone the slide is drawn at about a third of its size,
+  // so a thin bar and a small number become unreadable); desktop keeps the bar with a larger number
+  const mini = (d,i) => v ? `<div class="mtile" style="--cc:${CV(i)}">${f1(d.s[i])}</div>`
+    : `<div class="mini" style="font-size:30px"><div class="tr"><i style="width:${d.s[i]*10}%;background:${CV(i)}"></i></div><span>${f1(d.s[i])}</span></div>`;
+  const critHead = v
+    ? `<div style="display:grid;grid-template-columns:${cols};column-gap:20px;height:${crit}px;align-items:end;font-size:22px;color:var(--muted);padding:0 18px 0 14px"><span></span>
+        <div style="grid-column:2/4;display:grid;grid-template-columns:repeat(5,1fr);gap:14px">${CRIT.map(c=>`<span style="display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.1"><span style="font-size:38px">${c.e}</span><span>${c.s}</span></span>`).join('')}</div></div>`
+    : `<div style="display:grid;grid-template-columns:${cols};gap:22px;height:${crit}px;align-items:end;font-size:26px;color:var(--muted);padding:0 18px 0 14px"><span></span><span></span>
+        ${CRIT.map(c=>`<span style="white-space:nowrap">${c.e} ${c.s}</span>`).join('')}<span style="text-align:right">Total</span><span></span></div>`;
+  const rows = list.map(d=>{
+    const m = MEDAL[d.pos], fs = nameFs(d);
+    const rank = `<span class="qb" style="padding:${led*.22}px ${led*.34}px;border-radius:${led*.3}px;justify-self:start;box-shadow:inset 0 0 0 3px #3A3A3A">${ledNum(d.pos,2,led)}</span>`;
+    const name = `<span style="font-size:${fs}px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${esc(d.sh)}${d.tied?tiedChip(Math.round(fs*(v?.6:.42))):''}</span>`;
+    const tot = `<span class="num" style="font-size:${totFs}px;font-weight:900;text-align:right">${f1(d.t)}</span>`;
+    return `<div class="lbrow${m?' medal':''}" data-pos="${d.pos}"${m?` style="--mc:${m};height:${rh}px`:` style="height:${rh}px`};grid-template-columns:${cols};gap:${v?'10px 20px':'22px'}">
+      ${v ? `${rank}${name}${tot}${stk(d.rk,stamp)}<div style="grid-column:2/4;display:grid;grid-template-columns:repeat(5,1fr);gap:14px">${CRIT.map((c,i)=>mini(d,i)).join('')}</div>`
+          : `${rank}${name}${CRIT.map((c,i)=>mini(d,i)).join('')}${tot}${stk(d.rk,stamp)}`}</div>`;
+  }).join('');
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="inset:${PAD[0]}px ${PAD[1]}px ${PAD[2]}px;display:flex;flex-direction:column">
+    <div style="height:${head}px;display:flex;${v?'flex-direction:column;gap:18px':'align-items:center;gap:30px'}"><span class="kick" style="align-self:${v?'flex-start':'center'}">Leaderboard</span><h2 class="h" style="font-size:${v?130:92}px">Top ${n} so far</h2></div>
+    <div style="margin-top:${gapHead}px">${critHead}</div>
+    <div style="display:grid;gap:${gap}px;margin-top:${gapCrit}px">${rows}</div>
+  </div></div>`;
 }
 
 // the show's opening board: a hawker queue display counting the centres served so far
 function servingSlide(f){
   const v=f==='v', sq=f==='sq', H=(a,b,c)=>v?a:sq?b:c;
   const dg = String(TOTAL).length;
-  const stat = (l,val,d) => `<div style="display:flex;flex-direction:column;gap:${H(14,10,14)}px"><span class="lbl" style="font-size:${H(38,22,28)}px">${l}</span>${ledNum(val,d,H(132,64,92))}</div>`;
+  const stat = (l,val,d) => `<div style="display:flex;flex-direction:column;gap:${H(14,10,12)}px;padding-left:${H(30,18,26)}px;border-left:3px dashed #3A3A3A"><span class="lbl" style="font-size:${H(36,22,26)}px">${l}</span>${ledNum(val,d,H(120,64,88))}</div>`;
   const last = LATEST[LATEST.length-1];
-  const board = `<div class="qb" style="padding:${H('44px 50px','30px 36px','44px 56px')};display:grid;grid-template-columns:minmax(0,1fr);gap:${H(40,24,34)}px">
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:30px;flex-wrap:wrap">
+  const board = `<div class="qb" style="padding:${H('44px 50px','30px 36px','40px 54px')};display:grid;grid-template-columns:minmax(0,1fr);gap:${H(40,24,30)}px">
+      <div style="display:grid;grid-template-columns:${v?'1fr':'auto minmax(0,1fr)'};align-items:end;gap:${H(50,30,60)}px">
         <div style="display:flex;flex-direction:column;gap:${H(20,12,18)}px"><span class="lbl" style="font-size:${H(60,34,44)}px">Now serving</span>
           <div style="display:flex;align-items:flex-end;gap:${H(22,16,22)}px">${ledNum(R.length,dg,H(320,190,280))}<span class="lbl" style="font-size:${H(92,60,84)}px;padding-bottom:.12em">/${TOTAL}</span></div></div>
-        <div style="display:grid;grid-template-columns:repeat(2,auto);gap:${H('40px 80px','18px 40px','26px 60px')}">
+        <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:${H('40px 30px','18px 24px','30px 30px')}">
           ${stat('To go',LEFT,dg)}${stat('Hawker days',DATES.length,2)}${stat('Average',f1(AVGT),0)}${stat('Top score',f1(TOP.t),0)}</div>
       </div>
-      ${last?`<div class="lbl" style="font-size:${H(42,24,32)}px;line-height:1.25;border-top:3px dashed #3A3A3A;padding-top:${H(28,18,24)}px">Last called ▸ ${esc(last.sh)} · ${fmtDs(last.d)} · ${daysAgo(last.d)}</div>`:''}
+      ${last?`<div class="lbl" style="font-size:${H(40,24,30)}px;line-height:1.25;border-top:3px dashed #3A3A3A;padding-top:${H(28,18,22)}px">Last called ▸ ${esc(last.sh)} · ${fmtDs(last.d)} · ${daysAgo(last.d)}</div>`:''}
     </div>`;
-  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(80,26,40)}px;justify-content:center">
+  const pct = `<div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:${H(22,14,18)}px">
+      <span class="h" style="font-size:${H(64,40,52)}px"><span style="color:var(--red)">${questPct()}%</span> of the way</span>
+      <span style="font-size:${H(32,22,28)}px;color:var(--muted)">${R.length} of ${TOTAL} rated${CLOSED?` · ${CLOSED} closed`:''}</span></div>`;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;gap:${H(70,26,36)}px;justify-content:center">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:30px;flex-wrap:wrap"><span class="kick">Zumi's hawker quest 2026</span>
       <h1 class="h" style="font-size:${H(130,64,96)}px">Makan <span style="color:var(--red)">or meh?</span></h1></div>
     ${board}
-    <div>${slideBar(H(72,44,56),H(34,22,28))}</div>
+    <div>${pct}${slideBar(H(64,44,50),H(32,22,26))}</div>
   </div></div>`;
 }
 // chapter card in the full countdown: the queue board calls the next tier
@@ -2072,7 +2388,7 @@ function trackerSlides(f, mode){
   const S=[];
   S.push({t:'Now serving',ch:1,h:servingSlide(f)});
   if(mode==='stream'){
-    LATEST.forEach(d=>S.push({t:`New: #${d.pos} ${d.sh}`,grade:d.rk,h:centreSlide(d,f)}));
+    LATEST.forEach(d=>S.push({t:`New: #${d.pos} ${d.sh}`,grade:d.rk,h:centreSlide(d,f,`Newest review · ${fmtD(d.d)}`)}));
     S.push({t:'Top 10',h:leaderboardSlide(f, v?10:sq?8:10)});
     S.push({t:'Next up',h:nextUpSlide(f)});
     return S;
@@ -2105,12 +2421,19 @@ function trackerSlides(f, mode){
   S.push({t:'Next up',h:nextUpSlide(f)});
   return S;
 }
+// the finale: the queue board shows how many are still waiting, and the quest carries on (progress, never "almost")
 function nextUpSlide(f){
-  const v=f==='v', sq=f==='sq';
-  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;justify-content:center;gap:${v?70:sq?40:60}px">
-    <div><span class="kick">Still hungry</span><h2 class="h" style="font-size:${v?170:sq?120:160}px;margin-top:26px"><span style="color:var(--red)">${LEFT}</span> centres<br>to go</h2>
-    <p class="lead" style="margin-top:30px;font-size:${v?46:sq?32:42}px;max-width:1100px">${TC.S?`${TC.S} S tier so far. Could the next one join them?`:'No S tier yet. The first 45 out of 50 could be the next one on the list.'}</p></div>
-    <div>${slideBar(v?64:sq?44:56,v?30:sq?22:28)}</div></div></div>`;
+  const v=f==='v', sq=f==='sq', H=(a,b,c)=>v?a:sq?b:c;
+  const board = `<div class="qb" style="display:inline-flex;flex-direction:column;gap:${H(18,12,16)}px;padding:${H('40px 50px','26px 34px','38px 50px')}">
+      <span class="lbl" style="font-size:${H(46,28,40)}px">Centres left</span>${ledNum(LEFT,String(TOTAL).length,H(300,170,250))}</div>`;
+  const words = `<div style="display:flex;flex-direction:column;gap:${H(26,16,22)}px;min-width:0">
+      <h2 class="h" style="font-size:${H(150,96,138)}px">The quest<br><span style="color:var(--red)">continues</span></h2>
+      <p style="margin:0;font-size:${H(42,28,38)}px;font-weight:700">${questLine()}</p>
+      <p class="lead" style="font-size:${H(34,24,30)}px">${TC.S?`${TC.S} S tier so far. Could the next one join them?`:'No S tier yet. The first 45 out of 50 could be the next one on the list.'}</p></div>`;
+  return `<div class="sl"><div class="strip"></div><div class="pad" style="display:flex;flex-direction:column;justify-content:center;gap:${H(70,40,56)}px">
+    <div><span class="kick">Still hungry</span></div>
+    <div style="display:${v?'flex':'grid'};${v?'flex-direction:column;gap:60px':'grid-template-columns:auto minmax(0,1fr);gap:80px;align-items:center'}">${board}${words}</div>
+    <div>${slideBar(H(60,44,52),H(30,22,26))}</div></div></div>`;
 }
 
 // a control focused with the keyboard (Tab), not just clicked with a mouse or finger
@@ -2405,13 +2728,15 @@ const SYN = [['road','rd'],['avenue','ave'],['street','st'],['drive','dr'],['lor
 const STATUS = [['still to visit','todo'],['yet to visit','todo'],['to visit','todo'],['not visited','todo'],['unvisited','todo'],['not rated','todo'],
   ['unrated','todo'],['visited','rated'],['rated','rated'],['closed','closed']];
 const statusOf = d => d.s ? 'rated' : d.closed ? 'closed' : 'todo';
-const FIELD_RANK = {name:2, area:3, region:4, addr:5, best:6, note:7};
+const FIELD_RANK = {name:2, area:3, region:4, addr:5, best:6, note:7, dish:8};
+const dishText = x => normQ(x.d+' '+x.st);
 let SIDX = null;
 function searchIndex(){
   if(SIDX) return SIDX;
   SIDX = DATA.map(d=>{ const g=geoOf(d)||{};
     const names=[d.name, d.sh, g.nea].filter(Boolean).map(normQ);
-    return { d, g, names, f:[['name',names.join(' | ')],['area',normQ(g.area)],['region',normQ(g.region)],['addr',normQ(d.addr)],['best',normQ(d.best)],['note',normQ(d.note)]] };
+    return { d, g, names, f:[['name',names.join(' | ')],['area',normQ(g.area)],['region',normQ(g.region)],['addr',normQ(d.addr)],['best',normQ(d.best)],['note',normQ(d.note)],
+      ['dish',(FOOD_BY[d.n]||[]).map(dishText).join(' | ')]] };
   });
   return SIDX;
 }
@@ -2509,6 +2834,8 @@ function hsRow(x, rx){
       : f==='region' ? `Region: <b>${hl(g.region,rx)}</b>${g.area?` · ${esc(g.area)}`:''}`
       : f==='addr' ? `Address: ${hl(d.addr,rx)}`
       : f==='best' ? `Best time to go: <b>${hl(d.best,rx)}</b>`
+      : f==='dish' ? (()=>{ const t=x.why[1], y=(FOOD_BY[d.n]||[]).find(y=>t.lit.some(a=>hasAlt(dishText(y),a)));
+          return y ? `She ate: <b>${hl(y.d,rx)}</b>${y.st?` · ${hl(y.st,rx)}`:''}` : 'On her dish list'; })()
       : `Her notes: “${snippet(d.note,rx)}”`;
   } else why = d.s ? `${TIER_WORD[d.rk]}${place?` · ${esc(place)}`:''}` : d.closed ? `Closed · ${esc(d.addr)}` : `Still to visit${place?` · ${esc(place)}`:''}`;
   const right = d.s ? `<span class="hs-sc">${f1(d.t)}<small>/50 · #${d.pos} of ${R.length}</small></span>` : '<span></span>';
@@ -2668,11 +2995,418 @@ document.addEventListener('keydown',e=>{
   if(matchMedia('(max-width:720px)').matches) hsPhone(true); else hsQ.focus();
 });
 
+/* ---------- dishes (Maskedsound's list of what Zumi ate) ---------- */
+// One group per centre on Zumi's list, newest visit first. A dish whose centre isn't matched yet (n: []) is kept
+// under the name Masked wrote, without a tier or scorecard link. Her text is shown exactly as she wrote it.
+// "teh" is tea, except in bak kut teh (pork rib soup); soya bean is a drink unless it's bean curd
+const DRINK = /\b(kopi|(?<!kut )teh|tea|coffee|latte|cino|juice|sugarcane|water|100plus|drinks?|soy milk|soya bean(?! curd))\b/i;
+const DRINK_NAMES = ['radiant mulan'];   // Cha Mulan's tea, named without a drink word
+const isDrink = x => DRINK.test(x.d) || DRINK_NAMES.includes(normQ(x.d));
+const money = v => '$'+v.toFixed(2);
+// a stall as she wrote it, with each unit number ("#02-60") kept on one line
+const stallHtml = (st, rx) => st.split(/(#[0-9A-Z]{2}-\d+[A-Z]?)/).map((p,i)=>i%2 ? `<span class="nw">${hl(p,rx)}</span>` : hl(p,rx)).join('');
+const FOOD_GROUPS = (()=>{
+  const g = new Map();
+  FOOD.forEach(x=>(x.n.length ? x.n : ['h:'+x.h]).forEach(k=>{
+    if(!g.has(k)) g.set(k, {k:String(k), d:BY[k]||null, h:x.h, items:[]});
+    g.get(k).items.push(x);
+  }));
+  const day = e => (e.d && e.d.d) || '';
+  return [...g.values()].sort((a,b)=>day(b).localeCompare(day(a)) || (a.d?a.d.name:a.h).localeCompare(b.d?b.d.name:b.h));
+})();
+const FOOD_BY = {}; FOOD_GROUPS.forEach(e=>{ if(e.d) FOOD_BY[e.d.n]=e.items; });
+
+/* ---------- 4ever's edits (one YouTube video per centre visit) ---------- */
+// Only YouTube's own thumbnail shows until someone taps it; then the player loads in its place. Videos whose owner
+// turned embedding off (e: false) open on YouTube instead. Nothing is hosted here.
+const VID_BY = {}; VIDS.forEach(v=>v.n.forEach(n=>(VID_BY[n] = VID_BY[n] || []).push(v)));
+const VID_IDS = new Set(VIDS.filter(v=>v.e && v.n.length).map(v=>v.id));
+const ytWatch = id => `https://www.youtube.com/watch?v=${id}`;
+const ytThumb = (id, small) => `https://i.ytimg.com/vi/${id}/${small?'mqdefault':'hqdefault'}.jpg`;
+// 1605 -> "26:45"; 3723 -> "1:02:03"
+const clock = s => { const h=Math.floor(s/3600), m=Math.floor(s/60)%60, x=String(s%60).padStart(2,'0'); return h ? `${h}:${String(m).padStart(2,'0')}:${x}` : `${m}:${x}`; };
+const YT_GLYPH = `<svg class="vid-yt" viewBox="0 0 20 14" aria-hidden="true"><rect width="20" height="14" rx="4" fill="#FF0000"/><path d="M8 4l5 3-5 3z" fill="#fff"/></svg>`;
+// The card: YouTube's thumbnail with the title on it and the length on a queue-number display, chapters (when the
+// video has them) as chits that start the video at that moment, then the credit.
+function vidBlock(n, pick){
+  const vs = VID_BY[n]; if(!vs) return '';
+  const v = vs.find(o=>o.id===pick) || vs[0], from = (v.s && v.s[n]) || 0, label = `Play the video of Zumi's visit: ${v.t}${v.len?` (${clock(v.len)})`:''}`;
+  const face = `<img src="${ytThumb(v.id)}" alt="" loading="lazy" decoding="async"><span class="vid-shade" aria-hidden="true"></span>
+    <span class="vid-play" aria-hidden="true"></span>${v.len?`<span class="vid-len" aria-hidden="true">${clock(v.len)}</span>`:''}`;
+  // One rail for every video with times: 4ever's own chapters when the video has them (kept exactly as he wrote
+  // them), otherwise the dishes from this centre that have a moment in this video, in time order. Nothing else.
+  const own = v.c && v.c.length;
+  const items = own ? v.c : (FOOD_BY[n] || []).filter(x=>x.w && x.w[0]===v.id && Number.isInteger(x.w[1])).map(x=>[x.w[1], x.d]).sort((a,b)=>a[0]-b[0]);
+  const what = own ? 'Chapters' : 'Dishes in this video';
+  const ch = items.length ? `<p class="rail-label">${own ? 'Chapters' : '<span aria-hidden="true">🍽️</span> Dishes in this video'}</p>
+  <div class="vid-rail${own ? '' : ' is-dishes'}">
+    <button type="button" class="rail-arrow prev" data-rail="-1" aria-label="Earlier ${what.toLowerCase()}" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+    <div class="vid-ch" role="group" aria-label="${what}: jump to a moment">${items.map(([s,l])=>
+    v.e ? `<button type="button" class="vid-chip" data-at="${s}" aria-pressed="false" aria-label="Play from ${clock(s)}: ${esc(l)}"><b>${clock(s)}</b><span>${esc(l)}</span></button>`
+        : `<a class="vid-chip" href="${ytWatch(v.id)}&t=${s}s" target="_blank" rel="noopener"><b>${clock(s)}</b><span>${esc(l)}</span></a>`).join('')}</div>
+    <button type="button" class="rail-arrow next" data-rail="1" aria-label="Later ${what.toLowerCase()}" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+  </div>` : '';
+  return `<figure class="vid" data-v="${v.id}" data-vt="${esc(v.t)}" data-vc="${n}" data-s="${from}">
+    <div class="vid-screen">${v.e
+      ? `<button type="button" class="vid-face" aria-label="${esc(label)}">${face}</button>`
+      : `<a class="vid-face" href="${ytWatch(v.id)}" target="_blank" rel="noopener" aria-label="${esc(label)} (opens YouTube)">${face}</a>`}</div>
+    <p class="vid-t">${esc(v.t)}</p>
+    ${from && BY[n] ? `<p class="vid-from">This video covers more than one place: it plays from <b>${clock(from)}</b>, where ${esc(BY[n].sh)} begins.</p>` : ''}
+    ${ch}
+    <figcaption class="vid-by">${YT_GLYPH}<span>${VID_CREDIT?`Video edits by <b>${esc(VID_CREDIT)}</b>`:'On Zumi\'s YouTube channel'}</span>
+      <a href="${ytWatch(v.id)}" target="_blank" rel="noopener">Watch on YouTube ↗</a>
+      ${vs.filter(o=>o!==v).map(o=>`<a class="vid-more" href="${ytWatch(o.id)}" target="_blank" rel="noopener">Also from this visit: ${esc(o.t)} ↗</a>`).join('')}</figcaption>
+  </figure>`;
+}
+// Play inside the card with YouTube's IFrame Player API (loaded on first use; youtube-nocookie, so nothing from
+// YouTube loads before a tap). The first tap creates the player at the chosen second; every later jump, from a
+// chapter or a dish, seeks that same player instead of reloading it. YouTube's own controls stay on.
+// If the API can't load (blocked or offline), a plain embed starting at that second is used instead.
+let ytApi = null;
+function ytReady(){
+  if(ytApi) return ytApi;
+  ytApi = new Promise((res, rej)=>{
+    if(window.YT && YT.Player) return res(YT);
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = ()=>{ if(prev) prev(); res(YT); };
+    const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true; s.onerror = rej;
+    document.head.append(s);
+    setTimeout(()=>rej(new Error('YouTube player API did not load')), 6000);
+  });
+  ytApi.catch(()=>{ ytApi = null; });
+  return ytApi;
+}
+// start fetching the API as a finger or pointer comes down on a video or a watch button, so the tap itself is quick
+document.addEventListener('pointerdown', e=>{ if(e.target.closest('.vid, .w-chit')) ytReady().catch(()=>{}); }, {passive:true});
+function vidPlay(fig, at){
+  at = at|0;
+  const scr = fig.querySelector('.vid-screen');
+  // focus stays on the page (in the pop-up, on the scorecard) so Escape still closes it; Tab reaches the player
+  const stage = fig.closest('#rollStage'); if(stage) stage.focus({preventScroll:true});
+  if(fig._p){ if(fig._p.seekTo){ fig._p.seekTo(at, true); fig._p.playVideo(); } else fig._at = at; return; }
+  if(fig._iframe){ fig._iframe.src = embedSrc(fig.dataset.v, at); return; }
+  fig._p = {}; fig._at = at;
+  ytReady().then(YT=>{
+    if(!fig.isConnected) return;
+    const host = document.createElement('div'); scr.append(host);
+    new YT.Player(host, {host:'https://www.youtube-nocookie.com', videoId:fig.dataset.v, width:'100%', height:'100%',
+      playerVars:{autoplay:1, start:fig._at, rel:0, playsinline:1},
+      events:{onReady:ev=>{
+        const f = ev.target.getIframe(); f.title = fig.dataset.vt; f.classList.add('on');
+        const face = scr.querySelector('.vid-face'); if(face) setTimeout(()=>face.remove(), 350);
+        fig._p = ev.target;
+        if(fig._at) ev.target.seekTo(fig._at, true);
+        ev.target.playVideo();
+      }}});
+  }).catch(()=>{
+    if(!fig.isConnected) return;
+    const f = document.createElement('iframe');
+    f.title = fig.dataset.vt; f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+    f.addEventListener('load', ()=>f.classList.add('on'), {once:true});
+    f.src = embedSrc(fig.dataset.v, fig._at); fig._p = null; fig._iframe = f;
+    scr.replaceChildren(f);
+  });
+}
+const embedSrc = (id, at) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1${at?`&start=${at}`:''}`;
+// mark what's playing in both places at once: the chip on the card's rail and the ▶ time beside the dish
+function markPlaying(fig, at){
+  fig.querySelectorAll('.vid-chip').forEach(c=>c.setAttribute('aria-pressed', +c.dataset.at === at));
+  const scope = fig.closest('.fgrp, .roll-ticket, #detail');
+  document.querySelectorAll('.w-chit[aria-pressed="true"]').forEach(b=>b.setAttribute('aria-pressed','false'));
+  if(scope) scope.querySelectorAll(`.w-chit[data-w="${fig.dataset.v}"][data-at="${at}"]`).forEach(b=>b.setAttribute('aria-pressed','true'));
+}
+document.addEventListener('click', e=>{
+  const fig = e.target.closest('.vid'); if(!fig) return;
+  if(e.target.closest('button.vid-face')) vidPlay(fig, +fig.dataset.s || 0);
+  const chip = e.target.closest('button.vid-chip'); if(!chip) return;
+  markPlaying(fig, +chip.dataset.at);
+  vidPlay(fig, +chip.dataset.at);
+});
+
+// The chapter rail. Swipe works natively; this adds the arrows (shown only when there's more that way), the mouse
+// wheel, click-and-drag on desktop, and Left/Right arrow keys between chapters. Shared listeners, so every card
+// works wherever it's drawn (Dishes tab, pop-up, dashboard).
+const smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+function railSync(rail){
+  const ch = rail.querySelector('.vid-ch'), max = ch.scrollWidth - ch.clientWidth;
+  const l = ch.scrollLeft > 2, r = ch.scrollLeft < max - 2;
+  rail.classList.toggle('can-l', l); rail.classList.toggle('can-r', r);
+  const [p, n] = rail.querySelectorAll('.rail-arrow');
+  if(!l && p.contains(document.activeElement)) ch.querySelector('.vid-chip').focus({preventScroll:true});
+  if(!r && n.contains(document.activeElement)) [...ch.querySelectorAll('.vid-chip')].pop().focus({preventScroll:true});
+  p.hidden = !l; n.hidden = !r;
+}
+const railsSync = () => document.querySelectorAll('.vid-rail').forEach(railSync);
+let railFrame = 0;
+const railsSoon = () => { if(!railFrame) railFrame = requestAnimationFrame(()=>{ railFrame = 0; railsSync(); }); };
+new MutationObserver(railsSoon).observe(document.body, {childList:true, subtree:true});
+addEventListener('resize', railsSoon);
+document.addEventListener('toggle', railsSoon, true);   // a Dishes group opening reveals its rail
+document.addEventListener('scroll', e=>{ if(e.target.classList && e.target.classList.contains('vid-ch')) railSync(e.target.parentNode); }, true);
+document.addEventListener('click', e=>{
+  const a = e.target.closest('.rail-arrow'); if(!a) return;
+  const ch = a.parentNode.querySelector('.vid-ch');
+  ch.scrollBy({left: +a.dataset.rail * Math.max(160, ch.clientWidth * .75), behavior: smooth()});
+});
+// a vertical wheel over the rail scrolls it sideways, until it reaches that end; then the page scrolls as usual
+document.addEventListener('wheel', e=>{
+  const ch = e.target.closest && e.target.closest('.vid-ch'); if(!ch || e.ctrlKey) return;
+  const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? 0 : e.deltaY; if(!d) return;
+  const max = ch.scrollWidth - ch.clientWidth;
+  if((d < 0 && ch.scrollLeft <= 0) || (d > 0 && ch.scrollLeft >= max - 1)) return;
+  e.preventDefault(); ch.scrollLeft += d;
+}, {passive:false});
+// click-and-drag with a mouse; a drag never counts as a click on the chapter under the pointer
+let drag = null;
+document.addEventListener('pointerdown', e=>{
+  const ch = e.pointerType === 'mouse' && e.button === 0 && e.target.closest('.vid-ch'); if(!ch) return;
+  drag = {ch, x:e.clientX, left:ch.scrollLeft, moved:false};
+});
+document.addEventListener('pointermove', e=>{
+  if(!drag) return;
+  const dx = e.clientX - drag.x;
+  if(!drag.moved && Math.abs(dx) < 6) return;
+  drag.moved = true; drag.ch.classList.add('dragging');
+  drag.ch.scrollLeft = drag.left - dx;
+});
+document.addEventListener('pointerup', ()=>{
+  if(!drag) return;
+  if(drag.moved){
+    const ch = drag.ch, eat = ev=>{ if(ev.target.closest && ev.target.closest('.vid-ch') === ch) ev.stopPropagation(); };
+    addEventListener('click', eat, true);   // the click that ends this drag fires before the timeout below
+    setTimeout(()=>{ removeEventListener('click', eat, true); ch.classList.remove('dragging'); }, 0);
+  }
+  drag = null;
+});
+// Left/Right arrow keys move between chapters (Tab still moves on past the rail)
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+  const chip = e.target.closest && e.target.closest('.vid-chip'); if(!chip) return;
+  const all = [...chip.parentNode.querySelectorAll('.vid-chip')], i = all.indexOf(chip) + (e.key === 'ArrowRight' ? 1 : -1);
+  if(all[i]){ e.preventDefault(); all[i].focus(); all[i].scrollIntoView({block:'nearest', inline:'nearest', behavior: smooth()}); }
+});
+
+// "Watch 8:35" on a dish: the moment Zumi tastes it (from Gummy's video-moments sheet; never guessed). It plays
+// that dish's own video in the nearest card (swapping the card if the centre has more than one video), brings
+// the card into view and jumps to the second.
+const wChit = x => x.w && VID_IDS.has(x.w[0])
+  ? `<button type="button" class="w-chit" data-w="${x.w[0]}" data-at="${x.w[1]}" aria-pressed="false" aria-label="Watch ${esc(x.d)} at ${clock(x.w[1])}" title="Watch this moment in the video"><span aria-hidden="true">▶</span><b>${clock(x.w[1])}</b></button>`
+  : '';
+document.addEventListener('click', e=>{
+  const c = e.target.closest('.w-chit'); if(!c) return;
+  const scope = c.closest('.fgrp, .roll-ticket, #detail'); if(!scope) return;
+  let fig = scope.querySelector(`.vid[data-v="${c.dataset.w}"]`);
+  if(!fig){
+    const any = scope.querySelector('.vid'); if(!any) return;
+    any.insertAdjacentHTML('afterend', vidBlock(+any.dataset.vc, c.dataset.w)); any.remove();
+    fig = scope.querySelector(`.vid[data-v="${c.dataset.w}"]`);
+  }
+  markPlaying(fig, +c.dataset.at);
+  const r = fig.querySelector('.vid-screen').getBoundingClientRect(), hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+  if(r.top < (fig.closest('#rollStage') ? 0 : hb) || r.bottom > innerHeight)
+    fig.scrollIntoView({block:'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  vidPlay(fig, +c.dataset.at);
+});
+const FOOD_PAGE = 10;   // centres shown at first, and added by each "Show more"
+const foodState = {q:'', kind:'all', open:new Set(), shown:FOOD_PAGE};
+const ICON_FOOD = '<svg class="fg-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5v5.2c0 1 .7 1.8 1.6 1.8V14.5M2.4 1.5v3.4M5.6 1.5v3.4M11.6 14.5V1.5c-1.6.6-2.8 2.5-2.8 5v2.3h2.8"/></svg>';
+const ICON_DRINK = '<svg class="fg-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.5h9v4a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 6.5h1a1.8 1.8 0 0 1 0 3.6h-1.2M5 1.5v2M7.5 1.5v2"/></svg>';
+const hasMoment = x => !!(x.w && VID_IDS.has(x.w[0]));
+// shown above a dish list only when at least one of its dishes has a moment; "Click" or "Tap" to suit the device
+const W_HINT = `<p class="w-hint"><span class="w-hint-ic" aria-hidden="true"></span><span>See something delicious? <span class="w-click">Click</span><span class="w-tap">Tap</span> the <b>▶ time</b> beside any dish to jump straight to that moment in the video.</span></p>`;
+
+// Visit insights: the panel beside a centre's video on the Dishes tab, worked out from Masked's dishes every time
+// the list is drawn. Food or drink is the same isDrink() rule the filters use. Prices are hers: a single amount
+// counts as itself; "$3.50/4/5" (she paid one of those, by portion size) counts as its lowest to highest, so the
+// total becomes a range rather than a guess; "??" (not known) is named but can't be added. The totals are always
+// the whole visit; when a filter or search narrows the list, a separate "Showing ... of this visit" line says so.
+const loP = x => x.p!=null ? x.p : x.pr ? x.pr[0] : null;
+const hiP = x => x.p!=null ? x.p : x.pr ? x.pr[1] : null;
+const spanOf = xs => { const k = xs.filter(x=>loP(x)!=null); return {n:k.length, lo:k.reduce((a,x)=>a+loP(x),0), hi:k.reduce((a,x)=>a+hiP(x),0)}; };
+const fmtSpan = s => Math.abs(s.hi - s.lo) < 0.005 ? money(s.lo) : `${money(s.lo)}–${money(s.hi)}`;
+const nOf = (n, one, many) => `${n} ${n===1?one:(many||one+'s')}`;
+function visitInsights(e, xs, filtered){
+  const all = e.items, kind = foodState.kind, tot = spanOf(all);
+  const ranged = all.filter(x=>x.p==null && x.pr), unknown = all.filter(x=>loP(x)==null);
+  const kinds = [['food','Food',all.filter(x=>!isDrink(x))], ['drink','Drinks',all.filter(isDrink)]].filter(k=>k[2].length);
+  const bar = tot.n ? kinds.map(([k,l,ys])=>{ const s = spanOf(ys), v = (s.lo+s.hi)/2; return v>0 ? `<span class="vi-seg ${k}${kind===k?' on':''}" style="flex-grow:${v}"></span>` : ''; }).join('') : '';
+  const split = kinds.map(([k,l,ys])=>`${l} ${fmtSpan(spanOf(ys))}`).join(', ');
+  const rows = kinds.map(([k,l,ys])=>{
+    const s = spanOf(ys), un = ys.length - s.n, dim = (kind==='food'||kind==='drink') && kind!==k;
+    return `<li class="vi-k ${k}${dim?' dim':''}"><i aria-hidden="true"></i><b>${l}</b>
+      <span>${nOf(ys.length,'item')}${s.n ? ` · ${fmtSpan(s)}` : ''}${un ? ` · ${un} price unknown` : ''}</span>
+      ${kind===k ? `<span class="hs-sr">(${l} filter active)</span>` : ''}</li>`;
+  }).join('');
+  // highlights from single prices; skipped if a dish with several prices could beat it; ties: first in her list
+  const single = all.filter(x=>x.p!=null);
+  let hi = single.reduce((a,x)=>!a || x.p>a.p ? x : a, null), lo = single.reduce((a,x)=>!a || x.p<a.p ? x : a, null);
+  if(hi && ranged.some(x=>x.pr[1] > hi.p)) hi = null;
+  if(lo && ranged.some(x=>x.pr[0] < lo.p)) lo = null;
+  const pick = (label, x) => `<li><span class="vi-hl">${label}</span><span class="vi-dn">${esc(x.d)}</span><b>${money(x.p)}</b></li>`;
+  const highs = single.length > 1 ? (hi ? pick('Priciest', hi) : '') + (lo ? pick('Cheapest', lo) : '') : single.length === 1 && !ranged.length ? pick('Only priced item', single[0]) : '';
+  // the filter line: what's showing now, worded so it can't be read as the visit total
+  let ctx = '';
+  if(filtered){
+    const word = kind==='food' ? 'food' : kind==='drink' ? 'drinks' : kind==='moment' ? 'dishes on video' : 'dishes';
+    if(!xs.length) ctx = `No ${word} match the current filter.`;
+    else {
+      const sp = spanOf(xs);
+      ctx = `Showing ${xs.length} of ${nOf(all.length,'item')}${kind==='food'||kind==='drink' ? ` (${word})` : ''}${sp.n ? ` · ${fmtSpan(sp)} of this visit` : ''}`;
+    }
+  }
+  // say exactly how the total was made, in her words
+  const notes = [];
+  ranged.forEach(x=>notes.push(`<b>${esc(x.d)}</b> was ${esc(x.pt)}${x.no?` (${esc(x.no)})`:''}, so the total is a range.`));
+  if(unknown.length) notes.push(`Price not known for ${unknown.map(x=>`<b>${esc(x.d)}</b>${x.pt?` (${esc(x.pt)})`:''}`).join(', ')}, so ${unknown.length===1?"it isn't":"they aren't"} in the total.`);
+  const vid = e.d && VID_BY[e.d.n], moments = all.some(hasMoment);
+  const name = e.d ? e.d.name : e.h;
+  return `<aside class="vi" aria-label="Visit insights for ${esc(name)}">
+    <div class="vi-head"><span class="tkh">Visit insights</span><span class="vi-whole">Whole visit${e.d && e.d.d ? ` · ${fmtD(e.d.d)}` : ''}</span></div>
+    <div class="vi-stats">
+      <div><span class="vi-v">${all.length}</span><span class="vi-l">${all.length===1?'item':'items'} ordered</span></div>
+      <div><span class="vi-v${tot.n && tot.hi-tot.lo>=0.005 ? ' rng' : ''}">${tot.n ? fmtSpan(tot) : '—'}</span><span class="vi-l">${tot.n ? 'total spent' : 'prices not recorded'}</span></div>
+    </div>
+    ${notes.length ? `<p class="vi-note">${notes.join(' ')}</p>` : ''}
+    ${bar ? `<div class="vi-bar" role="img" aria-label="Spending split: ${split}, of ${fmtSpan(tot)}">${bar}</div>` : ''}
+    <ul class="vi-kinds">${rows}</ul>
+    ${ctx ? `<p class="vi-ctx" role="status">${ctx}</p>` : ''}
+    ${highs ? `<ul class="vi-hls">${highs}</ul>` : ''}
+    ${vid ? `<div class="vi-foot"><span class="w-hint-ic" aria-hidden="true"></span><p><b>Explore this visit.</b> ${moments
+      ? `<span class="w-click">Click</span><span class="w-tap">Tap</span> the <b class="vi-red">▶ time</b> beside any dish below to jump to that moment in the video.`
+      : `Watch the video of this visit <span class="vi-left">on the left</span><span class="vi-above">above</span>.`}</p></div>` : ''}
+  </aside>`;
+}
+
+// the short list on a scorecard: the first few dishes, then a link to the rest on the Dishes tab
+const ATE_SHOW = 6;
+function ateList(n){
+  const xs = FOOD_BY[n]; if(!xs) return '';
+  // dishes with a moment come first, so the ones you can watch are never hidden behind "See all"
+  const ys = [...xs].sort((a,b)=>(b.w&&VID_IDS.has(b.w[0])?1:0)-(a.w&&VID_IDS.has(a.w[0])?1:0));
+  return `${ys.slice(0,ATE_SHOW).some(hasMoment) ? W_HINT : ''}<ul class="ate">${ys.slice(0,ATE_SHOW).map(x=>`<li><span>${esc(x.d)}${wChit(x)}${x.st?`<small>${stallHtml(x.st)}</small>`:''}</span><span>${x.pt?esc(x.pt):'–'}</span></li>`).join('')}</ul>
+    <button type="button" class="linkbtn ate-more" data-food="${n}">${xs.length>ATE_SHOW?`See all ${xs.length} dishes`:'See them on the Dishes tab'}</button>`;
+}
+function renderFoodKpis(){
+  const el = document.getElementById('foodKpis');
+  if(!FOOD.length){ el.hidden = true; return; }
+  const covered = R.filter(d=>FOOD_BY[d.n]).length;
+  const tally = {}; FOOD.forEach(x=>{ const k=normQ(x.d); (tally[k] = tally[k] || {x, c:0}).c++; });
+  const top = Object.values(tally).sort((a,b)=>b.c-a.c)[0];
+  const priced = FOOD.filter(x=>x.p!=null), big = priced.length ? priced.reduce((a,b)=>b.p>a.p?b:a) : null;
+  const where = x => x.n.length ? BY[x.n[0]].sh : x.h;
+  el.innerHTML = `
+    <div class="kpi"><div class="v">${FOOD.length}</div><div class="l">dishes logged so far</div></div>
+    <div class="kpi"><div class="v">${covered}<small>/${R.length}</small></div><div class="l">rated centres with dishes logged</div></div>
+    ${top && top.c>1 ? `<div class="kpi"><div class="v tx">${esc(top.x.d)}</div><div class="l">her most-ordered item, ${top.c} times</div></div>` : ''}
+    ${big ? `<div class="kpi"><div class="v">${money(big.p)}</div><div class="l">priciest: ${esc(big.d)} at ${esc(where(big))}</div></div>` : ''}`;
+}
+function renderFoodChips(){
+  const n = {all:FOOD.length, food:FOOD.filter(x=>!isDrink(x)).length, drink:FOOD.filter(isDrink).length, moment:FOOD.filter(hasMoment).length};
+  const el = document.getElementById('foodChips');
+  // "On video" only appears once some dish has a moment to jump to
+  el.innerHTML = [['all',`All ${n.all}`],['food',`Food ${n.food}`],['drink',`Drinks ${n.drink}`],...(n.moment?[['moment',`▶ On video ${n.moment}`]]:[])]
+    .map(([k,l])=>`<button class="chip" type="button" data-fk="${k}" aria-pressed="${foodState.kind===k}">${l}</button>`).join('');
+  el.querySelectorAll('[data-fk]').forEach(b=>b.onclick=()=>{ foodState.kind=b.dataset.fk; foodState.shown=FOOD_PAGE; renderFoodChips(); renderFood(); });
+}
+function renderFood(){
+  const el = document.getElementById('foodList'), all = document.getElementById('foodAll');
+  if(!FOOD.length){
+    el.innerHTML = `<p class="food-none">The dish list couldn't be loaded just now. Please try again in a little while.</p>`;
+    document.getElementById('foodCount').textContent = ''; all.hidden = true; return;
+  }
+  const words = normQ(foodState.q).split(' ').filter(Boolean);
+  const hw = words.filter(w=>w.length>1);   // a lone letter ("kopi o") would highlight every o on the page
+  const rx = hw.length ? new RegExp(hw.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'gi') : null;
+  const match = (x,e) => { const t = normQ([x.d, x.st, x.no, x.h, e.d?e.d.name:'', e.d?e.d.sh:''].join(' ')); return words.every(w=>t.includes(w)); };
+  // every centre is checked against the search and filter; only the first foodState.shown matches are drawn
+  const matches = FOOD_GROUPS.map(e=>({e, xs: e.items.filter(x=>(foodState.kind==='all' || (foodState.kind==='moment' ? hasMoment(x) : (foodState.kind==='drink')===isDrink(x))) && (!words.length || match(x,e)))}))
+    .filter(m=>m.xs.length);
+  foodState.matchKeys = matches.map(m=>m.e.k);
+  const visible = matches.slice(0, foodState.shown);
+  el.innerHTML = visible.map(({e, xs})=>{
+    const d = e.d, sp = spanOf(e.items), unknown = e.items.length - sp.n;
+    const nDrink = e.items.filter(isDrink).length, nFood = e.items.length - nDrink, date = d && d.d ? fmtD(d.d) : '';
+    const plural = unknown===1 ? 'dish' : 'dishes';
+    const spend = sp.n ? `${fmtSpan(sp)}${unknown ? `<sup title="Total excludes ${unknown} ${plural} without a known price" aria-hidden="true">+${unknown}</sup><span class="hs-sr"> (excludes ${unknown} ${plural} without a known price)</span>` : ''}` : '<span class="fg-na">No prices</span>';
+    const open = words.length || foodState.kind!=='all' || foodState.open.has(e.k);
+    const vid = d && VID_BY[d.n];
+    return `<details class="fgrp" data-k="${esc(e.k)}"${open?' open':''}>
+      <summary>${d && d.s ? `<span class="st t${d.rk}">${d.rk}</span>` : `<span class="st fg-none" aria-hidden="true">·</span>`}
+        <span class="fg-id"><span class="fg-nm">${hl(d ? d.name : e.h, rx)}</span>${date ? `<span class="fg-meta">${date}</span>` : ''}</span>
+        <span class="fg-l2">${date ? `<span class="fg-date">${date}</span>` : ''}
+          <span class="fg-c${nFood?'':' zero'}" title="Food items">${ICON_FOOD}<span class="hs-sr">Food items: </span>${nFood}</span>
+          <span class="fg-c${nDrink?'':' zero'}" title="Drinks">${ICON_DRINK}<span class="hs-sr">Drinks: </span>${nDrink}</span>
+          <span class="fg-sp"><span class="hs-sr">Spent: </span>${spend}</span></span>
+        ${vid ? `<span class="fg-thumb" title="Has a video of the visit"><img src="${ytThumb(vid[0].id, true)}" alt="" loading="lazy" decoding="async"></span>` : `<span class="fg-thumb none" aria-hidden="true"></span>`}
+        <span class="fg-tog" aria-hidden="true"></span></summary>
+      <div class="fg-top${d && VID_BY[d.n] ? '' : ' no-vid'}">
+        ${d && VID_BY[d.n] ? `<div class="fg-vid">${vidBlock(d.n)}</div>` : ''}
+        ${visitInsights(e, xs, !!words.length || foodState.kind!=='all')}
+      </div>
+      <ul class="fdl">${xs.map(x=>`<li><span class="fd-d">${hl(x.d,rx)}${wChit(x)}</span><span class="fd-p">${isDrink(x)?'<span class="fd-cat drink">Drink</span>':'<span class="fd-cat food">Food</span>'}${x.pt?esc(x.pt):'–'}</span>
+        <span class="fd-s">${x.st?stallHtml(x.st,rx):'Stall not noted'}${x.no?` · <i>${hl(x.no,rx)}</i>`:''}</span></li>`).join('')}</ul>
+      ${d && d.s ? `<p class="fg-foot"><button type="button" class="linkbtn" data-card="${d.n}">See Zumi's scorecard for ${esc(d.sh)}</button></p>` : ''}
+    </details>`;
+  }).join('') || `<p class="food-none">No dishes match that. Clear the search or pick another filter.</p>`;
+  const filtering = words.length || foodState.kind!=='all';
+  document.getElementById('foodCount').textContent = matches.length
+    ? `Showing ${visible.length} of ${matches.length}${filtering?' matching':''} centre${matches.length===1?'':'s'}` : '';
+  const more = document.getElementById('foodMore'), fewer = document.getElementById('foodFewer');
+  more.hidden = visible.length >= matches.length;
+  more.textContent = `Show ${Math.min(FOOD_PAGE, matches.length - visible.length)} more`;
+  fewer.hidden = visible.length <= FOOD_PAGE;
+  all.hidden = !visible.length;
+  syncFoodAll();
+}
+// "Open visible" / "Close visible": it only ever acts on the centres drawn right now, so it says so, and the label
+// follows their real state (Close only when every visible centre is open)
+function syncFoodAll(){
+  const gs = [...document.querySelectorAll('#foodList .fgrp')];
+  document.getElementById('foodAll').textContent = gs.length && gs.every(g=>g.open) ? 'Close visible' : 'Open visible';
+}
+// open a centre's dishes on the Dishes tab (from a scorecard), with the same flash the leaderboard uses
+function foodGo(n){
+  if(!roll.hidden) rollShut();
+  foodState.q = ''; document.getElementById('fq').value = ''; foodState.kind = 'all'; foodState.open.add(String(n));
+  // a centre further down the list than what's showing is brought into the shown part first
+  const at = FOOD_GROUPS.findIndex(e=>e.k===String(n));
+  foodState.shown = Math.max(foodState.shown, Math.ceil((at+1)/FOOD_PAGE)*FOOD_PAGE);
+  renderFoodChips(); renderFood(); setTab('food');
+  const g = document.querySelector(`.fgrp[data-k="${n}"]`); if(!g) return;
+  const hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+  scrollTo({top: scrollY + g.getBoundingClientRect().top - hb - 12});
+  g.classList.remove('flash'); void g.offsetWidth; g.classList.add('flash');
+}
+document.getElementById('fq').addEventListener('input', e=>{ foodState.q = e.target.value; foodState.shown = FOOD_PAGE; renderFood(); });
+// remember which centres are open (only while browsing; a search or filter opens every match by itself)
+document.getElementById('foodList').addEventListener('toggle', e=>{
+  if(!e.target.matches('.fgrp')) return;
+  if(!foodState.q.trim() && foodState.kind==='all') foodState.open[e.target.open ? 'add' : 'delete'](e.target.dataset.k);
+  syncFoodAll();
+}, true);
+document.getElementById('foodList').addEventListener('click', e=>{ const b=e.target.closest('[data-card]'); if(b) openCard(+b.dataset.card, b); });
+document.getElementById('foodAll').onclick = ()=>{
+  const gs = [...document.querySelectorAll('#foodList .fgrp')], open = gs.some(g=>!g.open);
+  gs.forEach(g=>{ g.open = open; });
+};
+// Show 10 more / Show fewer. Showing fewer closes the centres it hides, so they come back collapsed next time;
+// the first 10 keep whatever state they had.
+document.getElementById('foodMore').onclick = ()=>{ foodState.shown += FOOD_PAGE; renderFood(); };
+document.getElementById('foodFewer').onclick = ()=>{
+  (foodState.matchKeys || []).slice(FOOD_PAGE).forEach(k=>foodState.open.delete(k));
+  foodState.shown = FOOD_PAGE; renderFood();
+  const top = document.getElementById('foodList').getBoundingClientRect().top, hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+  if(top < hb) scrollTo({top: scrollY + top - hb - 12, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+};
+document.addEventListener('click', e=>{ const b=e.target.closest('[data-food]'); if(b) foodGo(+b.dataset.food); });
+
 /* ---------- init ---------- */
+if(VIDS.length && VID_CREDIT){ const c = document.getElementById('vidCredit'); c.innerHTML = `Video edits by <b>${esc(VID_CREDIT)}</b>, from Zumi's YouTube channel.`; c.hidden = false; }
 renderIntro(); renderHero(); renderChips(); renderLB(); renderFinder(); renderReport(); renderTrail(); renderTiers(); renderSupers(); renderRevisit(); renderTurf(); newPair();
 if(location.protocol==='file:') document.getElementById('fileWarn').hidden=false;
 countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
+renderFoodKpis(); renderFoodChips(); renderFood();
 select(state.sel);
 setTab((location.hash||'').slice(1));
 
@@ -2685,7 +3419,11 @@ paintFresh(); setInterval(paintFresh, 60000);
 document.getElementById('totalN').textContent = TOTAL;
 document.getElementById('newData').onclick=()=>location.reload();
 if(META.live) setInterval(async()=>{ try{ const r=await fetch('data.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json();
-  if(j.updated && j.updated!==META.updated) document.getElementById('newData').classList.add('on'); }catch(e){} }, 3*60000);
+  if(j.updated && j.updated!==META.updated){ const b=document.getElementById('newData'); b.textContent='New ratings are in. Refresh'; b.classList.add('on'); } }catch(e){} }, 3*60000);
+// Masked's dish list is checked the same way; new ratings take the button's wording if both arrive
+if(FOODJ) setInterval(async()=>{ try{ const r=await fetch('food.json?t='+Date.now(),{cache:'no-store'}); if(!r.ok) return; const j=await r.json();
+  const b=document.getElementById('newData');
+  if(j.updated && j.updated!==FOODJ.updated && !b.classList.contains('on')){ b.textContent='New dishes are in. Refresh'; b.classList.add('on'); } }catch(e){} }, 3*60000);
 })();
 </script>
 </body>
