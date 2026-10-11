@@ -657,6 +657,35 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .lv-head .linkbtn{font-size:14px;white-space:nowrap}
 .lv-note{margin:-4px 0 12px;font-size:13px;color:var(--muted)}
 .lv-note[hidden]{display:none}
+/* spotlight: the newest centre on the list, a third of the width beside the row on wide screens, a compact card above it below 1100px */
+.lv-stage{display:flex;gap:20px;align-items:stretch}
+.lv-stage .lv-wrap{flex:1;min-width:0}
+.lv-spot{flex:0 0 33%;display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper)}
+.lv-spot[hidden]{display:none}
+.lvs-pic{position:relative;min-height:240px;background:var(--paper2)}
+.lvs-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.lvs-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px 18px;text-align:center;min-width:0}
+.lvs-lbl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.lvs-nm{margin:0;font-family:var(--fd);font-weight:800;font-size:24px;line-height:1.05;text-transform:uppercase;letter-spacing:.02em;overflow-wrap:anywhere}
+.lvs-info .lv-stats{justify-content:center;gap:4px 12px}
+.lvs-info .lv-stats .lv-sp{margin-left:0}
+.lvs-acts{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:6px}
+.lvs-go{border:0;border-radius:10px;background:var(--red);color:var(--onred);font:inherit;font-size:14px;font-weight:800;padding:10px 20px;cursor:pointer;transition:background-color .15s}
+.lvs-go:hover{background:var(--red2)}
+.lvs-go:focus-visible,.lvs-vid:focus-visible{outline:3px solid var(--kaya);outline-offset:2px;border-radius:10px}
+.lvs-vid{font-size:13px;font-weight:700;color:var(--ink);text-underline-offset:3px}
+@media (min-width:1101px){.lv-stage.has-spot .lv-card{flex-basis:clamp(150px,calc((100% - 3*var(--gap))/4),198px)}}
+@media (max-width:1100px){
+  .lv-stage{flex-direction:column;gap:12px}
+  .lv-spot{flex:none;grid-template-columns:110px 1fr}
+  .lvs-pic{min-height:165px}
+  .lvs-info{align-items:flex-start;text-align:left;padding:12px 14px;gap:5px}
+  .lvs-nm{font-size:19px}
+  .lvs-info .lv-stats{justify-content:flex-start}
+  .lvs-acts{flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 14px;margin-top:4px}
+  .lvs-go{padding:8px 14px}
+}
+@media (prefers-reduced-motion:reduce){.lvs-go{transition:none}}
 .lv-wrap{position:relative;--lv-mid:40%}
 /* the row bleeds 16px into the panel's padding so each tile's hover panel has room; photos still line up with the heading */
 .lv-row{--gap:6px;display:flex;gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;list-style:none;margin:-6px -16px -8px;padding:6px 8px 8px;scroll-padding-inline:8px}
@@ -1267,10 +1296,13 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
       <div class="lv-head"><h3 id="lvTitle">Latest dishes logged</h3>
         <button type="button" class="linkbtn" id="lvAll">View all centres ↓</button></div>
       <p class="lv-note" id="lvNote" hidden></p>
-      <div class="lv-wrap" id="lvWrap">
-        <ol class="lv-row" id="lvRow" aria-labelledby="lvTitle"></ol>
-        <button type="button" class="lv-arrow prev" data-lvgo="-1" aria-label="Scroll to earlier centres" aria-controls="lvRow" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
-        <button type="button" class="lv-arrow next" data-lvgo="1" aria-label="Scroll to more centres" aria-controls="lvRow"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+      <div class="lv-stage" id="lvStage">
+        <article class="lv-spot" id="lvSpot" aria-labelledby="lvSpotNm" hidden></article>
+        <div class="lv-wrap" id="lvWrap">
+          <ol class="lv-row" id="lvRow" aria-labelledby="lvTitle"></ol>
+          <button type="button" class="lv-arrow prev" data-lvgo="-1" aria-label="Scroll to earlier centres" aria-controls="lvRow" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+          <button type="button" class="lv-arrow next" data-lvgo="1" aria-label="Scroll to more centres" aria-controls="lvRow"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+        </div>
       </div>
       <details class="lv-credits" id="lvCredits" hidden><summary>Photo credits</summary><ul id="lvCreditList"></ul></details>
     </section>
@@ -3492,16 +3524,40 @@ renderSheetHead(); renderSheetChips(); renderSheet();
 // Latest dishes logged: her newest centres from Masked's list (FOOD_GROUPS is already newest first) that have a real photo,
 // as poster tiles. A centre without a photo isn't shown here (it's still in the list below), and a photo that fails to
 // load takes its tile out. Each tile holds one button that opens that centre in the list below. Photo credits sit in
-// one list under the row.
+// one list under the row. The newest centre on the list, when it has a photo, is shown larger as a spotlight beside the
+// row (above it on narrower screens) and left out of the row so it appears once.
 const LV_COUNT = 12;
-function lvTile(e){
-  const d = e.d, ph = PHOTOS[d.n], sp = spanOf(e.items), unknown = e.items.length - sp.n;
+const lvFailed = new Set();   // centres whose photo wouldn't load: never picked again this visit
+// food/drink counts and spend, shared by the tiles and the spotlight
+function lvStats(e){
+  const sp = spanOf(e.items), unknown = e.items.length - sp.n;
   const nDrink = e.items.filter(isDrink).length, nFood = e.items.length - nDrink, dishW = unknown===1 ? 'dish' : 'dishes';
   const spend = sp.n ? `${fmtSpan(sp)}${unknown ? `<sup title="Total excludes ${unknown} ${dishW} without a known price" aria-hidden="true">+${unknown}</sup><span class="hs-sr"> (excludes ${unknown} ${dishW} without a known price)</span>` : ''}` : '<span class="fg-na">No prices</span>';
+  return `<span class="lv-stats">
+          <span class="fg-c${nFood?'':' zero'}" title="Food items">${ICON_FOOD}<span class="hs-sr">Food items: </span>${nFood}</span>
+          <span class="fg-c${nDrink?'':' zero'}" title="Drinks">${ICON_DRINK}<span class="hs-sr">Drinks: </span>${nDrink}</span>
+          <span class="lv-sp"><span class="hs-sr">Spent: </span>${spend}</span>
+        </span>`;
+}
+const lvImg = (ph, lazy) => `<img src="${esc(ph.src)}" alt="" ${lazy ? 'loading="lazy" ' : ''}decoding="async"${okPos(ph.pos) ? ` style="object-position:${ph.pos.trim()}"` : ''}>`;
+function lvSpot(e){
+  const d = e.d, vid = VID_BY[d.n];
+  return `<div class="lvs-pic" data-k="${d.n}">${lvImg(PHOTOS[d.n], false)}</div>
+    <div class="lvs-info">
+      <small class="lvs-lbl">Newest dishes logged</small>
+      <h4 class="lvs-nm" id="lvSpotNm">${esc(d.name)}</h4>
+      <span class="lv-meta"><span class="st t${d.rk} lv-grade" title="${TIER_WORD[d.rk]}"><span class="hs-sr">Grade </span>${d.rk}</span><span>${fmtD(d.d)}</span></span>
+      ${lvStats(e)}
+      <div class="lvs-acts"><button type="button" class="lvs-go" data-spot="${d.n}">Explore dishes</button>
+        ${vid ? `<a class="lvs-vid" href="${ytWatch(vid[0].id)}" target="_blank" rel="noopener">▶ Watch visit</a>` : ''}</div>
+    </div>`;
+}
+function lvTile(e){
+  const d = e.d, ph = PHOTOS[d.n];
   return `<li class="lv-card" data-k="${d.n}">
     <button type="button" class="lv-open" data-lv="${d.n}">
       <span class="lv-pic">
-        <img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async"${okPos(ph.pos) ? ` style="object-position:${ph.pos.trim()}"` : ''}>
+        ${lvImg(ph, true)}
         ${VID_BY[d.n] ? '<span class="lv-vid">▶ Video</span>' : ''}
         <span class="lv-peek" aria-hidden="true"><small>She ate ${plural(e.items.length,'item')}</small><span class="lv-peek-d">${e.items.slice(0,3).map(x=>esc(x.d)).join(' · ')}</span>
           <em>${e.items.length>3 ? `and ${e.items.length-3} more · ` : ''}See all →</em></span>
@@ -3509,19 +3565,21 @@ function lvTile(e){
       <span class="lv-body">
         <span class="lv-nm">${esc(d.name)}</span>
         <span class="lv-meta"><span class="st t${d.rk} lv-grade" title="${TIER_WORD[d.rk]}"><span class="hs-sr">Grade </span>${d.rk}</span><span>${fmtD(d.d)}</span></span>
-        <span class="lv-stats">
-          <span class="fg-c${nFood?'':' zero'}" title="Food items">${ICON_FOOD}<span class="hs-sr">Food items: </span>${nFood}</span>
-          <span class="fg-c${nDrink?'':' zero'}" title="Drinks">${ICON_DRINK}<span class="hs-sr">Drinks: </span>${nDrink}</span>
-          <span class="lv-sp"><span class="hs-sr">Spent: </span>${spend}</span>
-        </span>
+        ${lvStats(e)}
       </span>
     </button>
   </li>`;
 }
 function renderLatest(){
-  const row = document.getElementById('lvRow');
-  const list = FOOD_GROUPS.filter(e=>e.d && e.d.s && PHOTOS[e.d.n]).slice(0, LV_COUNT);
-  document.getElementById('latest').hidden = !list.length;
+  const row = document.getElementById('lvRow'), spotEl = document.getElementById('lvSpot');
+  const shown = e => PHOTOS[e.d.n] && !lvFailed.has(e.d.n);
+  // the spotlight is the newest centre on Masked's list (her dish-list order, not Zumi's newest rating), only with a photo
+  const first = FOOD_GROUPS.find(e=>e.d && e.d.s), spot = first && shown(first) ? first : null;
+  const list = FOOD_GROUPS.filter(e=>e.d && e.d.s && shown(e) && e!==spot).slice(0, LV_COUNT);
+  document.getElementById('latest').hidden = !spot && !list.length;
+  spotEl.hidden = !spot; spotEl.innerHTML = spot ? lvSpot(spot) : '';
+  document.getElementById('lvStage').classList.toggle('has-spot', !!spot);
+  document.getElementById('lvWrap').hidden = !list.length;
   row.innerHTML = list.map(lvTile).join('');
   // the row follows Masked's dish list, which can trail Zumi's own ratings: name the newer rated visits still waiting for dishes
   const logged = FOOD_GROUPS.find(e=>e.d && e.d.s), note = document.getElementById('lvNote');
@@ -3530,19 +3588,23 @@ function renderLatest(){
   note.hidden = !waiting.length;
   note.textContent = waiting.length ? `Newer ${waiting.length===1 ? 'visit' : 'visits'} (${names.length>1 ? names.slice(0,-1).join(', ')+' and '+names[names.length-1] : names[0]}) will show here once ${waiting.length===1 ? 'its' : 'their'} dishes are logged.` : '';
   // one credits list under the row instead of a line on every tile; the licences ask for the photographer's name and a link
-  document.getElementById('lvCredits').hidden = !list.length;
-  document.getElementById('lvCreditList').innerHTML = list.map(e=>{ const ph = PHOTOS[e.d.n];
+  const credited = spot ? [spot, ...list] : list;
+  document.getElementById('lvCredits').hidden = !credited.length;
+  document.getElementById('lvCreditList').innerHTML = credited.map(e=>{ const ph = PHOTOS[e.d.n];
     return `<li data-k="${e.d.n}">${esc(e.d.name)}: <a href="${esc(ph.url)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>, ${esc(ph.licence)}</li>`; }).join('');
   // an image that was already broken before this listener could see it
-  row.querySelectorAll('img').forEach(i=>{ if(i.complete && !i.naturalWidth) lvNoImg(i); });
+  document.querySelectorAll('#lvSpot img, #lvRow img').forEach(i=>{ if(i.isConnected && i.complete && !i.naturalWidth) lvNoImg(i); });
   lvArrows();
 }
-// a photo that won't load: its tile and its credit go, rather than leave an empty frame
+// a photo that won't load: the centre is marked so it isn't picked or requested again. A tile and its credit just go;
+// a spotlight photo means drawing the section again without it (its centre doesn't go back into the row either)
 function lvNoImg(img){
-  const c = img.closest('.lv-card'); if(!c) return;
+  const c = img.closest('.lv-card, .lvs-pic'); if(!c || lvFailed.has(+c.dataset.k)) return;
+  lvFailed.add(+c.dataset.k);
+  if(c.matches('.lvs-pic')){ renderLatest(); return; }
   const li = document.querySelector(`#lvCreditList [data-k="${c.dataset.k}"]`); if(li) li.remove();
   c.remove();
-  if(!document.querySelector('#lvRow .lv-card')) document.getElementById('latest').hidden = true;
+  if(!document.querySelector('#lvRow .lv-card')){ document.getElementById('lvWrap').hidden = true; if(document.getElementById('lvSpot').hidden) document.getElementById('latest').hidden = true; }
   if(!document.getElementById('lvCreditList').children.length) document.getElementById('lvCredits').hidden = true;
   lvArrows();
 }
@@ -3558,6 +3620,9 @@ function lvArrows(){
 (()=>{
   const row = document.getElementById('lvRow'), smooth = () => matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
   row.addEventListener('error', e=>{ if(e.target.tagName==='IMG') lvNoImg(e.target); }, true);   // a photo that fails to load
+  const spotEl = document.getElementById('lvSpot');
+  spotEl.addEventListener('error', e=>{ if(e.target.tagName==='IMG') lvNoImg(e.target); }, true);
+  spotEl.addEventListener('click', e=>{ const b = e.target.closest('[data-spot]'); if(b) foodGo(+b.dataset.spot); });
   row.addEventListener('click', e=>{ const b = e.target.closest('[data-lv]'); if(b) foodGo(+b.dataset.lv); });
   row.addEventListener('scroll', lvArrows, {passive:true});
   if(window.ResizeObserver) new ResizeObserver(lvArrows).observe(row); else addEventListener('resize', lvArrows);
