@@ -661,6 +661,11 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .lv-spot[hidden]{display:none}
 .lvs-pic{position:relative;min-height:240px;background:var(--paper2)}
 .lvs-pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+/* no photo of the centre yet: a queue-ticket stub with her grade instead, never a stand-in photo */
+.lvs-pic.ticket{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:12px 6px;background:#0B0B0B;color:#FFB020;
+  border-right:2px dashed rgba(255,176,32,.45);text-align:center}
+.lvs-pic.ticket small{font-size:10px;font-weight:800;letter-spacing:.12em;line-height:1.2;opacity:.85}
+.lvs-pic.ticket b{font-family:'Doto',var(--fd);font-weight:900;font-size:96px;line-height:1;text-shadow:0 0 14px rgba(255,176,32,.55)}
 .lvs-info{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px 18px;text-align:center;min-width:0}
 .lvs-lbl{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
 .lvs-nm{margin:0;font-family:var(--fd);font-weight:800;font-size:24px;line-height:1.05;text-transform:uppercase;letter-spacing:.02em;overflow-wrap:anywhere}
@@ -676,6 +681,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   .lv-stage{flex-direction:column;gap:12px}
   .lv-spot{flex:none;grid-template-columns:110px 1fr}
   .lvs-pic{min-height:165px}
+  .lvs-pic.ticket b{font-size:64px}
   .lvs-info{align-items:flex-start;text-align:left;padding:12px 14px;gap:5px}
   .lvs-nm{font-size:19px}
   .lvs-info .lv-stats{justify-content:flex-start}
@@ -3545,10 +3551,11 @@ if(location.protocol==='file:') document.getElementById('fileWarn').hidden=false
 countUps(document.getElementById('v-dashboard'));
 renderSheetHead(); renderSheetChips(); renderSheet();
 // Latest dishes logged: her newest centres from Masked's list (FOOD_GROUPS is already newest first) that have a real photo,
-// as poster tiles. A centre without a photo isn't shown here (it's still in the list below), and a photo that fails to
-// load takes its tile out. Each tile holds one button that opens that centre in the list below. Photo credits sit in
-// one list under the row. The newest centre on the list, when it has a photo, is shown larger as a spotlight beside the
-// row (above it on narrower screens) and left out of the row so it appears once.
+// as poster tiles. A centre without a photo isn't shown in the row (it's still in the list below), and a photo that fails
+// to load takes its tile out. Each tile holds one button that opens that centre in the list below. Photo credits sit in
+// one list under the row. The newest centre on the list is always shown larger as a spotlight beside the row (above it
+// on narrower screens) and left out of the row so it appears once; without a photo, or if its photo won't load, the
+// spotlight shows a queue-ticket stub with her grade in place of the picture.
 const LV_COUNT = 12;
 const lvFailed = new Set();   // centres whose photo wouldn't load: never picked again this visit
 // food/drink counts and spend, shared by the tiles and the spotlight
@@ -3562,10 +3569,12 @@ function lvStats(e){
           <span class="lv-sp"><span class="hs-sr">Spent: </span>${spend}</span>
         </span>`;
 }
+const lvPhoto = n => (!lvFailed.has(n) && PHOTOS[n]) || null;   // a centre's photo, unless it wouldn't load
 const lvImg = (ph, lazy) => `<img src="${esc(ph.src)}" alt="" ${lazy ? 'loading="lazy" ' : ''}decoding="async"${okPos(ph.pos) ? ` style="object-position:${ph.pos.trim()}"` : ''}>`;
 function lvSpot(e){
-  const d = e.d, vid = VID_BY[d.n];
-  return `<div class="lvs-pic" data-k="${d.n}">${lvImg(PHOTOS[d.n], false)}</div>
+  const d = e.d, vid = VID_BY[d.n], ph = lvPhoto(d.n);
+  return `${ph ? `<div class="lvs-pic" data-k="${d.n}">${lvImg(ph, false)}</div>`
+    : `<div class="lvs-pic ticket" aria-hidden="true"><small>GRADE</small><b>${d.rk}</b><small>NO PHOTO<br>YET</small></div>`}
     <div class="lvs-info">
       <small class="lvs-lbl">Newest dishes logged</small>
       <h4 class="lvs-nm" id="lvSpotNm">${esc(d.name)}</h4>
@@ -3595,10 +3604,10 @@ function lvTile(e){
 }
 function renderLatest(){
   const row = document.getElementById('lvRow'), spotEl = document.getElementById('lvSpot');
-  const shown = e => PHOTOS[e.d.n] && !lvFailed.has(e.d.n);
+  const shown = e => !!lvPhoto(e.d.n);
   // the spotlight is the newest centre on Masked's list (by Zumi's visit date, same-day visits in the order Masked logged
-  // them; not Zumi's newest rating, which may not have dishes yet), only with a photo
-  const first = FOOD_GROUPS.find(e=>e.d && e.d.s), spot = first && shown(first) ? first : null;
+  // them; not Zumi's newest rating, which may not have dishes yet), with or without a photo
+  const spot = FOOD_GROUPS.find(e=>e.d && e.d.s) || null;
   const list = FOOD_GROUPS.filter(e=>e.d && e.d.s && shown(e) && e!==spot).slice(0, LV_COUNT);
   document.getElementById('latest').hidden = !spot && !list.length;
   spotEl.hidden = !spot; spotEl.innerHTML = spot ? lvSpot(spot) : '';
@@ -3612,7 +3621,7 @@ function renderLatest(){
   note.hidden = !waiting.length;
   note.textContent = waiting.length ? `Newer ${waiting.length===1 ? 'visit' : 'visits'} (${names.length>1 ? names.slice(0,-1).join(', ')+' and '+names[names.length-1] : names[0]}) will show here once ${waiting.length===1 ? 'its' : 'their'} dishes are logged.` : '';
   // one credits list under the row instead of a line on every tile; the licences ask for the photographer's name and a link
-  const credited = spot ? [spot, ...list] : list;
+  const credited = spot && shown(spot) ? [spot, ...list] : list;
   document.getElementById('lvCredits').hidden = !credited.length;
   document.getElementById('lvCreditList').innerHTML = credited.map(e=>{ const ph = PHOTOS[e.d.n];
     return `<li data-k="${e.d.n}">${esc(e.d.name)}: <a href="${esc(ph.url)}" target="_blank" rel="noopener">${esc(ph.credit)}</a>, ${esc(ph.licence)}</li>`; }).join('');
@@ -3621,7 +3630,7 @@ function renderLatest(){
   lvArrows();
 }
 // a photo that won't load: the centre is marked so it isn't picked or requested again. A tile and its credit just go;
-// a spotlight photo means drawing the section again without it (its centre doesn't go back into the row either)
+// a spotlight photo means drawing the section again with the ticket stub in its place
 function lvNoImg(img){
   const c = img.closest('.lv-card, .lvs-pic'); if(!c || lvFailed.has(+c.dataset.k)) return;
   lvFailed.add(+c.dataset.k);

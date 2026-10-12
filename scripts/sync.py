@@ -51,6 +51,10 @@ MOMENTS_ISSUE = "Video moments sheet needs a look"
 FOOD = os.path.join(ROOT, "food.json")
 FOOD_ISSUE = "Dish sync paused: Masked's sheet needs a look"
 VIDEO_ISSUE = "New video needs a centre"
+# Latest dishes logged on the Dishes tab shows a photo for her newest visits; photos are picked by hand (photos.json)
+PHOTOS = os.path.join(ROOT, "photos.json")
+PHOTO_ISSUE = "New visit needs a photo"
+PHOTO_WINDOW = 13  # the spotlight + the row's 12 tiles (LV_COUNT in index.html)
 FOOD_MAX_DROP = 20
 KEEPALIVE_DAYS = 50  # GitHub disables scheduled workflows after 60 days without commits
 
@@ -239,6 +243,34 @@ def sync_videos(centres, alerts, no_git):
             commit("videos.json", msg)
 
 
+def photos_needed(centres, photos, window=PHOTO_WINDOW):
+    """Her newest rated visits (as many as Latest dishes logged can show), newest first, that have no photo yet."""
+    rated = sorted((c for c in centres or [] if "s" in c and c.get("d")), key=lambda c: (c["d"], -c["n"]), reverse=True)
+    return [c for c in rated[:window] if str(c["n"]) not in photos]
+
+
+def load_photos():
+    with open(PHOTOS, encoding="utf-8") as f:
+        return json.load(f)["photos"]
+
+
+def check_photos(centres, alerts, load=load_photos):
+    """Raise an issue while one of her newest visits has no photo; it closes once photos.json has them all.
+    Nothing is published either way, so this can't hold up the sync."""
+    if not centres:
+        return
+    try:
+        photos = load()
+    except (OSError, ValueError, KeyError) as e:
+        log(f"photos not checked this run: {e}")
+        return
+    need = photos_needed(centres, photos)
+    if need:
+        alerts.problem("no photo yet for " + "; ".join(f"{c['name']} (#{c['n']}, visited {c['d']})" for c in need))
+    else:
+        alerts.healthy()
+
+
 def git(*args, check=True):
     return subprocess.run(["git", *args], cwd=ROOT, check=check, text=True, capture_output=True)
 
@@ -276,11 +308,14 @@ def keepalive():
 class Alerts:
     """One GitHub issue while the sync is blocked; closed automatically once it recovers."""
 
-    def __init__(self, enabled, title=ISSUE_TITLE, sheet="Zumi's sheet", lead=None):
+    def __init__(self, enabled, title=ISSUE_TITLE, sheet="Zumi's sheet", lead=None,
+                 tail="It keeps checking and closes this issue itself once the sheet is fine again.",
+                 done="The sheet passes all checks again and the sync has resumed.", log_as="NOT PUBLISHED"):
         self.enabled = enabled and bool(os.environ.get("GH_TOKEN"))
         self.title, self.sheet = title, sheet
         self.lead = lead or (f"The automatic sync found a problem in {sheet} and **did not publish** it. "
                              f"The site keeps showing the last good data.")
+        self.tail, self.done, self.log_as = tail, done, log_as
         self.state = None  # last reported problem text, or "" once known healthy
 
     def _gh(self, *args):
@@ -295,12 +330,11 @@ class Alerts:
         return None
 
     def problem(self, text):
-        log(f"NOT PUBLISHED: {text}")
+        log(f"{self.log_as}: {text}")
         if not self.enabled or self.state == text:
             return
         self.state = text
-        body = (f"{self.lead}\n\n> {text}\n\n"
-                f"It keeps checking and closes this issue itself once the sheet is fine again.")
+        body = f"{self.lead}\n\n> {text}\n\n{self.tail}"
         issue = self._open_issue()
         if issue is None:
             self._gh("issue", "create", "--title", self.title, "--body", body)
@@ -315,8 +349,7 @@ class Alerts:
         self.state = ""
         issue = self._open_issue()
         if issue:
-            self._gh("issue", "close", str(issue["number"]), "--comment",
-                     "The sheet passes all checks again and the sync has resumed.")
+            self._gh("issue", "close", str(issue["number"]), "--comment", self.done)
 
 
 def main():
@@ -343,6 +376,15 @@ def main():
     sync_videos(published, Alerts(enabled=not a.no_git, title=VIDEO_ISSUE, sheet="4ever's playlist",
                                   lead="A video in 4ever's playlist couldn't be matched to a centre, so it isn't on "
                                        "the site yet. Add it to VIDEO_CENTRES in scripts/build_videos.py."), a.no_git)
+    photo_alerts = Alerts(enabled=not a.no_git, title=PHOTO_ISSUE, sheet="photos.json", log_as="photo needed",
+                          lead="Zumi has a new rated visit without a photo. The \"Newest dishes logged\" spotlight on the "
+                               "Dishes tab shows a queue ticket in its place, and the row leaves it out, until one is "
+                               "added. Find an openly licensed photo that clearly shows the centre (Wikimedia Commons "
+                               "first, then Creative Commons on Flickr), save it to assets/photos/ and add it with its "
+                               "credit, licence and link to photos.json.",
+                          tail="This closes itself once photos.json has a photo for each of these.",
+                          done="Every recent visit has a photo now.")
+    check_photos(published, photo_alerts)
 
     while True:
         try:
@@ -372,6 +414,7 @@ def main():
                     else:
                         publish(centres, msg)
                     published, pending = centres, None
+                    check_photos(published, photo_alerts)
                 else:
                     log(f"change seen, confirming on next poll: {describe(published, centres)}")
                     pending = centres
