@@ -179,11 +179,9 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .g-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
 .g-two{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px}
 .g-main + .g-two{margin-top:24px}   /* Leaderboard/scorecard row to Find your hawker */
-.g-two.g-even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 /* only ever shown when index.html is opened from disk (file://), never to visitors */
 .filewarn{margin:0 0 16px;padding:12px 16px;border-radius:14px;background:color-mix(in srgb,var(--kaya) 22%,var(--paper));border:1px solid var(--kaya);font-size:14px;line-height:1.45}
 .filewarn code{font-size:13px;background:var(--paper);padding:1px 6px;border-radius:5px}
-@media (max-width:1080px){.g-two.g-even{grid-template-columns:1fr}}
 @media (max-width:1080px){.g-hero,.g-main,.g-two{grid-template-columns:1fr}.g-three{grid-template-columns:1fr 1fr}}
 @media (max-width:720px){.g-three{grid-template-columns:1fr}}
 
@@ -1214,7 +1212,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
       </div>
     </div>
 
-    <div class="grid g-two g-even">
+    <div class="grid g-two">
       <div class="panel">
         <h2>Worth a return trip</h2>
         <p class="sub">Every centre Zumi graded A or above ("Must makan"), in her own words. Updates as she rates more.</p>
