@@ -173,10 +173,11 @@ main{padding:22px clamp(14px,3vw,32px) 60px;max-width:1480px;margin:0 auto}
 .panel h2{margin:0;font-family:var(--fd);font-weight:800;font-size:26px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
 .panel .sub{margin:5px 0 14px;color:var(--muted);font-size:13px}
 .grid{display:grid;gap:16px}
-.g-hero{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+/* hero, main and two-column rows share one split so the gap between the columns runs straight down the page */
+.g-hero{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
 .g-main{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px;align-items:start}
 .g-three{grid-template-columns:repeat(3,minmax(0,1fr));margin-top:16px}
-.g-two{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);margin-top:16px}
+.g-two{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);margin-top:16px}
 .g-main + .g-two{margin-top:24px}   /* Leaderboard/scorecard row to Find your hawker */
 .g-two.g-even{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
 /* only ever shown when index.html is opened from disk (file://), never to visitors */
