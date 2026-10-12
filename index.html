@@ -3421,7 +3421,7 @@ function ateList(n){
   const xs = FOOD_BY[n]; if(!xs) return '';
   // dishes with a moment come first, so the ones you can watch are never hidden behind "See all"
   const ys = [...xs].sort((a,b)=>(b.w&&VID_IDS.has(b.w[0])?1:0)-(a.w&&VID_IDS.has(a.w[0])?1:0));
-  return `${ys.slice(0,ATE_SHOW).some(hasMoment) ? W_HINT : ''}<ul class="ate">${ys.slice(0,ATE_SHOW).map(x=>`<li><span>${esc(x.d)}${wChit(x)}${x.st?`<small>${stallHtml(x.st)}</small>`:''}</span><span>${x.pt?esc(x.pt):'–'}</span></li>`).join('')}</ul>
+  return `${ys.slice(0,ATE_SHOW).some(hasMoment) ? W_HINT : ''}<ul class="ate">${ys.slice(0,ATE_SHOW).map(x=>`<li><span>${esc(x.d)}${wChit(x)}${x.st?`<small>Stall: ${stallHtml(x.st)}</small>`:''}</span><span>${x.pt?esc(x.pt):'–'}</span></li>`).join('')}</ul>
     <button type="button" class="linkbtn ate-more" data-food="${n}">${xs.length>ATE_SHOW?`See all ${xs.length} dishes`:'See them on the Dishes tab'}</button>`;
 }
 function renderFoodKpis(){
@@ -3482,7 +3482,7 @@ function renderFood(){
         ${visitInsights(e, xs, !!words.length || foodState.kind!=='all')}
       </div>
       <ul class="fdl">${xs.map(x=>`<li><span class="fd-d">${hl(x.d,rx)}${wChit(x)}</span><span class="fd-p">${isDrink(x)?'<span class="fd-cat drink">Drink</span>':'<span class="fd-cat food">Food</span>'}${x.pt?esc(x.pt):'–'}</span>
-        <span class="fd-s">${x.st?stallHtml(x.st,rx):'Stall not noted'}${x.no?` · <i>${hl(x.no,rx)}</i>`:''}</span></li>`).join('')}</ul>
+        <span class="fd-s">${x.st?`Stall: ${stallHtml(x.st,rx)}`:'Stall not noted'}${x.no?` · <i>${hl(x.no,rx)}</i>`:''}</span></li>`).join('')}</ul>
       ${d && d.s ? `<p class="fg-foot"><button type="button" class="linkbtn" data-card="${d.n}">See Zumi's scorecard for ${esc(d.sh)}</button></p>` : ''}
     </details>`;
   }).join('') || `<p class="food-none">No dishes match that. Clear the search or pick another filter.</p>`;
