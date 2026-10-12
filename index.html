@@ -3144,12 +3144,13 @@ const money = v => '$'+v.toFixed(2);
 const stallHtml = (st, rx) => st.split(/(#[0-9A-Z]{2}-\d+[A-Z]?)/).map((p,i)=>i%2 ? `<span class="nw">${hl(p,rx)}</span>` : hl(p,rx)).join('');
 const FOOD_GROUPS = (()=>{
   const g = new Map();
-  FOOD.forEach(x=>(x.n.length ? x.n : ['h:'+x.h]).forEach(k=>{
+  FOOD.forEach((x,i)=>(x.n.length ? x.n : ['h:'+x.h]).forEach(k=>{
     if(!g.has(k)) g.set(k, {k:String(k), d:BY[k]||null, h:x.h, items:[]});
-    g.get(k).items.push(x);
+    g.get(k).items.push(x); g.get(k).row = i;   // her last row for this centre: she logs visits in order
   }));
   const day = e => (e.d && e.d.d) || '';
-  return [...g.values()].sort((a,b)=>day(b).localeCompare(day(a)) || (a.d?a.d.name:a.h).localeCompare(b.d?b.d.name:b.h));
+  // same day: the centre Masked logged later comes first
+  return [...g.values()].sort((a,b)=>day(b).localeCompare(day(a)) || b.row-a.row);
 })();
 const FOOD_BY = {}; FOOD_GROUPS.forEach(e=>{ if(e.d) FOOD_BY[e.d.n]=e.items; });
 
@@ -3595,7 +3596,8 @@ function lvTile(e){
 function renderLatest(){
   const row = document.getElementById('lvRow'), spotEl = document.getElementById('lvSpot');
   const shown = e => PHOTOS[e.d.n] && !lvFailed.has(e.d.n);
-  // the spotlight is the newest centre on Masked's list (her dish-list order, not Zumi's newest rating), only with a photo
+  // the spotlight is the newest centre on Masked's list (by Zumi's visit date, same-day visits in the order Masked logged
+  // them; not Zumi's newest rating, which may not have dishes yet), only with a photo
   const first = FOOD_GROUPS.find(e=>e.d && e.d.s), spot = first && shown(first) ? first : null;
   const list = FOOD_GROUPS.filter(e=>e.d && e.d.s && shown(e) && e!==spot).slice(0, LV_COUNT);
   document.getElementById('latest').hidden = !spot && !list.length;
