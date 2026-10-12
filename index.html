@@ -3505,7 +3505,8 @@ function syncFoodAll(){
 // open a centre's dishes on the Dishes tab (from a scorecard), with the same flash the leaderboard uses
 function foodGo(n){
   if(!roll.hidden) rollShut();
-  foodState.q = ''; document.getElementById('fq').value = ''; foodState.kind = 'all'; foodState.open.add(String(n));
+  // only the centre asked for is open, so its dishes can't run into another centre's from the same day
+  foodState.q = ''; document.getElementById('fq').value = ''; foodState.kind = 'all'; foodState.open.clear(); foodState.open.add(String(n));
   // a centre further down the list than what's showing is brought into the shown part first
   const at = FOOD_GROUPS.findIndex(e=>e.k===String(n));
   foodState.shown = Math.max(foodState.shown, Math.ceil((at+1)/FOOD_PAGE)*FOOD_PAGE);
