@@ -49,7 +49,7 @@ VIDEO_CENTRES = {
 
 # Where a video's part about a centre starts, when one video covers more than one: id -> {S/N: seconds}.
 VIDEO_STARTS = {
-    "q5oVUrCQcs8": {85: 770},
+    "q5oVUrCQcs8": {85: 765},
 }
 
 # Name endings dropped to get a short form, like the site's autoShort() in index.html.
