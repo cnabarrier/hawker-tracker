@@ -1073,6 +1073,7 @@ body[data-tab="welcome"] .board{padding-bottom:14px}
 .wl section{scroll-margin-top:90px}
 .wl h2{margin:0;font-family:var(--fd);font-weight:900;font-size:clamp(28px,4.4vw,40px);line-height:.95;text-transform:uppercase;letter-spacing:.01em}
 .wl .sub{margin:6px 0 16px;color:var(--muted);font-size:14.5px;max-width:62ch}
+.wl-about > .sub{max-width:none}
 /* hero: her centres (and, once there are stills, her plates and Zumi herself) drift behind the headline on slow
    camera moves; it stays dark in both themes */
 .wl-hero{position:relative;overflow:hidden;min-height:clamp(420px,60vh,590px);display:flex;align-items:flex-end;padding:clamp(22px,3.4vw,44px);border-radius:24px;background:#0B1F1B;color:#fff;isolation:isolate}
@@ -1901,7 +1902,7 @@ function renderWelcome(calm){
   <section class="panel wl-about" aria-labelledby="wlName">
     ${kick(1)}
     <h2 id="wlName">What's Makan or Meh?</h2>
-    <p class="sub">A streamer's quest to eat at every hawker centre in Singapore, and grade each one. Three things to know.</p>
+    <p class="sub">A streamer's quest to eat at every hawker centre in Singapore, and grade each one. Three&nbsp;things&nbsp;to&nbsp;know.</p>
     <ol class="wl-beats">
       <li class="wl-beat" style="--i:0">
         ${day ? `<figure class="wl-beat-pic"><img src="${esc(PHOTOS[day.n].src)}" alt="${esc(day.name)}" loading="lazy" decoding="async"${pos(PHOTOS[day.n])}><figcaption>📷 ${esc(day.sh)}</figcaption></figure>` : ''}
