@@ -1906,7 +1906,7 @@ function renderWelcome(calm){
       <li class="wl-beat" style="--i:0">
         ${day ? `<figure class="wl-beat-pic"><img src="${esc(PHOTOS[day.n].src)}" alt="${esc(day.name)}" loading="lazy" decoding="async"${pos(PHOTOS[day.n])}><figcaption>📷 ${esc(day.sh)}</figcaption></figure>` : ''}
         <div class="wl-beat-in">
-          <p class="wl-beat-k">1 · The place</p>
+          <p class="wl-beat-k">The place</p>
           <h3>Hawker centres</h3>
           <p class="t">Singapore's open-air food centres: rows of small stalls cooking local dishes at everyday prices, around shared tables. In 2020 UNESCO listed Singapore's hawker culture as Intangible Cultural Heritage of Humanity.</p>
           <ul class="wl-chips"><li><b>${TOTAL}</b>official centres</li>${price ? `<li><b>${price.big}</b>${esc(price.txt)}</li>` : ''}</ul>
@@ -1916,7 +1916,7 @@ function renderWelcome(calm){
         ${zq ? `<figure class="wl-beat-pic"><img src="${esc(zq.s.src)}" alt="Zumi on stream" loading="lazy" decoding="async"${stillPos(zq.s)}><figcaption>📷 ${esc(zq.cap)}</figcaption></figure>`
           : vids.length ? `<figure class="wl-beat-pic"><img src="${ytThumb(vids[0].id)}" alt="" loading="lazy" decoding="async"><figcaption>🎥 ${esc(vids[0].n.map(n=>BY[n].sh).join(' + '))}, on stream</figcaption></figure>` : ''}
         <div class="wl-beat-in">
-          <p class="wl-beat-k">2 · The quest</p>
+          <p class="wl-beat-k">The quest</p>
           <h3>Zumi eats there</h3>
           <p class="t">Zumi is a streamer. On stream she visits a hawker centre, tries the food and takes in the place, then scores it in her own ratings sheet. This site turns that sheet into something anyone can explore.</p>
           <div class="socials">${socialLinks()}</div>
@@ -1924,7 +1924,7 @@ function renderWelcome(calm){
       </li>
       <li class="wl-beat" style="--i:2">
         <div class="wl-beat-in">
-          <p class="wl-beat-k">3 · The verdict</p>
+          <p class="wl-beat-k">The verdict</p>
           <h3>Makan, or meh?</h3>
           <div class="wl-vs">
             <div class="wl-word mk"><b>Makan</b><i>Malay · to eat</i><span>"Let's go makan!" means "let's go eat!"</span></div>

@@ -18,19 +18,18 @@ All scores, notes and visit dates come from Zumi's own spreadsheet. The site is 
 
 ## What's on the site
 
-- **Welcome page**: what the bare link always opens, before any numbers. Every section has a fixed size, so the page stays the same length however many centres she rates. It includes:
-  - a full-width opener over her newest centre photos, which slowly cross-fade. The headline rises in line by line, a thin progress line fills to her count of rated centres, and slim bars along the edge show which photo is up (tap one to jump to it);
-  - "What's a hawker centre?": a photo beside a plain explanation (UNESCO 2020), three big facts worked out live (all 123 centres; what most plates she has bought cost, from her dish list; 2020), and one slowly drifting line of up to 24 real plates from her visits with price and centre, linking to the Dishes tab;
-  - "What's Makan or Meh?": the two words, and her grades laid out from Meh to Makan;
-  - "Her map so far": Singapore's outline (traced from URA's Master Plan 2019 subzones, simplified and kept in the page as `SG_COAST`), with every hawker centre at its real spot. The coast draws itself in as it scrolls into view. Rated ones glow in their grade colour and her newest visit pulses. Neighbourhood names are worked out from where the centres are (planning areas with 3+ centres). The legend buttons light up one grade or the centres still to go. Tapping a dot (or Tab + Enter on a rated one) opens a card with her grade, date, note and photo, plus "Her scorecard" and "See on the full map". The map zooms and pans on its own (no map library): + / − / reset buttons, double-click, trackpad pinch, the mouse wheel once the map has been clicked (so page scrolling never gets stuck), mouse drag, and on phones a two-finger pinch (one finger pans once zoomed in; at full view one finger scrolls the page). Zoomed in, dots keep about their on-screen size, next-door centres fan out so each can be tapped, and more area names appear. A live update keeps the zoom, the lit grade and the open card;
-  - how the scoring works in three steps, with the full criteria and grade bands folded away;
-  - "Latest from her hawker trail": always her 6 newest visits that have a photo, plus a card for all centres on the map (tap a photo for its scorecard);
-  - "Watch the visits": the newest video plays in place, 3 more sit beside it, and a link goes to the full YouTube playlist;
-  - About Zumi, with her public links, and "Made possible by", crediting her sheet, Maskedsound, 4everhugging and her stream community;
-  - four big ways in (Map, Dashboard, Dishes, Countdown);
+- **Welcome page**: what the bare link always opens, before any numbers. It includes:
+  - an opener over her newest centre photos, which slowly cross-fade (slim bars show which photo is up; tap one to jump to it). The headline rises in line by line, a progress bar and count climb to her number of rated centres, with "Explore the ratings" and "Watch the visits" buttons and a receipt for her latest visit that opens its scorecard;
+  - 01 "What's Makan or Meh?": three cards, The place (hawker centres, UNESCO 2020, all 123 centres and what most of her plates cost, from her dish list), The quest (Zumi, with her public links) and The verdict (the two words, her grades laid out from Meh to Makan, the full scoring folded away);
+  - a slowly drifting line of up to 24 real dishes from her visits, with a pause button;
+  - 02 "On her plate": three dishes as paper tickets with what she paid and the centre's grade, a still of her plate once the video editor supplies one (`stills.json`), and "▶ Watch her taste it" when the dish has a moment in a video;
+  - 03 "Recent stops": her three newest visits that have a photo, each opening its scorecard;
+  - 04 "Watch the visits": the newest video plays in place, 3 more sit beside it, and a link goes to the full YouTube playlist;
+  - 05 "Where next?": two doors, one out to Zumi (her links, full streams, every visit video) and one into the ratings (Dashboard, Dishes, Countdown);
+  - "Made possible by", crediting her sheet, Maskedsound, 4everhugging and her stream community;
   - one small line at the end crediting the photographers, which opens the licence list.
 
-  Sections carry small numbered kickers and rise gently into view as you scroll. With reduced motion, nothing moves and everything shows at once.
+  Sections after the opener rise gently into view as you scroll. With reduced motion, nothing moves and everything shows at once.
 
   `#welcome`, `#about` (and the older `#pitch`), the logo and the 🏠 Home tab (first in the tab bar on every other tab) open it too. A link to any other tab (`#dashboard`, `#map`, `#food`, …) skips it.
 - **About the quest**: a short intro card at the top of the Dashboard (live counts, how scoring works, links to Zumi's public channels) with a link back to the welcome page.
