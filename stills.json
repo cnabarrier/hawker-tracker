@@ -1,1 +1,7 @@
-{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%.","stills":{}}
+{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%.","stills":{
+"q5oVUrCQcs8@295":{"src":"assets/stills/redhill-pork-porridge.jpg","kind":"dish","credit":"4everhugging"},
+"eNOzVPQmdnw@758":{"src":"assets/stills/chong-boon-char-kway-teow.jpg","kind":"dish","credit":"4everhugging","pos":"45% 60%"},
+"DJDe4cwNMkc@204":{"src":"assets/stills/tiong-bahru-wanton-mee-char-siew.jpg","kind":"dish","credit":"4everhugging","pos":"45% 35%"},
+"eNOzVPQmdnw@750":{"src":"assets/stills/zumi-chong-boon.jpg","kind":"zumi","credit":"4everhugging","pos":"60% 30%"},
+"gFkVf5imnZA@989":{"src":"assets/stills/zumi-ang-mo-kio-628.jpg","kind":"zumi","credit":"4everhugging","pos":"50% 22%"}
+}}

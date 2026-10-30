@@ -1287,6 +1287,15 @@ body[data-tab="welcome"] .wl-skip{display:inline-flex}
 /* Zumi's door: one clean still of her with a plain fade, or (until there is one) a plain deep red */
 .wl-door.z{background:radial-gradient(120% 90% at 85% 0%,#9B1F28 0%,#5A1016 50%,#2A070B 100%)}
 .wl-door.z::after{background:linear-gradient(180deg,transparent 0%,rgba(30,8,10,.25) 25%,rgba(30,8,10,.88) 58%,rgba(30,8,10,.96) 100%)}
+/* with her still: the photo keeps the right side, fading into the red where the words sit, so her face stays bright */
+.wl-door.z.pic{text-shadow:0 1px 10px rgba(30,8,10,.6)}
+.wl-door.z.pic>img{left:auto;width:70%;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 40%);mask-image:linear-gradient(90deg,transparent 0,#000 40%)}
+.wl-door.z.pic::after{background:linear-gradient(90deg,rgba(30,8,10,.5) 0%,rgba(30,8,10,.15) 50%,transparent 75%),linear-gradient(180deg,transparent 60%,rgba(30,8,10,.55) 100%)}
+@media (max-width:860px){
+  .wl-door.z.pic{padding-top:clamp(190px,52vw,300px)}
+  .wl-door.z.pic>img{width:100%;height:clamp(240px,62vw,360px);bottom:auto;-webkit-mask-image:linear-gradient(180deg,#000 55%,transparent);mask-image:linear-gradient(180deg,#000 55%,transparent)}
+  .wl-door.z.pic::after{background:none}
+}
 .wl-door-k{margin:0;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--kaya)}
 @media (max-width:860px){.wl-door{min-height:0;padding-top:90px}}
 .wl-door h3{margin:4px 0 6px;font-family:var(--fd);font-weight:900;font-size:clamp(36px,4.2vw,52px);line-height:.85;text-transform:uppercase}
@@ -1983,7 +1992,7 @@ function renderWelcome(calm){
     ${kick(5)}
     <h2 id="wlNext" style="margin-bottom:14px">Where next?</h2>
     <div class="wl-dd">
-      <article class="wl-door z" aria-labelledby="wlDoorZ">
+      <article class="wl-door z${zd ? ' pic' : ''}" aria-labelledby="wlDoorZ">
         ${zd ? `<img src="${esc(zd.s.src)}" alt="" loading="lazy" decoding="async"${stillPos(zd.s)}>` : ''}
         <p class="wl-door-k">The streamer</p>
         <h3 id="wlDoorZ">Zumi</h3>
