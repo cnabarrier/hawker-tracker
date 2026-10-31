@@ -998,7 +998,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .phx-kick{margin:0 0 10px;display:inline-flex;align-items:center;gap:8px;font:800 13px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase;color:var(--kaya)}
 .phx-new{padding:4px 7px 3px;border-radius:6px;background:var(--kaya);color:#1a1300}
 .phx h2{margin:0;max-width:16ch;font:900 clamp(42px,7vw,96px)/.88 var(--fd);text-transform:uppercase;letter-spacing:.005em;text-shadow:0 6px 40px rgba(0,0,0,.55)}
-.phx h2 em{font-style:normal;color:var(--kaya)}
+.phx h2 em{font-style:normal;color:var(--kaya);white-space:nowrap}   /* "up close" always stays together */
 .phx-sub{margin:14px 0 20px;max-width:56ch;font-size:clamp(15px,1.4vw,17px);line-height:1.5;color:rgba(255,255,255,.88)}
 .phx-sub b{color:#fff}
 .phx-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -4778,7 +4778,7 @@ function phxHtml(als){
     <div class="phx-txt">
       <p class="phx-kick"><span class="phx-new">New</span> Photo albums</p>
       <h2 id="phxTitle">Makan or Meh, <em>up close</em></h2>
-      <p class="phx-sub">${als.length} visits and ${nPh} photos from <b>4everhugging</b>'s edits: the stalls, the plates, the drinks, the friends and the rating boards, in the order they happened.</p>
+      <p class="phx-sub">${nPh} photos from ${als.length} visits, taken from <b>4everhugging</b>'s edits. Tap any photo to watch that moment.</p>
       <div class="phx-acts">
         <button type="button" class="phx-play" data-phxplay><span aria-hidden="true">▶</span> Play the slideshow</button>
         ${followBtns()}
