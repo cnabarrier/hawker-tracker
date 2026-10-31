@@ -801,24 +801,281 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .fd-pic:hover img{transform:scale(1.06)}
 .fd-pic.none{display:grid;place-items:center;cursor:default;box-shadow:inset 0 0 0 1px var(--line)}
 .fd-pic.none .fg-ic{width:22px;height:22px;opacity:.6}
-#picBox{width:min(92vw,960px);max-width:none;padding:0;border:0;border-radius:16px;overflow:hidden;background:#0B1F1B;color:#fff}
-#picBox::backdrop{background:rgba(6,18,15,.78)}
-#picBox img{display:block;width:100%;max-height:72vh;object-fit:contain;background:#000}
-#picBox figure{margin:0}
-#picBox figcaption{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;font-size:14px}
-#picBox figcaption small{display:block;margin-top:2px;color:rgba(255,255,255,.7);font-size:12px}
-#picBox button{flex:none;border:0;border-radius:999px;padding:8px 14px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;cursor:pointer}
-/* the photo plays its moment in the visit's video: tap the picture or "Watch from" */
-#picBox .pb-img{display:block;position:relative;width:100%;padding:0;border-radius:0;background:#000;cursor:default}
+/* ---------- photo viewer: the photo large on a blurred glow of itself ---------- */
+#picBox{width:min(96vw,1180px);max-width:none;max-height:none;padding:0;border:0;border-radius:20px;overflow:hidden;background:#06110F;color:#fff;
+  box-shadow:0 30px 80px -20px rgba(0,0,0,.7);animation:pbIn .32s cubic-bezier(.2,.8,.2,1)}
+#picBox::backdrop{background:rgba(4,12,10,.82);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@keyframes pbIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+.pb-amb{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(46px) saturate(1.5) brightness(.5);transform:scale(1.1)}
+#picBox figure{position:relative;margin:0}
+.pb-stage{position:relative;touch-action:pan-y}
+#picBox .pb-img{display:block;position:relative;width:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:default}
 #picBox .pb-img.can{cursor:pointer}
-.pb-play{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:68px;height:68px;margin:-34px 0 0 -34px;border-radius:50%;
-  background:rgba(200,35,44,.88);color:#fff;font-size:26px;padding-left:5px;box-shadow:0 6px 20px rgba(0,0,0,.45);opacity:.85;transition:transform .2s,opacity .2s}
+#picBox .pb-img img{display:block;width:100%;height:min(74vh,664px);object-fit:contain;filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+#picBox .pb-img img.in{animation:pbImg .38s cubic-bezier(.2,.8,.2,1)}
+@keyframes pbImg{from{opacity:.25;transform:scale(.985)}to{opacity:1;transform:none}}
+.pb-play{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;
+  background:rgba(200,35,44,.9);color:#fff;font-size:26px;padding-left:5px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:.82;transition:transform .2s,opacity .2s}
 #picBox .pb-img:not(.can) .pb-play{display:none}
-#picBox .pb-img.can:hover .pb-play,#picBox .pb-img.can:focus-visible .pb-play{opacity:1;transform:scale(1.08)}
+#picBox .pb-img.can:hover .pb-play,#picBox .pb-img.can:focus-visible .pb-play{opacity:1;transform:scale(1.1)}
+#picBox .pb-nav{position:absolute;top:50%;width:48px;height:48px;margin-top:-24px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;background:rgba(10,20,18,.45);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;cursor:pointer;transition:background .2s,opacity .2s,transform .2s}
+#picBox .pb-nav svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#picBox .pb-nav.prev{left:16px}#picBox .pb-nav.next{right:16px}
+#picBox .pb-nav:hover:not(:disabled){background:rgba(200,35,44,.85);transform:scale(1.06)}
+#picBox .pb-nav:disabled{opacity:.25;cursor:default}
+#picBox .pb-nav[hidden],#picBox .pb-count[hidden],#picBox .pb-watch[hidden]{display:none}
+.pb-count{position:absolute;top:14px;left:50%;transform:translateX(-50%);padding:5px 11px;border-radius:999px;background:rgba(10,20,18,.5);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:800 12px/1 var(--fb);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+#picBox figcaption{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px 16px;font-size:15px;
+  background:linear-gradient(180deg,rgba(6,17,15,0),rgba(6,17,15,.55))}
+.pb-txt{min-width:0}
+#picBox figcaption b{display:block;font-weight:700;line-height:1.3}
+#picBox figcaption small{display:block;margin-top:3px;color:rgba(255,255,255,.68);font-size:12.5px}
 .pb-acts{display:flex;gap:8px;flex:none}
-#picBox .pb-watch{background:#C8232C}
-#picBox .pb-watch:hover{background:#E0303A}
-#picBox .pb-watch[hidden]{display:none}
+#picBox .pb-watch,#picBox .pb-close{border:0;border-radius:999px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s,transform .2s}
+#picBox .pb-close{background:rgba(255,255,255,.14);color:#fff}
+#picBox .pb-close:hover{background:rgba(255,255,255,.24)}
+#picBox .pb-watch{background:#C8232C;color:#fff;box-shadow:0 6px 18px -6px rgba(200,35,44,.8)}
+#picBox .pb-watch:hover{background:#E0303A;transform:translateY(-1px)}
+@media (max-width:640px){
+  #picBox{width:100vw;height:100dvh;max-height:100dvh;border-radius:0;margin:0;inset:0}
+  #picBox[open]{display:flex;flex-direction:column;justify-content:center}
+  #picBox .pb-img img{height:auto;max-height:68dvh}
+  #picBox .pb-nav{display:none}
+  #picBox figcaption{flex-direction:column;align-items:stretch;gap:12px}
+  .pb-acts button{flex:1}
+}
+@media (prefers-reduced-motion:reduce){#picBox,#picBox .pb-img img.in{animation:none}}
+
+/* ---------- Dishes & photos: the List | Photos switch ---------- */
+.fview{display:inline-flex;gap:4px;padding:4px;margin:0 0 14px;border-radius:999px;background:var(--paper2);border:1px solid var(--line)}
+.fview button{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:999px;padding:9px 18px;background:transparent;color:var(--muted);
+  font:800 15px/1 var(--fb);letter-spacing:.01em;cursor:pointer;transition:background .25s,color .25s,box-shadow .25s}
+.fview button:hover{color:var(--ink)}
+.fview button[aria-pressed="true"]{background:var(--red);color:#fff;box-shadow:0 6px 16px -6px color-mix(in srgb,var(--red) 80%,transparent)}
+.fview button[data-fview="photos"][aria-pressed="false"]{color:var(--ink)}
+.fview button[data-fview="photos"][aria-pressed="false"]::after{content:"New";margin-left:2px;padding:3px 6px;border-radius:6px;background:var(--kaya);color:#1a1300;font:800 10px/1 var(--fb);letter-spacing:.06em;text-transform:uppercase}
+#v-food:not(.ph-on) #albums,#v-food:not(.ph-on) .fv-photos,#v-food.ph-on .fv-list{display:none}
+#v-food.ph-on #foodList,#v-food.ph-on #latest,#v-food.ph-on .food-more,#v-food.ph-on #foodAll,#v-food.ph-on #foodKpis{display:none}
+
+/* ---------- photo albums ---------- */
+.albums{display:grid;gap:22px;margin-top:4px}
+.alb{background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 18px 40px -30px rgba(15,46,41,.5);
+  opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i,0)*70ms)}
+.alb.seen{opacity:1;transform:none}
+.alb-cover{position:relative;height:clamp(210px,30vw,360px);overflow:hidden;background:#0B1F1B}
+.alb-cv{width:100%;height:100%;object-fit:cover;object-position:50% 28%;transform:scale(1.04);transition:transform 6s ease}
+.alb.seen .alb-cv{transform:scale(1)}
+.alb-cover::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,17,15,0) 50%,rgba(6,17,15,.25) 70%,rgba(6,17,15,.7) 100%);pointer-events:none}
+.alb-meta h3,.alb-meta p{text-shadow:0 1px 4px rgba(0,0,0,.55),0 4px 22px rgba(0,0,0,.45)}
+.alb-meta{position:absolute;left:clamp(16px,3vw,30px);right:clamp(16px,3vw,30px);bottom:clamp(14px,2.4vw,24px);z-index:1;color:#fff}
+.alb-grades{display:flex;gap:6px;margin-bottom:8px}
+.alb-grades .st{box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.alb-meta h3{margin:0;font:900 clamp(26px,4.2vw,46px)/.95 var(--fd);letter-spacing:.01em;text-transform:uppercase;text-shadow:0 2px 18px rgba(0,0,0,.45);text-wrap:balance}
+.alb-amp{color:var(--kaya)}
+.alb-meta p{margin:8px 0 0;font-size:14px;color:rgba(255,255,255,.85);font-weight:600}
+.alb-watch{position:absolute;top:16px;right:16px;z-index:1;display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 16px;
+  background:rgba(200,35,44,.92);color:#fff;font:800 14px/1 var(--fb);cursor:pointer;box-shadow:0 8px 22px -8px rgba(0,0,0,.6);transition:transform .2s,background .2s}
+.alb-watch:hover{background:#E0303A;transform:translateY(-1px)}
+.alb-wrap{position:relative;padding:16px 0 4px}
+.alb-row{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none;list-style:none;margin:0;padding:2px clamp(16px,3vw,30px) 14px;scroll-padding-inline:clamp(16px,3vw,30px)}
+.alb-row::-webkit-scrollbar{display:none}
+.alb-it{flex:none;scroll-snap-align:start}
+.alb-ph{position:relative;display:block;width:clamp(200px,24vw,290px);aspect-ratio:4/3;padding:0;border:0;border-radius:16px;overflow:hidden;background:var(--paper2);cursor:zoom-in;
+  box-shadow:0 10px 24px -16px rgba(15,46,41,.55);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.alb-ph img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.alb-ph:hover{transform:translateY(-4px);box-shadow:0 18px 30px -16px rgba(15,46,41,.6)}
+.alb-ph:hover img{transform:scale(1.06)}
+.alb-ph:focus-visible{outline:3px solid var(--kaya);outline-offset:2px}
+.alb-cap{position:absolute;left:10px;right:10px;bottom:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;pointer-events:none}
+.alb-cap b{min-width:0;padding:6px 10px;border-radius:10px;background:rgba(10,20,18,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;
+  font:700 13px/1.25 var(--fb);text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.alb-cap i{flex:none;padding:6px 9px;border-radius:10px;background:var(--kaya);color:#1a1300;font:800 13px/1 var(--fb);font-style:normal;font-variant-numeric:tabular-nums}
+.alb-ph.scene .alb-cap b{background:rgba(10,20,18,.42);font-weight:600}
+.alb-ph.none{cursor:default;display:grid;place-items:center;background:repeating-linear-gradient(135deg,var(--paper2) 0 12px,color-mix(in srgb,var(--paper2) 70%,var(--line)) 12px 24px);
+  border:1px dashed var(--line2);box-shadow:none}
+.alb-ph.none:hover{transform:none}
+.alb-none-ic .fg-ic{width:34px;height:34px;opacity:.45;stroke:var(--ink)}
+.alb-ph.none small{position:absolute;top:10px;left:10px;padding:4px 8px;border-radius:7px;background:var(--paper);color:var(--muted);font:700 11px/1 var(--fb);letter-spacing:.04em;text-transform:uppercase}
+.alb-ph.none .alb-cap b{background:var(--paper);color:var(--ink);backdrop-filter:none;-webkit-backdrop-filter:none}
+.alb-arrow{position:absolute;top:calc(50% - 4px);z-index:2;width:44px;height:44px;margin-top:-22px;display:grid;place-items:center;padding:0;border:1px solid var(--line);
+  border-radius:50%;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--ink);cursor:pointer;
+  box-shadow:0 8px 20px -10px rgba(0,0,0,.4);transition:opacity .2s,transform .2s,background .2s}
+.alb-arrow svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.alb-arrow.prev{left:10px}.alb-arrow.next{right:10px}
+.alb-arrow:hover:not(:disabled){background:var(--red);color:#fff;border-color:var(--red)}
+.alb-arrow:disabled{opacity:.3;pointer-events:none;box-shadow:none}
+.alb-wrap.fits .alb-arrow{display:none}
+@media (max-width:560px){.alb-arrow{width:38px;height:38px;margin-top:-19px}.alb-arrow.prev{left:6px}.alb-arrow.next{right:6px}}
+.alb-credit{margin:0;padding:2px clamp(16px,3vw,30px) 18px;font-size:13px;color:var(--muted)}
+.alb-credit b{color:var(--ink)}
+@media (max-width:560px){
+  .alb{border-radius:18px}
+  .alb-ph{width:68vw}
+  .alb-watch{top:12px;right:12px;padding:9px 13px;font-size:13px}
+  .fview{display:flex;width:100%}.fview button{flex:1;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){
+  .alb,.alb.seen{opacity:1;transform:none;transition:none}.alb-cv,.alb.seen .alb-cv{transform:none;transition:none}
+  .alb-ph,.alb-ph img{transition:none}.alb-ph:hover,.alb-ph:hover img{transform:none}.alb-row{scroll-behavior:auto}
+}
+
+/* ---------- Dashboard: the "Photo albums" card ---------- */
+.phc{display:grid;grid-template-columns:minmax(260px,.85fr) 1.6fr;gap:clamp(16px,3vw,32px);align-items:center;margin-top:18px;padding:clamp(18px,2.6vw,28px);
+  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--kaya) 16%,var(--paper)) 0%,var(--paper) 55%);overflow:hidden}
+.phc[hidden]{display:none}
+.phc-kick{margin:0 0 6px;font:800 13px/1 var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.phc h2{margin:0;font:900 clamp(30px,3.6vw,46px)/.95 var(--fd);text-transform:uppercase;letter-spacing:.01em}
+.phc-sub{margin:10px 0 16px;color:var(--muted);font-size:15px;line-height:1.5;max-width:42ch}
+.phc-sub b{color:var(--ink)}
+.phc .phc-go{background:var(--red);border-color:var(--red);color:#fff;padding:11px 20px;font-size:15px;font-weight:800;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--red) 80%,transparent);transition:transform .2s,background .2s}
+.phc .phc-go:hover{background:var(--red2);transform:translateY(-1px)}
+.phc-mosaic{display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:clamp(200px,22vw,280px);width:100%;padding:0;border:0;background:none;cursor:pointer}
+.phc-tile{position:relative;overflow:hidden;border-radius:14px;background:var(--paper2)}
+.phc-tile.t0{grid-row:1 / 3}
+.phc-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .8s}
+.phc-tile img.fresh{opacity:0}.phc-tile img.fresh.on{opacity:1}
+.phc-mosaic:hover .phc-tile img{transform:scale(1.05)}
+.phc-mosaic:focus-visible{outline:3px solid var(--kaya);outline-offset:4px;border-radius:16px}
+@media (max-width:760px){
+  .phc{grid-template-columns:1fr}
+  .phc-mosaic{order:-1;height:clamp(170px,48vw,240px);grid-template-columns:1.4fr 1fr}
+  .phc-tile.t3,.phc-tile.t4{display:none}
+}
+@media (prefers-reduced-motion:reduce){.phc-tile img{transition:none}.phc-mosaic:hover .phc-tile img{transform:none}}
+
+/* ---------- "New" markers: on the tab, and on the Home page buttons ---------- */
+.tab-new{display:inline-block;margin-left:6px;padding:3px 6px 2px;white-space:nowrap;border-radius:6px;background:var(--kaya);color:#1a1300;font:800 10px/1 var(--fb);letter-spacing:.06em;
+  text-transform:uppercase;vertical-align:3px;box-shadow:0 2px 8px -2px rgba(0,0,0,.35);animation:newPulse 2.4s ease-in-out infinite}
+@keyframes newPulse{0%,100%{transform:none}50%{transform:scale(1.08)}}
+.wl-new{display:inline-block;padding:3px 7px 2px;border-radius:6px;background:var(--kaya);color:#1a1300;font:800 11px/1 var(--fb);letter-spacing:.06em;text-transform:uppercase;vertical-align:2px}
+.wl-go-ph{gap:10px}
+@media (prefers-reduced-motion:reduce){.tab-new{animation:none}}
+
+/* ---------- Home: "Inside her visits" ---------- */
+.wlp{position:relative;overflow:hidden;border-radius:26px;background:#071512;color:#fff;min-height:clamp(380px,46vw,520px);display:grid;align-items:center;
+  box-shadow:0 30px 60px -40px rgba(7,21,18,.9);isolation:isolate}
+.wlp-rows{position:absolute;inset:0;display:grid;grid-template-rows:1fr 1fr;gap:12px;padding:12px 0;cursor:pointer;z-index:-1;transform:rotate(-4deg) scale(1.12)}
+.wlp-row{overflow:hidden}
+.wlp-track{display:flex;gap:12px;width:max-content;height:100%;animation:wlpDrift 70s linear infinite}
+.wlp-row.b .wlp-track{animation-direction:reverse;animation-duration:80s}
+.wlp-rows:hover .wlp-track{animation-play-state:paused}
+@keyframes wlpDrift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.wlp-ph{position:relative;flex:none;height:100%;aspect-ratio:4/3;border-radius:16px;overflow:hidden;background:#0f2622}
+.wlp-ph img{width:100%;height:100%;object-fit:cover;filter:saturate(1.1)}
+.wlp-ph small{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);padding:4px 8px;border-radius:8px;background:rgba(6,17,15,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  font:700 11.5px/1.2 var(--fb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wlp::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(ellipse 60% 70% at 50% 50%,rgba(7,21,18,.92) 0%,rgba(7,21,18,.72) 45%,rgba(7,21,18,.15) 100%)}
+.wlp-txt{position:relative;max-width:640px;margin:0 auto;padding:clamp(28px,5vw,56px) clamp(20px,4vw,40px);text-align:center;pointer-events:none}
+.wlp-txt > *{pointer-events:auto}
+.wlp-kick{margin:0 0 10px;font:800 13px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase;color:var(--kaya);display:inline-flex;gap:8px;align-items:center}
+.wlp h2{margin:0;font:900 clamp(40px,6.4vw,82px)/.9 var(--fd);text-transform:uppercase;letter-spacing:.01em;text-shadow:0 4px 30px rgba(0,0,0,.6);text-wrap:balance}
+.wlp h2 em{font-style:normal;color:var(--kaya)}
+.wlp-txt p:not(.wlp-kick){margin:14px auto 22px;max-width:46ch;font-size:clamp(15px,1.5vw,17px);line-height:1.5;color:rgba(255,255,255,.86)}
+.wlp .wl-go{font-size:17px;padding:14px 26px;box-shadow:0 14px 30px -12px rgba(200,35,44,.9)}
+@media (prefers-reduced-motion:reduce){.wlp-track{animation:none}}
+@media (max-width:560px){.wlp{border-radius:20px}.wlp-rows{transform:rotate(-4deg) scale(1.3)}}
+
+/* ---------- Photos: the showcase at the top ---------- */
+.phx{position:relative;overflow:hidden;border-radius:26px;min-height:clamp(420px,52vw,600px);display:flex;align-items:flex-end;color:#fff;background:#071512;
+  box-shadow:0 30px 60px -36px rgba(7,21,18,.85);isolation:isolate}
+.phx-bg{position:absolute;inset:0;z-index:-2}
+.phx-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 30%;opacity:0;transform:scale(1.08);transition:opacity 1.6s ease}
+.phx-bg img.on{opacity:1;animation:kb 12s ease-out forwards}
+.phx-bg img.k1.on{animation-name:kb1}.phx-bg img.k2.on{animation-name:kb2}
+@keyframes kb{from{transform:scale(1.14) translate(1.5%,1%)}to{transform:scale(1.02) translate(0,0)}}
+@keyframes kb1{from{transform:scale(1.02) translate(-1%,0)}to{transform:scale(1.14) translate(1.5%,-1%)}}
+@keyframes kb2{from{transform:scale(1.12) translate(-1.5%,1%)}to{transform:scale(1.03) translate(1%,0)}}
+/* a light shade only where the words sit (lower left); the rest of the photo stays bright */
+.phx::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(7,21,18,0) 0%,rgba(7,21,18,0) 45%,rgba(7,21,18,.55) 100%),
+  radial-gradient(ellipse 70% 75% at 0% 100%,rgba(7,21,18,.55) 0%,rgba(7,21,18,0) 70%)}
+.phx-bg img{filter:brightness(1.06) saturate(1.08)}
+.phx h2{text-shadow:0 2px 6px rgba(0,0,0,.45),0 8px 40px rgba(0,0,0,.55)}
+.phx-sub,.phx-kick,.phx-hint{text-shadow:0 1px 3px rgba(0,0,0,.6),0 2px 18px rgba(0,0,0,.5)}
+.phx-txt{width:100%;padding:clamp(22px,4vw,44px)}
+.phx-kick{margin:0 0 10px;display:inline-flex;align-items:center;gap:8px;font:800 13px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase;color:var(--kaya)}
+.phx-new{padding:4px 7px 3px;border-radius:6px;background:var(--kaya);color:#1a1300}
+.phx h2{margin:0;max-width:16ch;font:900 clamp(42px,7vw,96px)/.88 var(--fd);text-transform:uppercase;letter-spacing:.005em;text-shadow:0 6px 40px rgba(0,0,0,.55)}
+.phx h2 em{font-style:normal;color:var(--kaya)}
+.phx-sub{margin:14px 0 20px;max-width:56ch;font-size:clamp(15px,1.4vw,17px);line-height:1.5;color:rgba(255,255,255,.88)}
+.phx-sub b{color:#fff}
+.phx-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.phx-play{display:inline-flex;align-items:center;gap:10px;border:0;border-radius:999px;padding:14px 24px;background:var(--red);color:#fff;font:800 16px/1 var(--fb);cursor:pointer;
+  box-shadow:0 14px 30px -12px rgba(200,35,44,.95);transition:transform .2s,background .2s}
+.phx-play:hover{background:#E0303A;transform:translateY(-2px)}
+.phx-hint{font-size:13px;color:rgba(255,255,255,.7);font-weight:600}
+.phx-jump{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 calc(-1 * clamp(22px,4vw,44px));padding:2px clamp(22px,4vw,44px) 4px}
+.phx-jump::-webkit-scrollbar{display:none}
+.phx-jump button{flex:none;display:flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border:1px solid rgba(255,255,255,.2);border-radius:999px;
+  background:rgba(10,20,18,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;font:700 14px/1 var(--fb);cursor:pointer;transition:background .2s,transform .2s,border-color .2s}
+.phx-jump button:hover{background:rgba(200,35,44,.85);border-color:transparent;transform:translateY(-2px)}
+.phx-jump img{width:34px;height:34px;border-radius:50%;object-fit:cover}
+.phx-jump span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.phx-jump .st{font-style:normal}
+.alb.flash{animation:albFlash 1.4s ease}
+@keyframes albFlash{0%,100%{box-shadow:0 18px 40px -30px rgba(15,46,41,.5)}30%{box-shadow:0 0 0 4px var(--kaya),0 18px 40px -20px rgba(15,46,41,.5)}}
+@media (prefers-reduced-motion:reduce){.phx-bg img,.phx-bg img.on{animation:none;transform:none;transition:none}.alb.flash{animation:none}}
+@media (max-width:560px){.phx{border-radius:20px;min-height:520px}.phx-hint{display:none}}
+
+/* ---------- viewer extras: video in place, slideshow, thumbnail strip ---------- */
+.pb-video{--vh:min(74vh,664px);position:relative;height:var(--vh);display:flex;align-items:center;justify-content:center;padding:0 clamp(0px,4vw,72px)}
+.pb-video[hidden]{display:none}
+.pb-video iframe{width:min(100%,calc(var(--vh) * 16 / 9));height:auto;aspect-ratio:16/9;border:0;border-radius:14px;background:#000;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+#picBox.vid-on .pb-img,#picBox.vid-on .pb-show,#picBox.vid-on .pb-count{display:none}
+#picBox.vid-on .pb-watch{background:rgba(255,255,255,.14);box-shadow:none}
+#picBox .pb-show{position:absolute;top:12px;left:14px;display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid rgba(255,255,255,.18);border-radius:999px;
+  background:rgba(10,20,18,.5);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:#fff;font:800 12.5px/1 var(--fb);cursor:pointer;transition:background .2s}
+#picBox .pb-show:hover,#picBox .pb-show[aria-pressed="true"]{background:rgba(200,35,44,.85);border-color:transparent}
+#picBox .pb-show[hidden]{display:none}
+.pb-show-ic{font-size:11px;letter-spacing:-1px}
+.pb-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.08);opacity:0;transition:opacity .3s}
+#picBox.auto .pb-bar{opacity:1}
+.pb-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--kaya),#E0303A)}
+.pb-strip{position:relative;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 18px 16px}
+.pb-strip::-webkit-scrollbar{display:none}
+.pb-strip[hidden]{display:none}
+.pb-strip button{flex:none;width:74px;height:50px;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;background:#0f2622;cursor:pointer;opacity:.5;
+  transition:opacity .2s,border-color .2s,transform .2s}
+.pb-strip button:hover{opacity:.9}
+.pb-strip button.on{opacity:1;border-color:var(--kaya);transform:translateY(-2px)}
+.pb-strip img{width:100%;height:100%;object-fit:cover;display:block}
+/* ---------- Subscribe, Open on YouTube, Share ---------- */
+.yt-sub{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:999px;background:#fff;color:#0f0f0f;font:800 15px/1 var(--fb);text-decoration:none;
+  box-shadow:0 10px 26px -12px rgba(0,0,0,.55);transition:transform .2s,box-shadow .2s;white-space:nowrap}
+.yt-sub svg{width:22px;height:22px;fill:#FF0000;flex:none}
+.yt-sub:hover{transform:translateY(-2px);box-shadow:0 14px 30px -12px rgba(0,0,0,.6)}
+.yt-sub.tw svg{fill:#9146FF}
+.follow{display:inline-flex;gap:10px;flex-wrap:wrap}
+.yt-sub.sm{padding:8px 13px;font-size:13px;gap:7px;box-shadow:none;border:1px solid var(--line2);background:var(--paper);color:var(--ink)}
+.yt-sub.sm svg{width:18px;height:18px}
+.wlp-acts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.alb-foot{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:2px clamp(16px,3vw,30px) 18px}
+.alb-foot .alb-credit{padding:0}
+.alb-act{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border:1px solid var(--line2);border-radius:999px;background:var(--paper);color:var(--ink);
+  font:700 13px/1 var(--fb);text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s}
+.alb-act:hover,.yt-sub.sm:hover{border-color:var(--red);background:color-mix(in srgb,var(--red) 7%,var(--paper))}
+#picBox .pb-share,#picBox .pb-like,#picBox .pb-sub{border:0;border-radius:999px;padding:10px 16px;background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;transition:background .2s}
+#picBox .pb-share:hover,#picBox .pb-like:hover,#picBox .pb-sub:hover{background:rgba(255,255,255,.26)}
+#picBox .pb-like[hidden],#picBox .pb-sub[hidden]{display:none}
+#picBox .pb-sub{background:#FF0000}#picBox .pb-sub:hover{background:#e00000}
+#shareBox{width:min(92vw,420px);padding:22px;border:0;border-radius:20px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -20px rgba(0,0,0,.6)}
+#shareBox::backdrop{background:rgba(4,12,10,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.sh-kick{margin:0;font:800 12px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.sh-title{margin:6px 32px 16px 0;font-weight:700;font-size:16px;line-height:1.35}
+.sh-list{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
+#picBox .pb-share[hidden]{display:none}
+.sh-list a{display:block;padding:12px;border:1px solid var(--line2);border-radius:12px;text-align:center;font-weight:700;color:var(--ink);text-decoration:none;transition:background .2s,border-color .2s}
+.sh-list a:hover{border-color:var(--red);background:color-mix(in srgb,var(--red) 7%,var(--paper))}
+.sh-row{display:flex;gap:8px}
+.sh-url{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--paper2);color:var(--ink);font-size:13px}
+.sh-copy{border:0;border-radius:10px;padding:10px 14px;background:var(--red);color:#fff;font-weight:800;cursor:pointer}
+.sh-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border:0;border-radius:50%;background:var(--paper2);color:var(--ink);font-size:15px;cursor:pointer}
+@media (max-width:640px){#picBox .pb-acts{flex-wrap:wrap}#picBox .pb-acts > *{flex:1;justify-content:center}}
+@media (min-width:641px){#picBox.has-strip .pb-img img{height:min(64vh,600px)}#picBox.has-strip .pb-video{--vh:min(64vh,600px)}}
+@media (max-width:640px){.pb-strip{display:none}.pb-video{height:auto;padding:0}.pb-video iframe{width:100%;height:auto}}
 .fg-foot{margin:0;padding:10px 16px 14px;border-top:1px solid var(--line);font-size:13.5px}
 .food-none{padding:30px;text-align:center;color:var(--muted)}
 .nw{white-space:nowrap}
@@ -1476,7 +1733,7 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
     <button class="tab" role="tab" data-tab="dashboard" aria-selected="true">🍜 Dashboard</button>
     <button class="tab" role="tab" data-tab="sheet" aria-selected="false">📋 Full list</button>
     <button class="tab" role="tab" data-tab="map" aria-selected="false">🗺️ Map<span class="tab-more"> &amp; regions</span></button>
-    <button class="tab" role="tab" data-tab="food" aria-selected="false">🍽️ Dishes<span class="tab-more"> she ate</span></button>
+    <button class="tab" role="tab" data-tab="food" aria-selected="false">🍽️ Dishes<span class="tab-more"> she ate</span><span class="tab-new"><span class="hs-sr">, with </span>📸 Photos</span></button>
     <button class="tab" role="tab" data-tab="slides" aria-selected="false">🏆 Countdown<span class="tab-show"> show</span></button>
   </nav>
 </header>
@@ -1508,6 +1765,8 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
       </div>
       <div id="tierbox"></div>
     </div>
+
+    <section class="panel phc" id="phCard" aria-label="Photo albums" hidden></section>
 
     <div class="grid g-main">
       <div class="panel lbcard">
@@ -1620,8 +1879,13 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
   <!-- DISHES -->
   <section class="view" id="v-food">
     <div class="panel food-head">
+      <div class="fview" role="group" aria-label="Show the dishes as">
+        <button type="button" data-fview="list" aria-pressed="true"><span aria-hidden="true">📋</span> List</button>
+        <button type="button" data-fview="photos" aria-pressed="false"><span aria-hidden="true">📸</span> Photos</button>
+      </div>
       <h2>What Zumi ate</h2>
-      <p class="sub">Every dish from her hawker streams, centre by centre, newest visit first. Open a centre to see what she ordered.</p>
+      <p class="sub fv-list">Every dish from her hawker streams, centre by centre, newest visit first. Open a centre to see what she ordered.</p>
+      <p class="sub fv-photos">Her visits up close, from 4everhugging's edits: the stalls, the plates, the drinks and the rating boards, in the order they happened. Tap any photo to see it large.</p>
       <div class="kpis food-kpis" id="foodKpis"></div>
       <p class="food-credit">Dish list compiled by <b>Maskedsound</b> from Zumi's stream VODs. Prices are what Zumi paid on the day.</p>
       <p class="food-credit" id="vidCredit" hidden></p>
@@ -1647,6 +1911,7 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
       <span class="count" id="foodCount" aria-live="polite"></span>
     </div>
     <div id="foodList"></div>
+    <div id="albums" class="albums"></div>
     <div class="food-more"><button class="btn" id="foodMore" type="button" hidden>Show 10 more</button><button class="btn" id="foodFewer" type="button" hidden>Show fewer</button></div>
   </section>
 
@@ -1658,7 +1923,23 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
 <div class="roll" id="roll" role="dialog" aria-modal="true" aria-label="Pick a hawker for me" hidden></div>
 <footer class="site-foot">Scores from Zumi's Singapore Hawker Centre List 2026</footer>
 <div id="tip" role="tooltip"></div>
-<dialog id="picBox" aria-label="Dish photo"><figure><button type="button" class="pb-img"><img alt=""><span class="pb-play" aria-hidden="true">▶</span></button><figcaption><span><b></b><small></small></span><span class="pb-acts"><button type="button" class="pb-watch"></button><button type="button" class="pb-close" autofocus>Close</button></span></figcaption></figure></dialog>
+<dialog id="shareBox" aria-label="Share"><p class="sh-kick">Share</p><p class="sh-title"></p>
+  <div class="sh-list"></div>
+  <div class="sh-row"><input class="sh-url" readonly aria-label="Link"><button type="button" class="sh-copy">Copy link</button></div>
+  <button type="button" class="sh-close" aria-label="Close">✕</button></dialog>
+<dialog id="picBox" aria-label="Photo"><div class="pb-amb" aria-hidden="true"></div><figure>
+  <div class="pb-stage">
+    <button type="button" class="pb-img"><img alt=""><span class="pb-play" aria-hidden="true">▶</span></button>
+    <div class="pb-video" hidden></div>
+    <button type="button" class="pb-nav prev" aria-label="Previous photo" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+    <button type="button" class="pb-nav next" aria-label="Next photo" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+    <span class="pb-count" aria-live="polite" hidden></span>
+    <button type="button" class="pb-show" aria-pressed="false" hidden><span class="pb-show-ic" aria-hidden="true">▶</span> <span class="pb-show-t">Slideshow</span></button>
+    <span class="pb-bar" aria-hidden="true"><i></i></span>
+  </div>
+  <figcaption><span class="pb-txt"><b></b><small></small></span><span class="pb-acts"><a class="pb-like" target="_blank" rel="noopener" hidden title="Opens this video on YouTube, where you can like and comment">Open on YouTube ↗</a><button type="button" class="pb-share" hidden>↗ Share this video</button><a class="pb-sub" href="" target="_blank" rel="noopener" hidden>Subscribe</a><button type="button" class="pb-watch"></button><button type="button" class="pb-close" autofocus>Close</button></span></figcaption>
+  <div class="pb-strip" hidden></div>
+</figure></dialog>
 
 <script>
 const SNAPSHOT = {"updated":"2026-09-23T12:45:20+00:00","centres":[{"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)"},{"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},{"n":4,"name":"Beo Crescent Market","addr":"38A, Beo Crescent, S(169982)","s":[6,7.5,10,9,5],"t":37.5,"rk":"B","best":"AM to 5pm","note":"DYSON DRYER IN TOILET - WOW","d":"2026-04-20"},{"n":5,"name":"Berseh Food Centre","addr":"166, Jalan Besar, S(208877)"},{"n":6,"name":"Bukit Timah Market","addr":"Closed for redevelopment till 2029 (tentative)"},{"n":7,"name":"Chomp Chomp Food Centre","addr":"20, Kensington Park Road, S(557269)"},{"n":8,"name":"Commonwealth Crescent Market","addr":"31, Commonwealth Crescent, S(149644)"},{"n":9,"name":"Dunman Food Centre","addr":"271, Onan Road, S(424768)"},{"n":10,"name":"East Coast Lagoon Food Village","addr":"1220, East Coast Parkway, S(468960)"},{"n":11,"name":"Geylang Serai Market","addr":"Geylang Serai, S(402001)"},{"n":12,"name":"Golden Mile Food Centre","addr":"505, Beach Road, S(199583)","s":[10,8,7.5,8,8],"t":41.5,"rk":"A","best":"morning + lunch","note":"huge variety! highly recommend to visit","d":"2026-07-23"},{"n":13,"name":"Holland Village Market & Food Centre","addr":"1, Lorong Mambong, S(277700)"},{"n":14,"name":"Old Airport Road Food Centre","addr":"17, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42.0,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},{"n":15,"name":"Margaret Drive Hawker Centre","addr":"38A, Margaret Drive, S(142038)"},{"n":16,"name":"Market Street Hawker Centre","addr":"86, Market Street, CapitaSpring Building, S(048947)"},{"n":17,"name":"Marsiling Mall Hawker Centre","addr":"4, Woodlands Street 12, S(738623)"},{"n":18,"name":"Maxwell Food Centre","addr":"1, Kadayanallur Street, S(069184)","s":[9,9,6,6,6.5],"t":36.5,"rk":"B","best":"All Day","note":"Great for people visiting Singapore","d":"2026-04-20"},{"n":19,"name":"Newton Food Centre","addr":"500, Clemenceau Ave North, S(229495)","s":[5,8,4.5,8,8],"t":33.5,"rk":"C","best":"6 pm onwards","note":"Expensive but food quality is good and nice night vibe","d":"2026-07-16"},{"n":20,"name":"North Bridge Road Market & Food Centre","addr":"861, North Bridge Road, S(198783)","s":[6,5.5,5.5,9,6.5],"t":32.5,"rk":"C","best":"Open 24/7 but best in morning till lunch","note":"Great toilet. Food was mid but it might be cuz i went at 3 pm, lots of stalls were closed","d":"2026-08-06"},{"n":21,"name":"Pasir Panjang Food Centre","addr":"121, Pasir Panjang Road, S(118543)"},{"n":22,"name":"Sembawang Hills Food Centre","addr":"590, Upper Thomson Road, S(574419)"},{"n":23,"name":"Serangoon Garden Market","addr":"49A, Serangoon Garden Way, S(555945)"},{"n":24,"name":"Taman Jurong Market & Food Centre","addr":"3, Yung Sheng Road, S(618499)"},{"n":25,"name":"Tanglin Halt Market","addr":"48A, Tanglin Halt Road, S(148813)","s":[6.5,7,8,7.5,5],"t":34.0,"rk":"C","best":"Morning (6 am onwards)","note":"very neighbourhood hawker, food is average BUT the laksa man has aura and super friendly","d":"2026-09-09"},{"n":26,"name":"Tiong Bahru Market","addr":"30, Seng Poh Road, S(168898)","s":[6.5,9,7.5,9,8],"t":40.0,"rk":"A","best":"Morning","note":"My fav hawker :D","d":"2026-06-03"},{"n":27,"name":"Zion Riverside Food Centre","addr":"70, Zion Road, S(247792)"},{"n":28,"name":"ABC Brickworks Market & Food Centre","addr":"Blk 6, Jalan Bukit Merah, S(150006)"},{"n":29,"name":"Albert Centre Market & Food Centre","addr":"Blk 270, Queen Street, S(180270)"},{"n":30,"name":"Alexandra Village Food Centre","addr":"Blk 120, Bukit Merah Lane 1, S(150120)"},{"n":31,"name":"Blk 117 Aljunied Ave 2","addr":"Blk 117, Aljunied Ave 2, S(380117)"},{"n":32,"name":"Blk 226D Ang Mo Kio Ave 1","addr":"Blk 226D, Ang Mo Kio Ave 1, S(564226)"},{"n":33,"name":"Blk 341 Ang Mo Kio Ave 1","addr":"Blk 341, Ang Mo Kio Ave 1, S(560341)"},{"n":34,"name":"Mayflower Market & Food Centre","addr":"Blks 160/162, Ang Mo Kio Ave 4, S(560160/560162)"},{"n":35,"name":"Ang Mo Kio 628","addr":"Blk 628, Ang Mo Kio Ave 4, S(560628)","s":[4.5,9.5,7.5,7.5,5.5],"t":34.5,"rk":"C","best":"Morning till 2 pm","note":"BEST Peanut Pancake, i regret giving 4.5 for variation - should be 6.5 :c","d":"2026-06-09"},{"n":36,"name":"Ang Mo Kio Central Market & Food Center","addr":"Blk 724, Ang Mo Kio Ave 6, S(560724)"},{"n":37,"name":"Blk 409 Ang Mo Kio Ave 10","addr":"Blk 409, Ang Mo Kio Ave 10, S(560409)"},{"n":38,"name":"Chong Boon Market & Food Centre","addr":"Blk 453A, Ang Mo Kio Ave 10, S(561453)","s":[5.5,7.5,7,6.5,5],"t":31.5,"rk":"C","best":"Best to go for lunch - Stalls open till 7 pm","note":"Good Mee Rebeus","d":"2026-06-09"},{"n":39,"name":"Blk 527 Ang Mo Kio Ave 10","addr":"Blk 527, Ang Mo Kio Ave 10, S(560527)"},{"n":40,"name":"Blk 226H Ang Mo Kio Street 22","addr":"Blk 226H, Ang Mo Kio Street 22, S(568226)"},{"n":41,"name":"Blk 216 Bedok North Street 1","addr":"Blk 216, Bedok North Street 1, S(460216)"},{"n":42,"name":"Blk 511 Bedok North Street 3","addr":"Blk 511, Bedok North Street 3, S(460511)"},{"n":43,"name":"Blk 538 Bedok North Street 3","addr":"Blk 538, Bedok North Street 3, S(460538)"},{"n":44,"name":"Blk 85 Bedok North Street 4","addr":"Blk 85, Bedok North Street 4, S(460085)"},{"n":45,"name":"Blk 630 Bedok Reservoir Road","addr":"Blk 630, Bedok Reservoir Road, S(470630)"},{"n":46,"name":"Blk 16 Bedok South Road","addr":"Blk 16, Bedok South Road, S(460016)"},{"n":47,"name":"Bendemeer Market & Food Centre","addr":"Blk 29, Bendemeer Road, S(330029)","s":[6,8.5,7,7,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"generation coffee was good","d":"2026-05-26"},{"n":48,"name":"Blks 221A/B Boon Lay Place","addr":"Blks 221A/B, Boon Lay Place, S(641221/642221)"},{"n":49,"name":"Blk 163 Bukit Merah Central","addr":"Blk 163, Bukit Merah Central, S(150163)"},{"n":50,"name":"Blk 115 Bukit Merah View","addr":"Blk 115, Bukit Merah View, S(151115)"},{"n":51,"name":"Changi Village Hawker Centre","addr":"Blks 2/3, Changi Village Road, S(500002/500003)","s":[6,5.5,8,6,7.5],"t":33.0,"rk":"C","best":"Everything closes by 9 pm weekdays","note":"cool secluded place but the food quality wasnt worth the distance required to travel","d":"2026-07-30"},{"n":52,"name":"Chinatown Complex Market & Hawker Centre","addr":"Blk 335, Smith Street, S(050335)","s":[5.5,8,10,5,6.5],"t":35.0,"rk":"B","best":"morning + lunch","note":"less stall available after 2 pm. mainly Chinese food","d":"2026-07-16"},{"n":53,"name":"Chong Pang Market & Food Centre","addr":"Blks 104/105, Yishun Ring Road, S(760104/760105)"},{"n":54,"name":"Blks 79/79A Circuit Road","addr":"Blks 79/79A, Circuit Road, S(370079/371079)"},{"n":55,"name":"Blk 80 Circuit Road","addr":"Blk 80, Circuit Road, S(370080)"},{"n":56,"name":"Blk 89 Circuit Road","addr":"Blk 89, Circuit Road, S(370089)"},{"n":57,"name":"Blk 353 Clementi Ave 2","addr":"Blk 353, Clementi Ave 2, S(120353)"},{"n":58,"name":"Blk 448 Clementi Ave 3","addr":"Blk 448, Clementi Ave 3, S(120448)"},{"n":59,"name":"Blk 726 Clementi West Street 2","addr":"Blk 726, Clementi West Street 2, S(120726)"},{"n":60,"name":"Blk 7 Empress Road","addr":"Blk 7, Empress Road, S(260007)"},{"n":61,"name":"Blk 4A Eunos Crescent","addr":"Blk 4A, Eunos Crescent, S(402004)"},{"n":62,"name":"Geylang Bahru Food Centre","addr":"Blk 69, Geylang Bahru, S(330069)","s":[8,9,9,7,5],"t":38.0,"rk":"B","best":"stalls still open after 3 pm","note":"THE FOOD WAS SO GOOD - THE MICHELLIN RECOMMENDED WORTH IT. BEST DUCK RICE!","d":"2026-09-14"},{"n":63,"name":"Ghim Moh Hawker Centre","addr":"Blk 20, Ghim Moh Road, S(270020)","s":[8,9.5,9,7,6.5],"t":40.0,"rk":"A","best":"Morning + Lunch","note":"Everything I ate was delicious!Not a touristy spot - highly recommend.","d":"2026-08-06"},{"n":64,"name":"Blks 13/14 Haig Road","addr":"Blks 13/14, Haig Road, S(430013/430014)"},{"n":65,"name":"Havelock Road Cooked Food Center","addr":"Blks 22A/B, Havelock Road, S(161022/162022)"},{"n":66,"name":"Blk 44 Holland Drive","addr":"Blk 44, Holland Drive, S(270044)"},{"n":67,"name":"Hong Lim Market & Food Centre","addr":"Blk 531A, Upper Cross Street, S(051531)"},{"n":68,"name":"Hougang Hainanese Village Center","addr":"Blk 105, Hougang Ave 1, S(530105)","s":[6.5,9,6.5,8.5,7],"t":37.5,"rk":"B","best":"best to go before 2 pm cuz everything close after that","note":"laksa was so good! mainly Chinese food","d":"2026-07-09"},{"n":69,"name":"Blk 4A Jalan Batu","addr":"Blk 4A, Jalan Batu, S(432004)"},{"n":70,"name":"Blk 112 Jalan Bukit Merah","addr":"Blk 112, Jalan Bukit Merah, S(160112)"},{"n":71,"name":"Blk 1 Jalan Kukoh","addr":"Blk 1, Jalan Kukoh, S(161001)"},{"n":72,"name":"Blk 347 Jurong East Ave 1","addr":"Blk 347, Jurong East Ave 1, S(600347)"},{"n":73,"name":"Blk 254 Jurong East Street 24","addr":"Blk 254, Jurong East Street 24, S(600254)"},{"n":74,"name":"Blk 505 Jurong West Street 52","addr":"Blk 505, Jurong West Street 52, S(640505)"},{"n":75,"name":"209 Kovan Market & Food Centre","addr":"Blk 209, Hougang Street 21, S(530209)","s":[6.5,8,9.5,7,6.5],"t":37.5,"rk":"B","best":"Ideal time: 10 am, everything closes by 2pm","note":"Dont eat the Indonesian Stall - was mid","d":"2026-08-13"},{"n":76,"name":"Blk 84 Marine Parade Central","addr":"Blk 84, Marine Parade Central, S(440084)"},{"n":77,"name":"Blk 50A Marine Terrace","addr":"Blk 50A, Marine Terrace, S(441050)"},{"n":78,"name":"Blks 20/21 Marsiling Lane","addr":"Blks 20/21, Marsiling Lane, S(730020/730021)"},{"n":79,"name":"Blk 159 Mei Chin Road","addr":"Blk 159, Mei Chin Road, S(140159)"},{"n":80,"name":"Blk 58 New Upper Changi Road","addr":"Blk 58, New Upper Changi Road, S(461058)"},{"n":81,"name":"Blk 208B New Upper Changi Road","addr":"Blk 208B, New Upper Changi Road, S(462208)"},{"n":82,"name":"Blk 51 Old Airport Road","addr":"Blk 51, Old Airport Road, S(390051)"},{"n":83,"name":"Pek Kio Market & Food Centre","addr":"Blk 41A, Cambridge Road, S(211041)"},{"n":84,"name":"People's Park Complex Food Centre","addr":"Blk 32, New Market Road, S(050032)","s":[6,8,9.5,7.5,7.5],"t":38.5,"rk":"B","best":"Lunch & Dinner","note":"Duck rice is famous (didnt try) very affordable place","d":"2026-07-23"},{"n":85,"name":"Redhill Market","addr":"Blk 79, Redhill Lane, S(150079)","s":[4,6.5,6.5,6,4],"t":27.0,"rk":"D","best":"AM to 2 pm","note":"Feels like a kopitiam rather than hawker","d":"2026-04-20"},{"n":86,"name":"Redhill Food Center","addr":"Blk 85, Redhill Lane, S(150085)","s":[9,9,8,8,6],"t":40.0,"rk":"A","best":"AM to 2 pm","note":"Great place overall","d":"2026-04-20"},{"n":87,"name":"Blk 320 Shunfu Road","addr":"Blk 320, Shunfu Road, S(570320)"},{"n":88,"name":"Blk 49 Sims Place","addr":"Blk 49, Sims Place, S(380049)"},{"n":89,"name":"Blk 137 Tampines Street 11","addr":"Blk 137, Tampines Street 11, S(521137)"},{"n":90,"name":"Blk 6 Tanjong Pagar Plaza","addr":"Blk 6, Tanjong Pagar Plaza, S(081006)"},{"n":91,"name":"Blk 37A Teban Gardens Road","addr":"Blk 37A, Teban Gardens Road, S(601037)"},{"n":92,"name":"Tekka Market","addr":"Blk 665, Buffalo Road, S(210665)"},{"n":93,"name":"Blk 11 Telok Blangah Crescent","addr":"Blk 11, Telok Blangah Crescent, S(090011)"},{"n":94,"name":"Blk 79 Telok Blangah Drive","addr":"Blk 79, Telok Blangah Drive, S(100079)"},{"n":95,"name":"Blk 82 Telok Blangah Drive","addr":"Blk 82, Telok Blangah Drive, S(100082)"},{"n":96,"name":"Blk 36 Telok Blangah Rise","addr":"Blk 36, Telok Blangah Rise, S(090036)"},{"n":97,"name":"Blk 127 Toa Payoh Lorong 1","addr":"Blk 127, Lorong 1 Toa Payoh, S(310127)"},{"n":98,"name":"Blk 74 Toa Payoh Lorong 4","addr":"Blk 74, Lorong 4 Toa Payoh, S(310074)"},{"n":99,"name":"Blk 93 Toa Payoh Lorong 4","addr":"Blk 93, Lorong 4 Toa Payoh, S(310093)"},{"n":100,"name":"Blk 75 Toa Payoh Lorong 5","addr":"Blk 75, Lorong 5 Toa Payoh, S(310075)"},{"n":101,"name":"Blk 22 Toa Payoh Lorong 7","addr":"Blk 22, Lorong 7 Toa Payoh, S(310022)"},{"n":102,"name":"Toa Payoh Lorong 8","addr":"Blk 210, Lorong 8 Toa Payoh, S(310210)","s":[7.5,9,8.5,7,6],"t":38.0,"rk":"B","best":"Morning + Lunch","note":"East Seafood White Meehoon #01-06 stall is worth it","d":"2026-07-30"},{"n":103,"name":"Blk 17 Upper Boon Keng Road","addr":"Blk 17, Upper Boon Keng Road, S(380017)"},{"n":104,"name":"Blk 502 West Coast Drive","addr":"Blk 502, West Coast Drive, S(120502)"},{"n":105,"name":"Blk 503 West Coast Drive","addr":"Blk 503, West Coast Drive, S(120503)"},{"n":106,"name":"Whampoa Food Centre","addr":"Blk 90, Whampoa Drive, S(320090)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Morning (although half the stall was closed when i went at 9 am)","note":"did both whampoa together","d":"2026-07-09"},{"n":107,"name":"Blks 91/92 Whampoa Drive","addr":"Blks 91/92, Whampoa Drive, S(320091/320092)","s":[6,6.5,5.5,5,6],"t":29.0,"rk":"D","best":"Afternoon","note":"was better in the past, nothing really impressed me","d":"2026-07-09"},{"n":108,"name":"Ci Yuan Hawker Centre","addr":"51, Hougang Ave 9, S(538776)"},{"n":109,"name":"Bukit Panjang Hawker Centre & Market","addr":"2, Bukit Panjang Ring Road, S(679947)"},{"n":110,"name":"Hawker Centre @ Our Tampines Hub","addr":"1 Tampines Walk, S(528523)"},{"n":111,"name":"Kampung Admiralty Hawker Centre","addr":"Blk 676, Woodlands Drive 71, #02-44, S(730676)"},{"n":112,"name":"Yishun Park Hawker Centre","addr":"51, Yishun Avenue 11, S(768867)"},{"n":113,"name":"Jurong West Hawker Centre","addr":"50, Jurong West Street 61, S(648202)"},{"n":114,"name":"Pasir Ris Central Hawker Centre","addr":"110, Pasir Ris Central, S(519641)"},{"n":115,"name":"Fernvale Hawker Centre and Market","addr":"21, Sengkang West Avenue, S(797650)"},{"n":116,"name":"One Punggol Hawker Centre","addr":"1, Punggol Drive, S(828629)"},{"n":117,"name":"Senja Hawker Centre","addr":"2, Senja Close, S(677632)"},{"n":118,"name":"Bukit Canberra Hawker Centre","addr":"21, Canberra Link, S(756973)"},{"n":119,"name":"Buangkok Hawker Centre","addr":"70, Compassvale Bow, S(544692)"},{"n":120,"name":"Anchorvale Village Hawker Centre","addr":"339, Anchorvale Road, S(540339)"},{"n":121,"name":"Woodleigh Village Hawker Centre","addr":"202C, Woodleigh Link, S(363202)"},{"n":122,"name":"Bukit Batok West Hawker Centre","addr":"Blk 469, Bukit Batok West Ave 9, S(650469)"},{"n":123,"name":"Punggol Coast Hawker Centre","addr":"84 Punggol Way, S(829911)"}]};
@@ -1703,7 +1984,7 @@ const PHOTOS = {}; if(PHOTOJ && PHOTOJ.photos && typeof PHOTOJ.photos==='object'
 // a still is used only from this site's own stills folder, filed under "<video id>@<second>", with who took it
 const STILLJ = await stillReq;
 const okStill = (k,v) => /^[\w-]{11}@\d+$/.test(k) && v && typeof v.src==='string' && /^assets\/stills\/[\w.-]+\.(jpe?g|png|webp)$/i.test(v.src)
-  && (v.kind==='dish' || v.kind==='zumi') && typeof v.credit==='string' && v.credit.trim()
+  && (v.kind==='dish' || v.kind==='zumi' || (v.kind==='scene' && typeof v.cap==='string' && v.cap.trim())) && typeof v.credit==='string' && v.credit.trim()
   && (v.dish===undefined || (typeof v.dish==='string' && v.dish.trim()));
 const STILLS = {}; if(STILLJ && STILLJ.stills && typeof STILLJ.stills==='object') Object.entries(STILLJ.stills).forEach(([k,v])=>{ if(okStill(k,v)) STILLS[k]=v; });
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
@@ -1786,7 +2067,15 @@ if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 function setTab(t){
   // #about (and the old #pitch link) now open the welcome page, where the "about" now lives
   if(t==='about' || t==='pitch') t='welcome';
+  // #photos is the Dishes tab showing its photo albums; #photos/<video id> opens one visit's album, and
+  // #photos/<video id>/<n> opens that photo in the viewer (the links the Share buttons give out)
+  const deep = /^photos\/([\w-]{11})(?:\/(\d+))?$/.exec(t);
+  const photos = t==='photos' || !!deep; if(photos) t='food';
+  if(deep) setTimeout(()=>photoLink(deep[1], deep[2]===undefined ? null : +deep[2]), 60);
   if(!['welcome','dashboard','sheet','map','food','slides'].includes(t)) t='dashboard';
+  // a video playing on the tab being left stops (it would otherwise keep talking in the background)
+  if(typeof stopListVideos==='function' && document.body.dataset.tab && document.body.dataset.tab!==t) stopListVideos();
+  if(photos && typeof setFoodView==='function') setFoodView('photos');
   hsTab(t);
   document.body.dataset.tab=t;
   root.classList.remove('wl-first');
@@ -1794,7 +2083,7 @@ function setTab(t){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
   if(t==='slides') renderDeck(t);
   if(t==='map') mapShown();
-  try{ history.replaceState(null,'','#'+t); }catch(e){}
+  try{ history.replaceState(null,'','#'+(t==='food' && foodState.view==='photos' ? 'photos' : t)); }catch(e){}
   // every tab opens fresh at the top of the page (instant: the content has just been swapped, so a smooth
   // scroll would glide over the new page's layout). The Full list table's own scroll is left alone.
   scrollTo(0,0);
@@ -1866,6 +2155,7 @@ function renderWelcome(calm){
   const pics = byDate.filter(d=>PHOTOS[d.n]).slice(0,6);
   const shooters = [...new Set(pics.map(d=>PHOTOS[d.n].credit))];
   const vids = VIDS.filter(v=>v.n.length && BY[v.n[0]]).sort((a,b)=>(b.at||'').localeCompare(a.at||''));
+  const wlAlbums = albumsBuild();
   const list = VIDJ && typeof VIDJ.playlist==='string' && /^[\w-]+$/.test(VIDJ.playlist) ? VIDJ.playlist : '';
   const pos = ph => { const s = [okPos(ph.pos) ? `object-position:${ph.pos.trim()}` : '', okLight(ph.light) ? `filter:brightness(${ph.light}) saturate(1.1)` : ''].filter(Boolean);
     return s.length ? ` style="${s.join(';')}"` : ''; };
@@ -1935,6 +2225,7 @@ function renderWelcome(calm){
       </div>
       <div class="wl-acts wl-in" style="--i:5">
         <button type="button" class="wl-go" data-wgo="dashboard">Explore the ratings →</button>
+        ${wlAlbums.length ? `<button type="button" class="wl-go alt wl-go-ph" data-wgo="photos">📸 See the photos <span class="wl-new">New</span></button>` : ''}
         ${vids.length ? `<button type="button" class="wl-go alt" data-wto="wlVids">▶ Watch the visits</button>` : ''}
       </div>
     </div>
@@ -1945,6 +2236,7 @@ function renderWelcome(calm){
       <span class="r-row g"><span><span class="st t${latest.rk}">${latest.rk}</span>${TIER_WORD[latest.rk]}</span><span class="go">Scorecard →</span></span>
     </button>` : ''}
   </section>
+  ${wlPhotosHtml()}
   <section class="panel wl-about" aria-labelledby="wlName">
     ${kick(1)}
     <h2 id="wlName">What's Makan or Meh?</h2>
@@ -3952,7 +4244,7 @@ function vidPlay(fig, at){
     scr.replaceChildren(f);
   });
 }
-const embedSrc = (id, at) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1${at?`&start=${at}`:''}`;
+const embedSrc = (id, at) => `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&enablejsapi=1${at?`&start=${at}`:''}`;
 // mark what's playing in both places at once: the chip on the card's rail and the ▶ time beside the dish
 function markPlaying(fig, at){
   fig.querySelectorAll('.vid-chip').forEach(c=>c.setAttribute('aria-pressed', +c.dataset.at === at));
@@ -4056,7 +4348,7 @@ function watchAt(scope, v, at){
   vidPlay(fig, at);
 }
 const FOOD_PAGE = 10;   // centres shown at first, and added by each "Show more"
-const foodState = {q:'', kind:'all', open:new Set(), shown:FOOD_PAGE};
+const foodState = {q:'', kind:'all', open:new Set(), shown:FOOD_PAGE, view:'list'};
 const ICON_FOOD = '<svg class="fg-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5v5.2c0 1 .7 1.8 1.6 1.8V14.5M2.4 1.5v3.4M5.6 1.5v3.4M11.6 14.5V1.5c-1.6.6-2.8 2.5-2.8 5v2.3h2.8"/></svg>';
 const ICON_DRINK = '<svg class="fg-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 5.5h9v4a4 4 0 0 1-4 4h-1a4 4 0 0 1-4-4zM11.5 6.5h1a1.8 1.8 0 0 1 0 3.6h-1.2M5 1.5v2M7.5 1.5v2"/></svg>';
 const hasMoment = x => !!(x.w && VID_IDS.has(x.w[0]));
@@ -4157,6 +4449,7 @@ function renderFoodChips(){
   el.querySelectorAll('[data-fk]').forEach(b=>b.onclick=()=>{ foodState.kind=b.dataset.fk; foodState.shown=FOOD_PAGE; renderFoodChips(); renderFood(); });
 }
 function renderFood(){
+  if(foodState.view==='photos'){ renderAlbums(); return; }   // the search and chips drive the albums while Photos is showing
   const el = document.getElementById('foodList'), all = document.getElementById('foodAll');
   if(!FOOD.length){
     el.innerHTML = `<p class="food-none">The dish list couldn't be loaded just now. Please try again in a little while.</p>`;
@@ -4219,6 +4512,7 @@ function foodGo(n){
   if(!roll.hidden) rollShut();
   // only the centre asked for is open, so its dishes can't run into another centre's from the same day
   foodState.q = ''; document.getElementById('fq').value = ''; foodState.kind = 'all'; foodState.open.clear(); foodState.open.add(String(n));
+  if(foodState.view!=='list') setFoodView('list');
   // a centre further down the list than what's showing is brought into the shown part first
   const at = FOOD_GROUPS.findIndex(e=>e.k===String(n));
   foodState.shown = Math.max(foodState.shown, Math.ceil((at+1)/FOOD_PAGE)*FOOD_PAGE);
@@ -4232,33 +4526,417 @@ document.getElementById('fq').addEventListener('input', e=>{ foodState.q = e.tar
 // remember which centres are open (only while browsing; a search or filter opens every match by itself)
 document.getElementById('foodList').addEventListener('toggle', e=>{
   if(!e.target.matches('.fgrp')) return;
+  if(!e.target.open) stopListVideos(e.target);   // closing a visit stops its video
   if(!foodState.q.trim() && foodState.kind==='all') foodState.open[e.target.open ? 'add' : 'delete'](e.target.dataset.k);
   syncFoodAll();
 }, true);
 document.getElementById('foodList').addEventListener('click', e=>{ const b=e.target.closest('[data-card]'); if(b) openCard(+b.dataset.card, b); });
-// a dish photo opens large, with its dish, centre and who the still is from; Esc, Close or a tap outside shuts it
+// ---------- the photo viewer ----------
+// One viewer for a single dish photo (from the list) and for a whole album (from Photos): the photo large on a blurred glow of
+// itself, ‹ › / arrow keys / swipe to step through, swipe down (or Esc, Close, a tap outside) to shut, and ▶ to play the moment.
 const picBox = document.getElementById('picBox');
+const thumbOf = src => src.replace(/^assets\/stills\//, 'assets/stills/thumb/');
+// where a still's moment starts: a tasting moment plays from that second (as its ▶ time does); any other frame starts a
+// few seconds before it, so the moment isn't missed
+const stillStart = (k, s) => { const sec = +k.split('@')[1]; return s.kind==='dish' && !s.dish ? sec : Math.max(0, sec - 3); };
+let pbList = [], pbAt = 0, pbSwiped = false, pbTimer = null, pbPlaying = false, pbVid = null;
+const PB_STEP = 4500;   // slideshow: how long each photo stays up
+const pbQ = s => picBox.querySelector(s);
+function pbShow(i){
+  pbStopVideo();
+  const n = pbList.length; pbAt = pbAuto() ? (i + n) % n : Math.max(0, Math.min(n - 1, i));
+  const it = pbList[pbAt], img = pbQ('.pb-img img'), many = n > 1;
+  img.src = it.src; img.alt = it.alt;
+  pbQ('.pb-amb').style.backgroundImage = `url("${thumbOf(it.src)}"), url("${it.src}")`;
+  pbQ('figcaption b').textContent = it.title;
+  pbQ('figcaption small').textContent = it.sub;
+  const cnt = pbQ('.pb-count'); cnt.hidden = !many; cnt.textContent = `${pbAt + 1} / ${n}`;
+  picBox.querySelectorAll('.pb-nav').forEach(b=>{ b.hidden = !many; b.disabled = !pbAuto() && (b.classList.contains('next') ? pbAt===n-1 : pbAt===0); });
+  pbQ('.pb-show').hidden = n < 3;
+  const w = pbQ('.pb-watch'), im = pbQ('.pb-img');
+  w.hidden = !it.watch; w.textContent = it.watch ? `▶ Watch from ${clock(it.watch.at)}` : '';
+  im.classList.toggle('can', !!it.watch);
+  im.setAttribute('aria-label', it.watch ? `Watch this moment in the video from ${clock(it.watch.at)}` : it.alt);
+  img.classList.remove('in'); void img.offsetWidth; img.classList.add('in');
+  // the thumbnail strip follows along
+  const strip = pbQ('.pb-strip');
+  strip.querySelectorAll('button').forEach((b,k)=>{ b.classList.toggle('on', k===pbAt); if(k===pbAt) b.setAttribute('aria-current','true'); else b.removeAttribute('aria-current'); });
+  const on = strip.querySelector('.on'); if(on && !strip.hidden) strip.scrollTo({left: on.offsetLeft - strip.clientWidth/2 + on.clientWidth/2, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  [pbList[(pbAt + 1) % n], pbList[(pbAt - 1 + n) % n]].forEach(x=>{ if(x) (new Image()).src = x.src; });   // the next swipe is instant
+  if(pbAuto()) pbTick();
+}
+function pbOpen(list, i, opts){
+  pbList = list; pbAutoSet(false);
+  const strip = pbQ('.pb-strip');
+  strip.hidden = list.length < 2; picBox.classList.toggle('has-strip', list.length > 1);
+  strip.innerHTML = list.length < 2 ? '' : list.map((it,k)=>`<button type="button" data-pbi="${k}" aria-label="Photo ${k+1}: ${esc(it.title)}"><img src="${esc(thumbOf(it.src))}" alt="" loading="lazy" decoding="async"></button>`).join('');
+  if(!picBox.open) picBox.showModal();
+  pbShow(i);
+  if(opts && opts.auto) pbAutoSet(true);
+  if(opts && opts.play && list[i].watch) pbPlay(list[i].watch);
+}
+// ▶ plays the moment right here in the viewer; it stops on Close, on the next photo, or on "Back to the photo"
+function pbPlay(w){
+  pbAutoSet(false);
+  const box = pbQ('.pb-video');
+  box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(w.v)}?autoplay=1&rel=0&playsinline=1&modestbranding=1&start=${w.at|0}" title="Zumi's visit video, from ${clock(w.at)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  box.hidden = false; pbPlaying = true; picBox.classList.add('vid-on');
+  const lk = pbQ('.pb-like'); lk.href = likeHref(w.v, w.at); lk.hidden = false;
+  pbQ('.pb-share').hidden = false; const sb = pbQ('.pb-sub'); sb.href = YT_SUB; sb.hidden = false;
+  pbVid = w;
+  const b = pbQ('.pb-watch'); b.textContent = '🖼 Back to the photo';
+  pbQ('figcaption small').textContent = `Video by 4everhugging · playing from ${clock(w.at)}`;
+}
+function pbStopVideo(){
+  if(!pbPlaying) return;
+  const box = pbQ('.pb-video'); box.innerHTML = ''; box.hidden = true; pbPlaying = false; picBox.classList.remove('vid-on');
+  pbQ('.pb-like').hidden = true; pbQ('.pb-share').hidden = true; pbQ('.pb-sub').hidden = true; pbVid = null;
+}
+// the slideshow: steps through on its own, with a thin progress bar; any touch of the photos pauses it
+const pbAuto = () => picBox.classList.contains('auto');
+function pbTick(){ clearTimeout(pbTimer);
+  const bar = pbQ('.pb-bar i'); bar.style.transition = 'none'; bar.style.width = '0'; void bar.offsetWidth;
+  bar.style.transition = `width ${PB_STEP}ms linear`; bar.style.width = '100%';
+  pbTimer = setTimeout(()=>{ if(picBox.open && pbAuto()) pbShow(pbAt + 1); }, PB_STEP); }
+function pbAutoSet(on){
+  picBox.classList.toggle('auto', on); clearTimeout(pbTimer);
+  const b = pbQ('.pb-show'); b.setAttribute('aria-pressed', on);
+  b.querySelector('.pb-show-ic').textContent = on ? '❚❚' : '▶'; b.querySelector('.pb-show-t').textContent = on ? 'Pause' : 'Slideshow';
+  if(on){ pbStopVideo(); pbTick(); picBox.querySelectorAll('.pb-nav').forEach(x=>x.disabled = false); }
+  else { const bar = pbQ('.pb-bar i'); bar.style.transition = 'none'; bar.style.width = '0'; }
+}
+// closing stops the video at once (Close, a tap outside, swipe down); Esc lands here too. A late 'close' from an earlier
+// viewer must not stop a video the viewer has since been reopened with.
+const pbClose = () => { pbStopVideo(); pbAutoSet(false); picBox.close(); };
+picBox.addEventListener('cancel', ()=>{ pbStopVideo(); pbAutoSet(false); });   // Esc
+picBox.addEventListener('close', ()=>{ if(!picBox.open){ pbStopVideo(); pbAutoSet(false); } });
 document.getElementById('foodList').addEventListener('click', e=>{
   const b = e.target.closest('.fd-pic[data-pic]'), s = b && STILLS[b.dataset.pic]; if(!s) return;
-  picBox.querySelector('img').src = s.src;
-  picBox.querySelector('img').alt = `${b.dataset.dish} at ${b.dataset.at}, a still from her visit video`;
-  picBox.querySelector('b').textContent = `${b.dataset.dish} · ${b.dataset.at}`;
-  picBox.querySelector('small').textContent = `Video still by ${s.credit}`;
-  // a still filed by its tasting moment plays from that moment (as its ▶ time does); a drink's still, filed by the
-  // second its frame comes from, starts a few seconds earlier so the moment isn't missed
-  const [v, sec] = b.dataset.pic.split('@'), at = s.dish ? Math.max(0, +sec - 3) : +sec, scope = b.closest('.fgrp');
-  picAt = VID_IDS.has(v) && scope && scope.querySelector('.vid') ? {scope, v, at} : null;
-  const w = picBox.querySelector('.pb-watch'), im = picBox.querySelector('.pb-img');
-  w.hidden = !picAt; w.textContent = picAt ? `▶ Watch from ${clock(at)}` : '';
-  im.classList.toggle('can', !!picAt); im.disabled = !picAt;
-  im.setAttribute('aria-label', picAt ? `Watch ${b.dataset.dish} in the video from ${clock(at)}` : '');
-  picBox.showModal();
+  const v = b.dataset.pic.split('@')[0];
+  stopListVideos();
+  pbOpen([{src:s.src, alt:`${b.dataset.dish} at ${b.dataset.at}, a still from her visit video`, title:`${b.dataset.dish} · ${b.dataset.at}`,
+    sub:`Video still by ${s.credit}`, watch: VID_IDS.has(v) ? {v, at:stillStart(b.dataset.pic, s)} : null}], 0);
 });
-let picAt = null;
 picBox.addEventListener('click', e=>{
-  if(picAt && e.target.closest('.pb-watch, .pb-img')){ const p = picAt; picBox.close(); watchAt(p.scope, p.v, p.at); return; }
-  if(e.target===picBox || e.target.closest('.pb-close')) picBox.close();
+  if(pbSwiped){ pbSwiped = false; return; }
+  const nav = e.target.closest('.pb-nav'); if(nav){ pbAutoSet(false); pbShow(pbAt + (nav.classList.contains('next') ? 1 : -1)); return; }
+  const th = e.target.closest('[data-pbi]'); if(th){ pbAutoSet(false); pbShow(+th.dataset.pbi); return; }
+  // Share shares the video that is playing, from where it started
+  if(e.target.closest('.pb-share')){ if(!pbVid) return; const it = pbList[pbAt];
+    shareIt(`Zumi's Makan or Meh: ${it.title}`, likeHref(pbVid.v, pbVid.at)); return; }
+  if(e.target.closest('.pb-like, .pb-sub')) return;
+  if(e.target.closest('.pb-show')){ pbAutoSet(!pbAuto()); if(pbAuto()) pbShow(pbAt); return; }
+  const it = pbList[pbAt];
+  if(e.target.closest('.pb-watch')){ if(pbPlaying) pbShow(pbAt); else if(it && it.watch) pbPlay(it.watch); return; }
+  if(it && it.watch && e.target.closest('.pb-img')){ pbPlay(it.watch); return; }
+  if(e.target===picBox || e.target.classList.contains('pb-amb') || e.target.closest('.pb-close')) pbClose();
 });
+picBox.addEventListener('keydown', e=>{
+  if(e.target.closest && e.target.closest('iframe')) return;
+  if(e.key==='ArrowRight'){ e.preventDefault(); pbAutoSet(false); pbShow(pbAt + 1); }
+  if(e.key==='ArrowLeft'){ e.preventDefault(); pbAutoSet(false); pbShow(pbAt - 1); }
+  if(e.key===' ' && !e.target.closest('button')){ e.preventDefault(); pbAutoSet(!pbAuto()); }
+});
+{ let sx = null, sy = 0;
+  const stage = pbQ('.pb-stage');
+  stage.addEventListener('pointerdown', e=>{ if(e.pointerType!=='mouse' && !pbPlaying){ sx = e.clientX; sy = e.clientY; } });
+  stage.addEventListener('pointerup', e=>{
+    if(sx===null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){ pbSwiped = true; pbAutoSet(false); pbShow(pbAt + (dx < 0 ? 1 : -1)); }
+    else if(dy > 90){ pbSwiped = true; pbClose(); }
+  });
+  stage.addEventListener('pointercancel', ()=>{ sx = null; });
+}
+// the visit videos in the list (and on scorecards) stop when you move away from them: another tab, Photos, or closing the visit
+function stopListVideos(scope){
+  (scope || document).querySelectorAll('.vid').forEach(fig=>{
+    try{ if(fig._p && fig._p.pauseVideo) fig._p.pauseVideo(); }catch(e){}
+    if(fig._iframe && fig._iframe.contentWindow) try{ fig._iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*'); }catch(e){}
+    fig.querySelectorAll('.vid-chip[aria-pressed="true"]').forEach(c=>c.setAttribute('aria-pressed','false'));
+  });
+  document.querySelectorAll('.w-chit[aria-pressed="true"]').forEach(b=>b.setAttribute('aria-pressed','false'));
+}
+
+// ---------- Photos: one album per visit with a 4ever edit ----------
+// Built on every load from Masked's dish list (food.json) and the stills, so names and prices are always hers, every dish
+// she had shows (a tile where there's no photo yet), and a new visit gets its album as soon as its stills are added.
+// Items run in video order: dishes and drinks at their still's second, scenes and Zumi at the second their frame comes from.
+const centreAt = (v, sec) => { const ss = v.s || {}; let n = v.n.find(c=>!ss[c]) ?? v.n[0];
+  v.n.forEach(c=>{ if(ss[c] && sec >= ss[c] && sec >= (ss[n]||0)) n = c; }); return n; };
+let ALBUMS = null;
+function albumsBuild(){
+  if(ALBUMS) return ALBUMS;
+  ALBUMS = VIDS.filter(v=>v.n.length && v.n.some(n=>BY[n])).map(v=>{
+    const items = [], byKey = {};
+    FOOD.filter(x=>x.n.some(n=>v.n.includes(n))).forEach(x=>{
+      const k = stillKey(x), s = k && STILLS[k] && k.split('@')[0]===v.id ? STILLS[k] : null;
+      if(s && byKey[k]){ byKey[k].xs.push(x); return; }   // two dishes in one frame (chicken + fries) share a photo
+      const it = {kind:'dish', xs:[x], s, k:s ? k : '', sec: s ? +k.split('@')[1] : (x.w && x.w[0]===v.id ? x.w[1] : Infinity), n:x.n[0]};
+      if(s) byKey[k] = it; items.push(it);
+    });
+    Object.entries(STILLS).forEach(([k,s])=>{
+      if(k.split('@')[0]!==v.id || (s.kind!=='scene' && s.kind!=='zumi')) return;
+      const sec = +k.split('@')[1], n = centreAt(v, sec);
+      items.push({kind:s.kind, s, k, sec, n, cap: s.kind==='zumi' ? `Zumi at ${BY[n] ? BY[n].sh : 'the centre'}` : s.cap});
+    });
+    items.sort((a,b)=>a.sec - b.sec);
+    const main = centreAt(v, 0), cs = v.n.filter(n=>BY[n]).sort((a,b)=>((v.s||{})[a]||0) - ((v.s||{})[b]||0));
+    const photos = items.filter(i=>i.s);
+    const cover = photos.find(i=>i.s.cover===true) || photos.find(i=>i.kind==='zumi') || photos.find(i=>i.kind==='scene') || photos[0];
+    // the list's group to play in: a centre of this visit that has dishes
+    const play = cs.find(n=>FOOD_GROUPS.some(e=>e.k===String(n))) ?? main;
+    return {v, items, photos, cover, cs, main, play, date: BY[main] && BY[main].d || ''};
+  }).filter(a=>a.photos.length).sort((a,b)=>b.date.localeCompare(a.date));
+  return ALBUMS;
+}
+const itemTitle = it => it.kind==='dish' ? it.xs.map(x=>x.d).join(' + ') : it.cap;
+const itemPrice = it => it.kind==='dish' ? it.xs.map(x=>x.pt).filter(Boolean).join(' + ') : '';
+// the photo search: every word must be found in the photo's own words (dish, stall, Masked's note, caption, price) or its visit's
+// (centre name, short name, area words, date). "redhill" finds "Red Hill" and "kopio" finds "Kopi O": spaces are ignored too.
+const albWords = () => normQ(foodState.q).split(' ').filter(Boolean);
+const albHas = (text, words) => { const t = normQ(text), ts = t.replace(/ /g,''); return words.every(w=>t.includes(w) || ts.includes(w)); };
+const albItemText = it => it.kind==='dish' ? it.xs.map(x=>[x.d, x.st, x.no, x.pt, isDrink(x)?'drink drinks':'food'].join(' ')).join(' ')
+  : `${it.cap} ${it.kind==='zumi'?'zumi':''}`;
+const albVisitText = a => a.cs.map(n=>`${BY[n].name} ${BY[n].sh} ${BY[n].addr||''} ${BY[n].d?fmtD(BY[n].d):''}`).join(' ');
+function albumView(a){
+  // what the search and the Food / Drinks chips leave showing in this album: a search can be met partly by the visit
+  // ("tiong bahru kopi") and partly by the photo
+  const words = albWords(), visit = albVisitText(a);
+  return a.items.filter(it=>{
+    if(foodState.kind==='food' && !(it.kind==='dish' && it.xs.some(x=>!isDrink(x)))) return false;
+    if(foodState.kind==='drink' && !(it.kind==='dish' && it.xs.some(isDrink))) return false;
+    if(foodState.kind==='moment' && !(it.kind==='dish' && it.xs.some(hasMoment))) return false;
+    return !words.length || albHas(`${visit} ${albItemText(it)}`, words);
+  });
+}
+// ---------- Subscribe, Open on YouTube and Share ----------
+// Her channel, with YouTube's own subscribe prompt; a like can only be given on YouTube itself (no site can like for you), so "Open on YouTube" takes people to the video at that moment.
+const YT_CHANNEL = 'https://www.youtube.com/@zestyzumi';
+const YT_SUB = 'https://www.youtube.com/channel/UC1T3I7_RVn3Nz8H_9J47HEw?sub_confirmation=1';   // her channel's permanent ID: YouTube's subscribe prompt
+const TWITCH = 'https://www.twitch.tv/zumi';
+const subBtn = (cls='') => `<a class="yt-sub ${cls}" href="${YT_SUB}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>Subscribe on YouTube</a>`;
+const twBtn = (cls='') => `<a class="yt-sub tw ${cls}" href="${TWITCH}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.6 5.7h1.7v5.1h-1.7zm4.7 0H18v5.1h-1.7zM6 0 1.7 4.3v15.4h5.1V24l4.3-4.3h3.4L22.3 12V0zm14.6 11.1-3.4 3.4h-3.4l-3 3v-3H6.9V1.7h13.7z"/></svg>Follow on Twitch</a>`;
+// "Follow Zumi": her YouTube and her Twitch, side by side
+const followBtns = (cls='') => `<span class="follow ${cls}">${subBtn(cls)}${twBtn(cls)}</span>`;
+const likeHref = (v, at) => `https://www.youtube.com/watch?v=${encodeURIComponent(v)}${at ? `&t=${at|0}s` : ''}`;
+const siteBase = () => location.href.split('#')[0];
+// Share always shares one of Zumi's YouTube videos (the visit, or the visit from a photo's moment): a panel with X and Copy link
+async function shareIt(title, url){
+  const box = document.getElementById('shareBox'), u = encodeURIComponent(url), t = encodeURIComponent(title);
+  box.querySelector('.sh-title').textContent = title;
+  box.querySelector('.sh-url').value = url;
+  box.querySelector('.sh-list').innerHTML = `<a href="https://twitter.com/intent/tweet?text=${t}&url=${u}" target="_blank" rel="noopener">Share on X</a>`;
+  box.querySelector('.sh-copy').textContent = 'Copy link';
+  box.showModal();
+}
+{ const box = document.getElementById('shareBox');
+  box.addEventListener('click', async e=>{
+    if(e.target===box || e.target.closest('.sh-close')){ box.close(); return; }
+    const c = e.target.closest('.sh-copy'); if(!c) return;
+    const inp = box.querySelector('.sh-url');
+    try{ await navigator.clipboard.writeText(inp.value); }catch(err){ inp.select(); document.execCommand && document.execCommand('copy'); }
+    c.textContent = 'Copied ✓';
+  });
+}
+// open a shared link: the album glides into view (with a flash), and a photo number opens it in the viewer
+function photoLink(v, i){
+  const a = albumsBuild().find(x=>x.v.id===v); if(!a) return;
+  if(foodState.q || foodState.kind!=='all'){ foodState.q = ''; foodState.kind = 'all'; document.getElementById('fq').value = ''; renderFoodChips(); renderAlbums(); }
+  const art = document.getElementById(`album-${v}`);
+  if(art){ const hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+    scrollTo({top: scrollY + art.getBoundingClientRect().top - hb - 12}); art.classList.add('seen','flash'); }
+  if(i!==null && a.photos[i]) pbOpen(albViewerList(a), i);
+}
+// ---------- the Home page's "Inside her visits" band: two rows of photos drifting past, and the way in ----------
+function wlPhotosHtml(){
+  const als = albumsBuild(); if(!als.length) return '';
+  const nPh = als.reduce((t,a)=>t + a.photos.length, 0);
+  // covers first, then the rest round-robin across visits, so both rows mix places, people and plates
+  const pick = als.map(a=>a.cover), rest = als.map(a=>a.photos.filter(p=>p!==a.cover));
+  for(let i=0; rest.some(r=>r[i]); i++) rest.forEach(r=>{ if(r[i]) pick.push(r[i]); });
+  const ph = pick.slice(0, 26), r1 = ph.filter((_,i)=>i%2===0), r2 = ph.filter((_,i)=>i%2===1);
+  // each row is drawn twice so the drift loops without a seam
+  const row = (ps, cls) => `<div class="wlp-row ${cls}"><div class="wlp-track">${[...ps, ...ps].map(p=>`<span class="wlp-ph"><img src="${esc(thumbOf(p.s.src))}" alt="" loading="lazy" decoding="async"${stillAt(p.s)}><small>${esc(itemTitle(p))}</small></span>`).join('')}</div></div>`;
+  return `<section class="wlp" aria-labelledby="wlpTitle">
+    <div class="wlp-rows" data-wgo="photos" aria-hidden="true">${row(r1,'a')}${row(r2,'b')}</div>
+    <div class="wlp-txt">
+      <p class="wlp-kick"><span class="wl-new">New</span> Photo albums</p>
+      <h2 id="wlpTitle">Inside <em>her visits</em></h2>
+      <p>${nPh} photos from ${als.length} visits, taken from 4everhugging's edits. Tap any photo to watch that moment.</p>
+      <div class="wlp-acts"><button type="button" class="wl-go" data-wgo="photos">📸 See the photos →</button>${followBtns()}</div>
+    </div>
+  </section>`;
+}
+// ---------- the showcase at the top of Photos: a slow cross-fading slideshow of her visits, a jump to each, and ▶ Play ----------
+let phxTimer = null;
+function phxHtml(als){
+  // the slideshow opens on her best-graded visit (not the newest, whose cover sits right below)
+  const best = m => { const r = m.a.cs.map(n=>BY[n].t||0); return Math.max(0, ...r); };
+  const covers = [...als].sort((x,y)=>best(y) - best(x)).map(m=>m.a.cover), nPh = als.reduce((t,m)=>t + m.a.photos.length, 0);
+  return `<section class="phx" aria-labelledby="phxTitle">
+    <div class="phx-bg" aria-hidden="true">${covers.map((c,i)=>`<img src="${esc(c.s.src)}" alt="" decoding="async"${i?' loading="lazy"':' fetchpriority="high"'} class="${i?'':'on'} k${i%3}"${stillAt(c.s)}>`).join('')}</div>
+    <div class="phx-txt">
+      <p class="phx-kick"><span class="phx-new">New</span> Photo albums</p>
+      <h2 id="phxTitle">Makan or Meh, <em>up close</em></h2>
+      <p class="phx-sub">${als.length} visits and ${nPh} photos from <b>4everhugging</b>'s edits: the stalls, the plates, the drinks, the friends and the rating boards, in the order they happened.</p>
+      <div class="phx-acts">
+        <button type="button" class="phx-play" data-phxplay><span aria-hidden="true">▶</span> Play the slideshow</button>
+        ${followBtns()}
+      </div>
+      <div class="phx-jump" role="list">${als.map(({a})=>`<button type="button" role="listitem" data-jump="${a.v.id}"><img src="${esc(thumbOf(a.cover.s.src))}" alt="" loading="lazy" decoding="async"${stillAt(a.cover.s)}><span>${a.cs.filter(n=>BY[n].rk).slice(0,1).map(n=>`<i class="st t${BY[n].rk}">${BY[n].rk}</i>`).join('')}${esc(a.cs.map(n=>BY[n].sh).join(' & '))}</span></button>`).join('')}</div>
+    </div>
+  </section>`;
+}
+function phxRun(el){
+  clearInterval(phxTimer);
+  const imgs = el.querySelectorAll('.phx-bg img'); if(imgs.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let k = 0;
+  phxTimer = setInterval(()=>{
+    if(document.hidden || document.body.dataset.tab!=='food' || foodState.view!=='photos' || picBox.open) return;
+    const r = el.getBoundingClientRect(); if(r.bottom < 0 || r.top > innerHeight) return;
+    imgs[k].classList.remove('on'); k = (k + 1) % imgs.length; imgs[k].classList.add('on');
+  }, 5200);
+}
+// every album's photos, as the viewer wants them
+function albViewerList(a){
+  const embeddable = VID_IDS.has(a.v.id);
+  return a.photos.map((it,i)=>{ const t = itemTitle(it), pr = itemPrice(it), where = BY[it.n] ? BY[it.n].sh : '';
+    return {src:it.s.src, link:`photos/${a.v.id}/${i}`, alt:`${t}${where?` at ${where}`:''}, a still from her visit video`,
+      title:`${t}${pr?` · ${pr}`:''}${where && it.kind==='dish'?` · ${where}`:''}`, sub:`${where ? `${where} · ` : ''}Video still by ${it.s.credit}`,
+      watch: embeddable ? {v:a.v.id, at:stillStart(it.k, it.s)} : null}; });
+}
+function renderAlbums(){
+  const el = document.getElementById('albums'); if(!el) return;
+  const words = albWords(), filtered = words.length || foodState.kind!=='all';
+  const hw = words.filter(w=>w.length>1), rx = hw.length ? new RegExp(hw.map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'gi') : null;
+  const als = albumsBuild().map(a=>({a, its:albumView(a)})).filter(m=>m.its.some(i=>i.s));
+  const nPh = als.reduce((t,m)=>t + m.its.filter(i=>i.s).length, 0);
+  document.getElementById('foodCount').textContent = als.length ? `${als.length} ${als.length===1?'visit':'visits'} · ${nPh} ${nPh===1?'photo':'photos'}${filtered?' match':''}` : '';
+  clearInterval(phxTimer);
+  if(!als.length){ el.innerHTML = `<p class="food-none">No photos match <b>${esc(foodState.q.trim() || 'that')}</b> just now. Try another word, <b>All</b>, or <button type="button" class="linkbtn" data-albclear>clear the search</button>.</p>`; return; }
+  el.innerHTML = (filtered ? '' : phxHtml(als)) + als.map(({a, its}, ai)=>{
+    const cv = a.cover, d = BY[a.main], nDish = a.items.filter(i=>i.kind==='dish').reduce((t,i)=>t + i.xs.length, 0);
+    const tiles = its.map(it=>{
+      const t = hl(itemTitle(it), rx), tl = esc(itemTitle(it)), pr = itemPrice(it), drink = it.kind==='dish' && it.xs.every(isDrink);
+      if(!it.s) return `<li class="alb-it"><div class="alb-ph none"><span class="alb-none-ic">${drink?ICON_DRINK:ICON_FOOD}</span>
+        <span class="alb-cap"><b>${t}</b>${pr?`<i>${esc(pr)}</i>`:''}</span><small>Photo to come</small></div></li>`;
+      const i = a.photos.indexOf(it);
+      return `<li class="alb-it"><button type="button" class="alb-ph${it.kind==='dish'?'':' scene'}" data-alb="${a.v.id}" data-i="${i}" aria-label="Open photo: ${tl}${pr?`, ${esc(pr)}`:''}">
+        <img src="${esc(thumbOf(it.s.src))}" alt="" loading="lazy" decoding="async"${stillAt(it.s)} onerror="this.onerror=null;this.src='${esc(it.s.src)}'">
+        <span class="alb-cap"><b>${t}</b>${pr?`<i>${esc(pr)}</i>`:''}</span></button></li>`;
+    }).join('');
+    return `<article class="alb" id="album-${a.v.id}" style="--i:${Math.min(ai,4)}" aria-labelledby="alb-${a.v.id}">
+      <div class="alb-cover">
+        <img class="alb-cv" src="${esc(cv.s.src)}" alt="" ${ai ? 'loading="lazy" ' : ''}decoding="async"${stillAt(cv.s)}>
+        <div class="alb-meta">
+          <span class="alb-grades">${a.cs.filter(n=>BY[n].rk).map(n=>`<span class="st t${BY[n].rk}" title="${esc(BY[n].sh)}: ${TIER_WORD[BY[n].rk]}"><span class="hs-sr">${esc(BY[n].sh)} grade </span>${BY[n].rk}</span>`).join('')}</span>
+          <h3 id="alb-${a.v.id}">${a.cs.map(n=>esc(BY[n].name)).join(' <span class="alb-amp">&amp;</span> ')}</h3>
+          <p>${d && d.d ? `${fmtD(d.d)} · ` : ''}${a.photos.length} photos · ${nDish} ${nDish===1?'dish':'dishes'}</p>
+        </div>
+        ${VID_IDS.has(a.v.id) ? `<button type="button" class="alb-watch" data-albwatch="${a.v.id}"><span aria-hidden="true">▶</span> Watch the visit</button>` : ''}
+      </div>
+      <div class="alb-wrap">
+        <ol class="alb-row">${tiles}</ol>
+        <button type="button" class="alb-arrow prev" data-albgo="-1" aria-label="Scroll back" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg></button>
+        <button type="button" class="alb-arrow next" data-albgo="1" aria-label="Scroll on"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button>
+      </div>
+      <div class="alb-foot">
+        <p class="alb-credit">Stills from <b>${esc(cv.s.credit)}</b>'s edit · <button type="button" class="linkbtn" data-albdishes="${a.play}">See the dishes in the list</button></p>
+      </div>
+    </article>`;
+  }).join('');
+  el.querySelectorAll('.alb-row').forEach(albArrows);
+  albReveal(el);
+  const phx = el.querySelector('.phx'); if(phx) phxRun(phx);
+}
+// the ‹ › arrows: worked out again whenever the strip changes size (it is laid out while Photos may still be hidden,
+// when it measures 0 wide) and as its photos load
+function albArrows(row){
+  const w = row.parentElement, f = ()=>{ if(!row.clientWidth) return; const max = row.scrollWidth - row.clientWidth - 2;
+    w.classList.toggle('fits', max <= 0);
+    w.querySelector('.prev').disabled = row.scrollLeft <= 2; w.querySelector('.next').disabled = row.scrollLeft >= max; };
+  row._arrows = f;
+  row.addEventListener('scroll', f, {passive:true}); row.addEventListener('scrollend', f);
+  row.querySelectorAll('img').forEach(i=>i.addEventListener('load', f, {once:true}));
+  if('ResizeObserver' in window) new ResizeObserver(f).observe(row); else addEventListener('resize', f);
+  f(); requestAnimationFrame(f);
+}
+// albums glide in as they come into view (all at once with reduced motion, or where IntersectionObserver is missing)
+let albIO = null;
+function albReveal(el){
+  const as = el.querySelectorAll('.alb');
+  if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches){ as.forEach(a=>a.classList.add('seen')); return; }
+  if(albIO) albIO.disconnect();
+  albIO = new IntersectionObserver(es=>es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('seen'); albIO.unobserve(en.target); } }), {rootMargin:'0px 0px -8% 0px'});
+  as.forEach(a=>albIO.observe(a));
+}
+document.getElementById('albums').addEventListener('click', e=>{
+  const go = e.target.closest('[data-albgo]');
+  if(go){ const row = go.parentElement.querySelector('.alb-row'), dx = +go.dataset.albgo * row.clientWidth * .8;
+    // work out where it will land and set both arrows now, rather than waiting on the scroll to finish
+    const to = Math.max(0, Math.min(row.scrollWidth - row.clientWidth, row.scrollLeft + dx)), w = go.parentElement;
+    w.querySelector('.prev').disabled = to <= 2; w.querySelector('.next').disabled = to >= row.scrollWidth - row.clientWidth - 2;
+    row.scrollBy({left: dx}); setTimeout(()=>row._arrows && row._arrows(), 600); return; }
+  const a = (()=>{ const b = e.target.closest('[data-alb],[data-albwatch]'); return b && albumsBuild().find(x=>x.v.id===(b.dataset.alb || b.dataset.albwatch)); })();
+  const ph = e.target.closest('[data-alb]');
+  if(ph && a){ pbOpen(albViewerList(a), +ph.dataset.i); return; }
+  // "Watch the visit": the viewer opens on the album's cover and plays the video from the start
+  const wb = e.target.closest('[data-albwatch]');
+  if(wb && a){ const list = albViewerList(a), ci = Math.max(0, a.photos.indexOf(a.cover)); pbOpen(list, ci); pbPlay({v:a.v.id, at:0}); return; }
+  // the showcase: ▶ plays every photo of every visit (newest visit first); a visit button glides down to its album
+  if(e.target.closest('[data-phxplay]')){
+    const all = albumsBuild().flatMap(x=>albViewerList(x).map(it=>({...it, sub: it.sub})));
+    pbOpen(all, 0, {auto:true}); return;
+  }
+  const j = e.target.closest('[data-jump]');
+  if(j){ const art = document.getElementById(`album-${j.dataset.jump}`); if(!art) return;
+    const hb = Math.max(0, document.querySelector('.board').getBoundingClientRect().bottom);
+    scrollTo({top: scrollY + art.getBoundingClientRect().top - hb - 12, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    art.classList.remove('flash'); void art.offsetWidth; art.classList.add('flash'); return; }
+  if(e.target.closest('[data-albclear]')){ foodState.q = ''; foodState.kind = 'all'; document.getElementById('fq').value = ''; renderFoodChips(); renderAlbums(); return; }
+  const ld = e.target.closest('[data-albdishes]'); if(ld){ setFoodView('list'); foodGo(+ld.dataset.albdishes); }
+});
+// List | Photos. #photos opens the Dishes tab on Photos; #food on the list
+function setFoodView(v, push){
+  if(foodState.view!==v) stopListVideos(document.getElementById('v-food'));
+  foodState.view = v;
+  document.getElementById('v-food').classList.toggle('ph-on', v==='photos');
+  document.querySelectorAll('[data-fview]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.fview===v));
+  if(v==='photos') renderAlbums(); else renderFood();
+  if(push && document.body.dataset.tab==='food') try{ history.replaceState(null,'','#'+(v==='photos'?'photos':'food')); }catch(e){}
+}
+document.querySelectorAll('[data-fview]').forEach(b=>b.onclick=()=>setFoodView(b.dataset.fview, true));
+
+// ---------- the Dashboard's "Photo albums" card: a small mosaic that leads to Photos ----------
+function renderPhCard(){
+  const el = document.getElementById('phCard'), als = albumsBuild(); if(!el || !als.length) return;
+  // every visit's cover first (so the mosaic shows different visits), then their other photos, round-robin across visits
+  const pool = als.map(a=>a.cover), rest = als.map(a=>a.photos.filter(p=>p!==a.cover));
+  for(let i=0; rest.some(r=>r[i]); i++) rest.forEach(r=>{ if(r[i]) pool.push(r[i]); });
+  const nPh = als.reduce((t,a)=>t + a.photos.length, 0), show = pool.slice(0, 5);
+  el.innerHTML = `<div class="phc-text">
+      <p class="phc-kick">📸 Photo albums</p>
+      <h2>Inside her visits</h2>
+      <p class="phc-sub">${als.length} visits, ${nPh} photos: the stalls, the plates, the drinks and the rating boards, from <b>4everhugging</b>'s edits.</p>
+      <button type="button" class="btn phc-go" data-tab-go="photos">See the photos <span aria-hidden="true">→</span></button>
+    </div>
+    <button type="button" class="phc-mosaic" data-tab-go="photos" aria-label="See the photo albums">
+      ${show.map((p,i)=>`<span class="phc-tile t${i}"><img src="${esc(i ? thumbOf(p.s.src) : p.s.src)}" alt="" loading="lazy" decoding="async"${stillAt(p.s)}></span>`).join('')}
+    </button>`;
+  el.hidden = false;
+  el.querySelectorAll('[data-tab-go]').forEach(b=>b.onclick=()=>setTab('photos'));
+  // the small tiles gently swap in other photos while the card is on screen (not with reduced motion)
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches || pool.length <= 5) return;
+  let next = 5;
+  setInterval(()=>{
+    if(document.hidden || document.body.dataset.tab!=='dashboard') return;
+    const r = el.getBoundingClientRect(); if(r.bottom < 0 || r.top > innerHeight) return;
+    const tiles = el.querySelectorAll('.phc-tile:not(.t0)'), t = tiles[next % tiles.length], p = pool[next % pool.length]; next++;
+    const img = new Image(); img.decoding = 'async'; img.src = thumbOf(p.s.src);
+    img.onload = ()=>{ const old = t.querySelector('img'); img.className = 'fresh'; if(okPos(p.s.pos)) img.style.objectPosition = p.s.pos.trim();
+      t.append(img); requestAnimationFrame(()=>img.classList.add('on')); setTimeout(()=>old.remove(), 900); };
+  }, 4200);
+}
 document.getElementById('foodAll').onclick = ()=>{
   const gs = [...document.querySelectorAll('#foodList .fgrp')], open = gs.some(g=>!g.open);
   gs.forEach(g=>{ g.open = open; });
@@ -4401,7 +5079,7 @@ function lvArrows(){
   };
 })();
 renderLatest();
-renderFoodKpis(); renderFoodChips(); renderFood();
+renderFoodKpis(); renderFoodChips(); renderFood(); renderPhCard();
 select(state.sel);
 renderWelcome();
 // the bare link always opens the welcome page; any #link opens where it points
