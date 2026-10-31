@@ -1692,7 +1692,8 @@ const PHOTOS = {}; if(PHOTOJ && PHOTOJ.photos && typeof PHOTOJ.photos==='object'
 // a still is used only from this site's own stills folder, filed under "<video id>@<second>", with who took it
 const STILLJ = await stillReq;
 const okStill = (k,v) => /^[\w-]{11}@\d+$/.test(k) && v && typeof v.src==='string' && /^assets\/stills\/[\w.-]+\.(jpe?g|png|webp)$/i.test(v.src)
-  && (v.kind==='dish' || v.kind==='zumi') && typeof v.credit==='string' && v.credit.trim();
+  && (v.kind==='dish' || v.kind==='zumi') && typeof v.credit==='string' && v.credit.trim()
+  && (v.dish===undefined || (typeof v.dish==='string' && v.dish.trim()));
 const STILLS = {}; if(STILLJ && STILLJ.stills && typeof STILLJ.stills==='object') Object.entries(STILLJ.stills).forEach(([k,v])=>{ if(okStill(k,v)) STILLS[k]=v; });
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
 const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
@@ -1835,9 +1836,14 @@ function wlRun(){
   if(wlBack.length<2 || REDUCED) return;
   wlTimer = setInterval(()=>{ if(document.body.dataset.tab==='welcome' && !document.hidden) wlShow(wlAt+1); }, 7000);
 }
-// a dish's tasting moment is the key its still is filed under in stills.json, so a frame only ever shows the dish it is of
+// a dish's tasting moment is the key its still is filed under in stills.json, so a frame only ever shows the dish it is of.
+// A dish with no moment of its own (most drinks), or one sharing a moment with another dish, has its still filed under the
+// second the frame comes from, with "dish" naming it exactly as Masked does; it shows only on that dish, in a visit from that video
 const momentKey = x => x.w ? `${x.w[0]}@${x.w[1]}` : '';
-const dishStill = x => { const s = STILLS[momentKey(x)]; return s && s.kind==='dish' ? s : null; };
+const visitVids = x => new Set(VIDS.filter(v=>v.n.some(n=>x.n.includes(n))).map(v=>v.id));
+const stillKey = x => { const k = momentKey(x), s = STILLS[k]; if(s && s.kind==='dish' && !s.dish) return k;
+  const vs = visitVids(x); return Object.keys(STILLS).find(j=>{ const t = STILLS[j]; return t.kind==='dish' && t.dish===x.d && vs.has(j.split('@')[0]); }) || ''; };
+const dishStill = x => STILLS[stillKey(x)] || null;
 const stillAt = s => okPos(s.pos) ? ` style="object-position:${s.pos.trim()}"` : '';
 // the welcome page shows only the dish stills marked "home" (the ones 4ever picked for it); the Dishes tab shows them all
 const homeStill = x => { const s = dishStill(x); return s && s.home===true ? s : null; };
@@ -4172,7 +4178,7 @@ function renderFood(){
         ${visitInsights(e, xs, !!words.length || foodState.kind!=='all')}
       </div>
       <ul class="fdl${xs.some(dishStill)?' pics':''}">${xs.map(x=>`<li>${!xs.some(dishStill) ? '' : dishStill(x)
-          ? `<button type="button" class="fd-pic" data-pic="${esc(momentKey(x))}" data-dish="${esc(x.d)}" data-at="${esc(d ? d.sh : e.h)}" aria-label="See the photo of ${esc(x.d)}"><img src="${esc(dishStill(x).src)}" alt="" loading="lazy" decoding="async"${stillAt(dishStill(x))}></button>`
+          ? `<button type="button" class="fd-pic" data-pic="${esc(stillKey(x))}" data-dish="${esc(x.d)}" data-at="${esc(d ? d.sh : e.h)}" aria-label="See the photo of ${esc(x.d)}"><img src="${esc(dishStill(x).src)}" alt="" loading="lazy" decoding="async"${stillAt(dishStill(x))}></button>`
           : `<span class="fd-pic none" aria-hidden="true">${isDrink(x)?ICON_DRINK:ICON_FOOD}</span>`}<span class="fd-d">${hl(x.d,rx)}${wChit(x)}</span><span class="fd-p">${isDrink(x)?'<span class="fd-cat drink">Drink</span>':'<span class="fd-cat food">Food</span>'}${x.pt?esc(x.pt):'–'}</span>
         <span class="fd-s">${x.st?`Stall: ${stallHtml(x.st,rx)}`:'Stall not noted'}${x.no?` · <i>${hl(x.no,rx)}</i>`:''}</span></li>`).join('')}</ul>
       ${d && d.s ? `<p class="fg-foot"><button type="button" class="linkbtn" data-card="${d.n}">See Zumi's scorecard for ${esc(d.sh)}</button></p>` : ''}
