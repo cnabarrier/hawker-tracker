@@ -1,7 +1,27 @@
-{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%.","stills":{
-"q5oVUrCQcs8@295":{"src":"assets/stills/redhill-pork-porridge.jpg","kind":"dish","credit":"4everhugging"},
-"eNOzVPQmdnw@758":{"src":"assets/stills/chong-boon-char-kway-teow.jpg","kind":"dish","credit":"4everhugging","pos":"45% 60%"},
-"DJDe4cwNMkc@204":{"src":"assets/stills/tiong-bahru-wanton-mee-char-siew.jpg","kind":"dish","credit":"4everhugging","pos":"45% 35%"},
+{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%. home:true marks the dish stills the welcome page uses (the ones 4ever picked for it); the Dishes tab shows every dish still.","stills":{
+"q5oVUrCQcs8@295":{"src":"assets/stills/redhill-pork-porridge.jpg","kind":"dish","credit":"4everhugging","home":true},
+"eNOzVPQmdnw@758":{"src":"assets/stills/chong-boon-char-kway-teow.jpg","kind":"dish","credit":"4everhugging","pos":"45% 60%","home":true},
+"DJDe4cwNMkc@204":{"src":"assets/stills/tiong-bahru-wanton-mee-char-siew.jpg","kind":"dish","credit":"4everhugging","pos":"45% 35%","home":true},
 "eNOzVPQmdnw@750":{"src":"assets/stills/zumi-chong-boon.jpg","kind":"zumi","credit":"4everhugging","pos":"60% 30%"},
-"gFkVf5imnZA@989":{"src":"assets/stills/zumi-ang-mo-kio-628.jpg","kind":"zumi","credit":"4everhugging","pos":"50% 22%"}
+"gFkVf5imnZA@989":{"src":"assets/stills/zumi-ang-mo-kio-628.jpg","kind":"zumi","credit":"4everhugging","pos":"50% 22%"},
+"q5oVUrCQcs8@530":{"src":"assets/stills/redhill-beehoon.jpg","kind":"dish","credit":"4everhugging","pos":"50% 80%"},
+"m12xyzWEkM8@342":{"src":"assets/stills/beo-crescent-glass-noodle.jpg","kind":"dish","credit":"4everhugging","pos":"40% 75%"},
+"snyN0zGEqR4@449":{"src":"assets/stills/maxwell-chicken-rice.jpg","kind":"dish","credit":"4everhugging","pos":"75% 50%"},
+"vsqg6UJ3AH8@201":{"src":"assets/stills/bendemeer-hokkien-mee.jpg","kind":"dish","credit":"4everhugging","pos":"50% 80%"},
+"vsqg6UJ3AH8@358":{"src":"assets/stills/bendemeer-chicken-rice.jpg","kind":"dish","credit":"4everhugging"},
+"vsqg6UJ3AH8@471":{"src":"assets/stills/bendemeer-iced-latte.jpg","kind":"dish","credit":"4everhugging","pos":"50% 60%"},
+"vsqg6UJ3AH8@475":{"src":"assets/stills/bendemeer-kopi-o.jpg","kind":"dish","credit":"4everhugging","pos":"50% 50%"},
+"DJDe4cwNMkc@757":{"src":"assets/stills/tiong-bahru-char-siew-rice.jpg","kind":"dish","credit":"4everhugging"},
+"DJDe4cwNMkc@810":{"src":"assets/stills/tiong-bahru-mee-pok.jpg","kind":"dish","credit":"4everhugging"},
+"DJDe4cwNMkc@1051":{"src":"assets/stills/tiong-bahru-chicken-fries.jpg","kind":"dish","credit":"4everhugging"},
+"DJDe4cwNMkc@695":{"src":"assets/stills/tiong-bahru-chee-cheong-fun.jpg","kind":"dish","credit":"4everhugging"},
+"gFkVf5imnZA@305":{"src":"assets/stills/amk628-kway-teow-soup.jpg","kind":"dish","credit":"4everhugging"},
+"gFkVf5imnZA@669":{"src":"assets/stills/amk628-sun-toast.jpg","kind":"dish","credit":"4everhugging","pos":"50% 70%"},
+"gFkVf5imnZA@732":{"src":"assets/stills/amk628-black-chicken-soup.jpg","kind":"dish","credit":"4everhugging","pos":"40% 65%"},
+"gFkVf5imnZA@1014":{"src":"assets/stills/amk628-green-curry.jpg","kind":"dish","credit":"4everhugging","pos":"55% 65%"},
+"gFkVf5imnZA@973":{"src":"assets/stills/amk628-pineapple-rice.jpg","kind":"dish","credit":"4everhugging","pos":"40% 70%"},
+"gFkVf5imnZA@1177":{"src":"assets/stills/amk628-min-jiang-kueh.jpg","kind":"dish","credit":"4everhugging","pos":"75% 40%"},
+"eNOzVPQmdnw@201":{"src":"assets/stills/chong-boon-mee-rebus.jpg","kind":"dish","credit":"4everhugging"},
+"eNOzVPQmdnw@448":{"src":"assets/stills/chong-boon-bak-kut-teh.jpg","kind":"dish","credit":"4everhugging","pos":"50% 85%"},
+"eNOzVPQmdnw@1204":{"src":"assets/stills/chong-boon-lor-mee.jpg","kind":"dish","credit":"4everhugging","pos":"50% 85%"}
 }}
