@@ -761,6 +761,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .fg-sp sup{font-family:var(--fb);font-size:11px;font-weight:700;color:var(--muted);margin-left:3px;cursor:help}
 .fg-na{font-family:var(--fb);font-size:13px;font-weight:600;color:var(--muted)}
 .fg-thumb.none{visibility:hidden}
+.fg-thumb.ph::after{display:none}   /* a photo, not a video: no play badge */
 .fg-tog{width:10px;height:10px;justify-self:center;border-right:2.5px solid var(--muted);border-bottom:2.5px solid var(--muted);transform:translateY(-3px) rotate(45deg);transition:transform .15s}
 .fgrp[open] .fg-tog{transform:translateY(2px) rotate(-135deg)}
 .fgrp summary:focus-visible{outline:3px solid var(--kaya);outline-offset:-3px;border-radius:16px}
@@ -1171,6 +1172,10 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .cp-vid{margin:6px 20px 0}
 .cp-vid .vid{margin-top:12px}
 .fg-vid .vid{margin-top:0}
+/* no visit video: the centre's own photo (from photos.json, openly licensed) in the video's spot, credited under it */
+.fg-photo{margin:0}
+.fg-photo .vid-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.fg-photo .vid-by span{flex:1 1 auto}
 /* an open centre on the Dishes tab: video on the left, visit insights on the right (stacked on narrow screens) */
 .fg-top{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:2px 16px 16px}
 @media (min-width:880px){
@@ -4483,7 +4488,9 @@ function renderFood(){
     const plural = unknown===1 ? 'dish' : 'dishes';
     const spend = sp.n ? `${fmtSpan(sp)}${unknown ? `<sup title="Total excludes ${unknown} ${plural} without a known price" aria-hidden="true">+${unknown}</sup><span class="hs-sr"> (excludes ${unknown} ${plural} without a known price)</span>` : ''}` : '<span class="fg-na">No prices</span>';
     const open = words.length || foodState.kind!=='all' || foodState.open.has(e.k);
-    const vid = d && VID_BY[d.n];
+    const vid = d && VID_BY[d.n], ph = !vid && d && PHOTOS[d.n];
+    const phStyle = ph ? [okPos(ph.pos) ? `object-position:${ph.pos.trim()}` : '', okLight(ph.light) ? `filter:brightness(${ph.light}) saturate(1.1)` : ''].filter(Boolean).join(';') : '';
+    const phAttr = phStyle ? ` style="${phStyle}"` : '';
     return `<details class="fgrp" data-k="${esc(e.k)}"${open?' open':''}>
       <summary>${d && d.s ? `<span class="st t${d.rk}">${d.rk}</span>` : `<span class="st fg-none" aria-hidden="true">·</span>`}
         <span class="fg-id"><span class="fg-nm">${hl(d ? d.name : e.h, rx)}</span>${date ? `<span class="fg-meta">${date}</span>` : ''}</span>
@@ -4491,10 +4498,12 @@ function renderFood(){
           <span class="fg-c${nFood?'':' zero'}" title="Food items">${ICON_FOOD}<span class="hs-sr">Food items: </span>${nFood}</span>
           <span class="fg-c${nDrink?'':' zero'}" title="Drinks">${ICON_DRINK}<span class="hs-sr">Drinks: </span>${nDrink}</span>
           <span class="fg-sp"><span class="hs-sr">Spent: </span>${spend}</span></span>
-        ${vid ? `<span class="fg-thumb" title="Has a video of the visit"><img src="${ytThumb(vid[0].id, true)}" alt="" loading="lazy" decoding="async"></span>` : `<span class="fg-thumb none" aria-hidden="true"></span>`}
+        ${vid ? `<span class="fg-thumb" title="Has a video of the visit"><img src="${ytThumb(vid[0].id, true)}" alt="" loading="lazy" decoding="async"></span>` : ph ? `<span class="fg-thumb ph" aria-hidden="true"><img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async"${phAttr}></span>` : `<span class="fg-thumb none" aria-hidden="true"></span>`}
         <span class="fg-tog" aria-hidden="true"></span></summary>
-      <div class="fg-top${d && VID_BY[d.n] ? '' : ' no-vid'}">
-        ${d && VID_BY[d.n] ? `<div class="fg-vid">${vidBlock(d.n)}</div>` : ''}
+      <div class="fg-top${vid || ph ? '' : ' no-vid'}">
+        ${vid ? `<div class="fg-vid">${vidBlock(d.n)}</div>` : ''}
+        ${ph ? `<figure class="fg-vid fg-photo"><div class="vid-screen"><img src="${esc(ph.src)}" alt="${esc(d.name)}" loading="lazy" decoding="async"${phAttr}></div>
+          <figcaption class="vid-by"><span>📷 Photo by <b>${esc(ph.credit)}</b>${ph.licence ? ` · ${esc(ph.licence)}` : ''}</span>${ph.url ? `<a href="${esc(ph.url)}" target="_blank" rel="noopener">Source ↗</a>` : ''}</figcaption></figure>` : ''}
         ${visitInsights(e, xs, !!words.length || foodState.kind!=='all')}
       </div>
       <ul class="fdl${xs.some(dishStill)?' pics':''}">${xs.map(x=>`<li>${!xs.some(dishStill) ? '' : dishStill(x)
