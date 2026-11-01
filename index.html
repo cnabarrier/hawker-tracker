@@ -2069,7 +2069,10 @@ document.querySelectorAll('[data-theme-btn]').forEach(b=>b.onclick=()=>{ applyTh
 applyTheme(load('hk-theme'));
 if(['stream','full'].includes(load('hk-mode'))) state.mode = load('hk-mode');
 
-function setTab(t){
+// back/forward: a tab the visitor picks gets its own history entry (push), so the browser's Back button returns to the
+// last section, at the spot they had scrolled to. Arriving by a link, Back or Forward (from) only records where we are.
+function setTab(t, from){
+  if(!from) try{ history.replaceState({y:scrollY}, ''); }catch(e){}   // remember the scroll of the page being left
   // #about (and the old #pitch link) now open the welcome page, where the "about" now lives
   if(t==='about' || t==='pitch') t='welcome';
   // #photos is the Dishes tab showing its photo albums; #photos/<video id> opens one visit's album, and
@@ -2081,6 +2084,7 @@ function setTab(t){
   // a video playing on the tab being left stops (it would otherwise keep talking in the background)
   if(typeof stopListVideos==='function' && document.body.dataset.tab && document.body.dataset.tab!==t) stopListVideos();
   if(photos && typeof setFoodView==='function') setFoodView('photos');
+  else if(from && t==='food' && typeof setFoodView==='function' && foodState.view!=='list') setFoodView('list');   // Back to #food: the list
   hsTab(t);
   document.body.dataset.tab=t;
   root.classList.remove('wl-first');
@@ -2088,13 +2092,17 @@ function setTab(t){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on', v.id==='v-'+t));
   if(t==='slides') renderDeck(t);
   if(t==='map') mapShown();
-  try{ history.replaceState(null,'','#'+(t==='food' && foodState.view==='photos' ? 'photos' : t)); }catch(e){}
-  // every tab opens fresh at the top of the page (instant: the content has just been swapped, so a smooth
-  // scroll would glide over the new page's layout). The Full list table's own scroll is left alone.
-  scrollTo(0,0);
+  const h = '#'+(t==='food' && foodState.view==='photos' ? 'photos' : t);
+  const back = from==='nav' && history.state && typeof history.state.y==='number' ? history.state.y : 0;
+  try{ if(!from && h!==location.hash) history.pushState({y:0}, '', h); else history.replaceState({y:back}, '', h); }catch(e){}
+  // a newly picked tab opens fresh at the top of the page (instant: the content has just been swapped, so a smooth
+  // scroll would glide over the new page's layout); Back/Forward return to where that page was scrolled. The Full
+  // list table's own scroll is left alone.
+  scrollTo(0,0); if(back) requestAnimationFrame(()=>scrollTo(0,back));
 }
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
-addEventListener('hashchange',()=>setTab(location.hash.slice(1)));
+// Back/Forward between our entries, or a typed/linked #hash, arrive here
+addEventListener('hashchange',()=>setTab(location.hash.slice(1), 'nav'));
 
 // slide shape follows the screen: tall on portrait phones, wide everywhere else
 const autoFmt = () => innerHeight > innerWidth ? 'v' : 'w';
@@ -4911,7 +4919,8 @@ function setFoodView(v, push){
   document.getElementById('v-food').classList.toggle('ph-on', v==='photos');
   document.querySelectorAll('[data-fview]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.fview===v));
   if(v==='photos') renderAlbums(); else renderFood();
-  if(push && document.body.dataset.tab==='food') try{ history.replaceState(null,'','#'+(v==='photos'?'photos':'food')); }catch(e){}
+  if(push && document.body.dataset.tab==='food') try{ const h = '#'+(v==='photos'?'photos':'food');
+    if(h!==location.hash){ history.replaceState({y:scrollY}, ''); history.pushState({y:0}, '', h); } }catch(e){}   // List | Photos is a step Back can undo
 }
 document.querySelectorAll('[data-fview]').forEach(b=>b.onclick=()=>setFoodView(b.dataset.fview, true));
 
@@ -5097,7 +5106,7 @@ renderFoodKpis(); renderFoodChips(); renderFood(); renderPhCard();
 select(state.sel);
 renderWelcome();
 // the bare link always opens the welcome page; any #link opens where it points
-setTab((location.hash||'').slice(1) || 'welcome');
+setTab((location.hash||'').slice(1) || 'welcome', 'load');
 
 /* ---------- freshness + update polling ---------- */
 function ago(iso){ if(!iso) return ''; const m=Math.round((Date.now()-Date.parse(iso))/60000);
