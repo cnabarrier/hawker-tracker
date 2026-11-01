@@ -931,19 +931,24 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .phc-sub b{color:var(--ink)}
 .phc .phc-go{background:var(--red);border-color:var(--red);color:#fff;padding:11px 20px;font-size:15px;font-weight:800;box-shadow:0 10px 22px -10px color-mix(in srgb,var(--red) 80%,transparent);transition:transform .2s,background .2s}
 .phc .phc-go:hover{background:var(--red2);transform:translateY(-1px)}
-.phc-mosaic{display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:clamp(200px,22vw,280px);width:100%;padding:0;border:0;background:none;cursor:pointer}
-.phc-tile{position:relative;overflow:hidden;border-radius:14px;background:var(--paper2)}
+.phc-mosaic{display:grid;grid-template-columns:1.5fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:clamp(200px,22vw,280px);width:100%}
+.phc-tile{position:relative;overflow:hidden;border-radius:14px;background:var(--paper2);padding:0;border:0;cursor:zoom-in;display:block;width:100%;height:100%}
+.phc-tile::after{content:"";position:absolute;inset:0;background:rgba(6,17,15,.22);opacity:0;transition:opacity .25s;pointer-events:none}
+.phc-zoom{position:absolute;right:8px;top:8px;z-index:2;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);box-shadow:0 4px 12px rgba(0,0,0,.25);opacity:0;transform:scale(.8);transition:opacity .25s,transform .25s}
+.phc-zoom svg{width:14px;height:14px;fill:none;stroke:#0B1F1B;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.phc-tile:hover::after,.phc-tile:focus-visible::after{opacity:1}
+.phc-tile:hover .phc-zoom,.phc-tile:focus-visible .phc-zoom{opacity:1;transform:none}
+.phc-tile:hover img,.phc-tile:focus-visible img{transform:scale(1.06)}
+.phc-tile:focus-visible{outline:3px solid var(--kaya);outline-offset:3px}
 .phc-tile.t0{grid-row:1 / 3}
 .phc-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .8s}
 .phc-tile img.fresh{opacity:0}.phc-tile img.fresh.on{opacity:1}
-.phc-mosaic:hover .phc-tile img{transform:scale(1.05)}
-.phc-mosaic:focus-visible{outline:3px solid var(--kaya);outline-offset:4px;border-radius:16px}
 @media (max-width:760px){
   .phc{grid-template-columns:1fr}
   .phc-mosaic{order:-1;height:clamp(170px,48vw,240px);grid-template-columns:1.4fr 1fr}
   .phc-tile.t3,.phc-tile.t4{display:none}
 }
-@media (prefers-reduced-motion:reduce){.phc-tile img{transition:none}.phc-mosaic:hover .phc-tile img{transform:none}}
+@media (prefers-reduced-motion:reduce){.phc-tile img,.phc-zoom{transition:none}.phc-tile:hover img,.phc-tile:focus-visible img{transform:none}}
 
 /* ---------- "New" markers: on the tab, and on the Home page buttons ---------- */
 .tab-new{display:inline-block;margin-left:6px;padding:3px 6px 2px;white-space:nowrap;border-radius:6px;background:var(--kaya);color:#1a1300;font:800 10px/1 var(--fb);letter-spacing:.06em;
@@ -4917,24 +4922,30 @@ function renderPhCard(){
   const pool = als.map(a=>a.cover), rest = als.map(a=>a.photos.filter(p=>p!==a.cover));
   for(let i=0; rest.some(r=>r[i]); i++) rest.forEach(r=>{ if(r[i]) pool.push(r[i]); });
   const nPh = als.reduce((t,a)=>t + a.photos.length, 0), show = pool.slice(0, 5);
+  // the viewer list: every photo in pool order, so a tile opens on its own photo and ‹ › walk on through the rest
+  const lists = new Map(als.map(a=>[a, albViewerList(a)])), albOf = p => als.find(a=>a.photos.includes(p));
+  const vlist = pool.map(p=>{ const a = albOf(p); return lists.get(a)[a.photos.indexOf(p)]; });
+  const tileLabel = i => `Open photo: ${vlist[i].title}`;
   el.innerHTML = `<div class="phc-text">
       <p class="phc-kick">📸 Photo albums</p>
       <h2>Inside her visits</h2>
       <p class="phc-sub">${als.length} visits, ${nPh} photos: the stalls, the plates, the drinks and the rating boards, from <b>4everhugging</b>'s edits.</p>
       <button type="button" class="btn phc-go" data-tab-go="photos">See the photos <span aria-hidden="true">→</span></button>
     </div>
-    <button type="button" class="phc-mosaic" data-tab-go="photos" aria-label="See the photo albums">
-      ${show.map((p,i)=>`<span class="phc-tile t${i}"><img src="${esc(i ? thumbOf(p.s.src) : p.s.src)}" alt="" loading="lazy" decoding="async"${stillAt(p.s)}></span>`).join('')}
-    </button>`;
+    <div class="phc-mosaic">
+      ${show.map((p,i)=>`<button type="button" class="phc-tile t${i}" data-p="${i}" aria-label="${esc(tileLabel(i))}"><img src="${esc(i ? thumbOf(p.s.src) : p.s.src)}" alt="" loading="lazy" decoding="async"${stillAt(p.s)}><span class="phc-zoom" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></svg></span></button>`).join('')}
+    </div>`;
   el.hidden = false;
   el.querySelectorAll('[data-tab-go]').forEach(b=>b.onclick=()=>setTab('photos'));
+  el.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>pbOpen(vlist, +b.dataset.p));
   // the small tiles gently swap in other photos while the card is on screen (not with reduced motion)
   if(matchMedia('(prefers-reduced-motion: reduce)').matches || pool.length <= 5) return;
   let next = 5;
   setInterval(()=>{
-    if(document.hidden || document.body.dataset.tab!=='dashboard') return;
+    if(document.hidden || document.body.dataset.tab!=='dashboard' || picBox.open) return;
     const r = el.getBoundingClientRect(); if(r.bottom < 0 || r.top > innerHeight) return;
-    const tiles = el.querySelectorAll('.phc-tile:not(.t0)'), t = tiles[next % tiles.length], p = pool[next % pool.length]; next++;
+    const tiles = el.querySelectorAll('.phc-tile:not(.t0)'), t = tiles[next % tiles.length], pi = next % pool.length, p = pool[pi]; next++;
+    t.dataset.p = pi; t.setAttribute('aria-label', tileLabel(pi));   // a click opens the photo now showing
     const img = new Image(); img.decoding = 'async'; img.src = thumbOf(p.s.src);
     img.onload = ()=>{ const old = t.querySelector('img'); img.className = 'fresh'; if(okPos(p.s.pos)) img.style.objectPosition = p.s.pos.trim();
       t.append(img); requestAnimationFrame(()=>img.classList.add('on')); setTimeout(()=>old.remove(), 900); };
