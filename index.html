@@ -1930,7 +1930,7 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
 <div id="tip" role="tooltip"></div>
 <dialog id="shareBox" aria-label="Share"><p class="sh-kick">Share</p><p class="sh-title"></p>
   <div class="sh-list"></div>
-  <div class="sh-row"><input class="sh-url" readonly aria-label="Link"><button type="button" class="sh-copy">Copy link</button></div>
+  <div class="sh-row"><input class="sh-url" name="share-link" readonly aria-label="Link"><button type="button" class="sh-copy">Copy link</button></div>
   <button type="button" class="sh-close" aria-label="Close">✕</button></dialog>
 <dialog id="picBox" aria-label="Photo"><div class="pb-amb" aria-hidden="true"></div><figure>
   <div class="pb-stage">
@@ -2724,7 +2724,7 @@ function renderTrail(){
   trail.innerHTML = `<p class="jsum">Zumi has been out eating on <b>${plural(DATES.length,'day')}</b> since <b>${fmtDs(DATES[0])}</b> and rated <b>${plural(RD.length,'centre')}</b> on those days. Her latest visit was <b>${fmtDs(DATES[DATES.length-1])}</b> (${ago}).</p>
     <div class="jnav">
       <button class="btn" type="button" data-jstep="1" aria-label="Older month" ${mi<0||mi>=months.length-1?'disabled':''}>‹</button>
-      <select class="btn" data-jm aria-label="Show month">${months.map(m=>`<option value="${m}"${jState.month===m?' selected':''}>${mLabel(m)} · ${plural(newest.filter(d=>d.startsWith(m)).length,'day')} · ${plural(RD.filter(d=>d.d.startsWith(m)).length,'centre')}</option>`).join('')}
+      <select class="btn" name="month" data-jm aria-label="Show month">${months.map(m=>`<option value="${m}"${jState.month===m?' selected':''}>${mLabel(m)} · ${plural(newest.filter(d=>d.startsWith(m)).length,'day')} · ${plural(RD.filter(d=>d.d.startsWith(m)).length,'centre')}</option>`).join('')}
         <option value="all"${jState.month==='all'?' selected':''}>All days · ${plural(DATES.length,'day')} · ${plural(RD.length,'centre')}</option></select>
       <button class="btn" type="button" data-jstep="-1" aria-label="Newer month" ${mi<=0?'disabled':''}>›</button>
     </div>`;
@@ -3528,7 +3528,7 @@ function renderDeck(kind){
   const modeCtl = `<div class="seg" role="group" aria-label="Show length">
       <button type="button" data-mode="stream" aria-pressed="${state.mode==='stream'}" title="The board, her latest hawker day's centres and the Top 10">⚡ Quick recap</button>
       <button type="button" data-mode="full" aria-pressed="${state.mode==='full'}" title="Every rated centre, from last place to #1, in tier chapters">📜 Full countdown</button></div>
-    ${state.mode==='full'?`<select class="btn" data-jump aria-label="Jump to a chapter"><option value="">Jump to…</option>${chapters.map(([s,k])=>`<option value="${k}">${esc(s.t)}</option>`).join('')}</select>`:''}`;
+    ${state.mode==='full'?`<select class="btn" name="chapter" data-jump aria-label="Jump to a chapter"><option value="">Jump to…</option>${chapters.map(([s,k])=>`<option value="${k}">${esc(s.t)}</option>`).join('')}</select>`:''}`;
   // the deck is redrawn on every move: remember which control had keyboard focus so it keeps it afterwards
   const a = document.activeElement, keep = !host.contains(a) || !kbFocus(a) ? null
     : a.dataset.act ? (a.classList.contains('navbtn') ? `.navbtn[data-act="${a.dataset.act}"]` : `.deck-bar [data-act="${a.dataset.act}"]`)
