@@ -1984,7 +1984,7 @@ const PHOTOS = {}; if(PHOTOJ && PHOTOJ.photos && typeof PHOTOJ.photos==='object'
 // a still is used only from this site's own stills folder, filed under "<video id>@<second>", with who took it
 const STILLJ = await stillReq;
 const okStill = (k,v) => /^[\w-]{11}@\d+$/.test(k) && v && typeof v.src==='string' && /^assets\/stills\/[\w.-]+\.(jpe?g|png|webp)$/i.test(v.src)
-  && (v.kind==='dish' || v.kind==='zumi' || (v.kind==='scene' && typeof v.cap==='string' && v.cap.trim())) && typeof v.credit==='string' && v.credit.trim()
+  && (v.kind==='dish' || v.kind==='zumi' || v.kind==='banner' || (v.kind==='scene' && typeof v.cap==='string' && v.cap.trim())) && typeof v.credit==='string' && v.credit.trim()
   && (v.dish===undefined || (typeof v.dish==='string' && v.dish.trim()));
 const STILLS = {}; if(STILLJ && STILLJ.stills && typeof STILLJ.stills==='object') Object.entries(STILLJ.stills).forEach(([k,v])=>{ if(okStill(k,v)) STILLS[k]=v; });
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
@@ -4683,9 +4683,12 @@ function albumsBuild(){
     const main = centreAt(v, 0), cs = v.n.filter(n=>BY[n]).sort((a,b)=>((v.s||{})[a]||0) - ((v.s||{})[b]||0));
     const photos = items.filter(i=>i.s);
     const cover = photos.find(i=>i.s.cover===true) || photos.find(i=>i.kind==='zumi') || photos.find(i=>i.kind==='scene') || photos[0];
+    // the wide picture on top: its own frame (kind banner) so it never repeats a photo in the row; else the cover
+    const bk = Object.keys(STILLS).find(k=>STILLS[k].kind==='banner' && k.split('@')[0]===v.id);
+    const banner = bk ? STILLS[bk] : cover.s;
     // the list's group to play in: a centre of this visit that has dishes
     const play = cs.find(n=>FOOD_GROUPS.some(e=>e.k===String(n))) ?? main;
-    return {v, items, photos, cover, cs, main, play, date: BY[main] && BY[main].d || ''};
+    return {v, items, photos, cover, banner, cs, main, play, date: BY[main] && BY[main].d || ''};
   }).filter(a=>a.photos.length).sort((a,b)=>b.date.localeCompare(a.date));
   return ALBUMS;
 }
@@ -4827,7 +4830,7 @@ function renderAlbums(){
     }).join('');
     return `<article class="alb" id="album-${a.v.id}" style="--i:${Math.min(ai,4)}" aria-labelledby="alb-${a.v.id}">
       <div class="alb-cover">
-        <img class="alb-cv" src="${esc(cv.s.src)}" alt="" ${ai ? 'loading="lazy" ' : ''}decoding="async"${stillAt(cv.s)}>
+        <img class="alb-cv" src="${esc(a.banner.src)}" alt="" ${ai ? 'loading="lazy" ' : ''}decoding="async"${stillAt(a.banner)}>
         <div class="alb-meta">
           <span class="alb-grades">${a.cs.filter(n=>BY[n].rk).map(n=>`<span class="st t${BY[n].rk}" title="${esc(BY[n].sh)}: ${TIER_WORD[BY[n].rk]}"><span class="hs-sr">${esc(BY[n].sh)} grade </span>${BY[n].rk}</span>`).join('')}</span>
           <h3 id="alb-${a.v.id}">${a.cs.map(n=>esc(BY[n].name)).join(' <span class="alb-amp">&amp;</span> ')}</h3>

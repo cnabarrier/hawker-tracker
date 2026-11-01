@@ -1,4 +1,4 @@
-{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%. A still of kind scene (the visit itself: arriving, stalls, guests, rating boards) has a short factual cap and is filed under the second its frame comes from; cover:true makes it the cover of its visit album on the Photos view. home:true marks the dish stills the welcome page uses (the ones 4ever picked for it); the Dishes tab shows every dish still.","stills":{
+{"note":"Hand-kept. Stills from Zumi's visit videos, supplied by the video editor. Key = <YouTube video id>@<second>: for a dish (kind dish) the second is that dish's tasting moment in food.json (w), so the frame can only attach to the dish it shows; for a frame of Zumi (kind zumi) it is where the frame comes from. Files live in assets/stills/. Optional pos sets the crop focus, e.g. 50% 30%. A still of kind scene (the visit itself: arriving, stalls, guests, rating boards) has a short factual cap and is filed under the second its frame comes from; cover:true makes it the cover of its visit album on the Photos view. A still of kind banner is only the wide picture at the top of its visit's album (a frame not used anywhere else, so it never repeats a photo in the row under it). home:true marks the dish stills the welcome page uses (the ones 4ever picked for it); the Dishes tab shows every dish still.","stills":{
 "q5oVUrCQcs8@295":{"src":"assets/stills/redhill-pork-porridge.jpg","kind":"dish","credit":"4everhugging","home":true},
 "eNOzVPQmdnw@758":{"src":"assets/stills/chong-boon-char-kway-teow.jpg","kind":"dish","credit":"4everhugging","pos":"45% 60%","home":true},
 "DJDe4cwNMkc@204":{"src":"assets/stills/tiong-bahru-wanton-mee-char-siew.jpg","kind":"dish","credit":"4everhugging","pos":"45% 35%","home":true},
@@ -70,5 +70,12 @@
 "eNOzVPQmdnw@649":{"src":"assets/stills/chong-boon-fake-chef.jpg","kind":"scene","credit":"4everhugging","cap":"Meeting the Fake Chef"},
 "eNOzVPQmdnw@912":{"src":"assets/stills/chong-boon-chef-cooks.jpg","kind":"scene","credit":"4everhugging","cap":"Fake Chef cooks"},
 "eNOzVPQmdnw@1186":{"src":"assets/stills/chong-boon-tray.jpg","kind":"scene","credit":"4everhugging","cap":"Lor mee, bean curd and a passionfruit drink"},
-"eNOzVPQmdnw@1491":{"src":"assets/stills/chong-boon-rating.jpg","kind":"scene","credit":"4everhugging","cap":"Rating Chong Boon Market & Food Centre"}
+"eNOzVPQmdnw@1491":{"src":"assets/stills/chong-boon-rating.jpg","kind":"scene","credit":"4everhugging","cap":"Rating Chong Boon Market & Food Centre"},
+"snyN0zGEqR4@158":{"src":"assets/stills/banner-maxwell.jpg","kind":"banner","credit":"4everhugging"},
+"vsqg6UJ3AH8@58":{"src":"assets/stills/banner-bendemeer.jpg","kind":"banner","credit":"4everhugging"},
+"DJDe4cwNMkc@45":{"src":"assets/stills/banner-tiong-bahru.jpg","kind":"banner","credit":"4everhugging"},
+"gFkVf5imnZA@144":{"src":"assets/stills/banner-amk628.jpg","kind":"banner","credit":"4everhugging","pos":"50% 20%"},
+"q5oVUrCQcs8@86":{"src":"assets/stills/banner-redhill.jpg","kind":"banner","credit":"4everhugging"},
+"m12xyzWEkM8@99":{"src":"assets/stills/banner-beo-crescent.jpg","kind":"banner","credit":"4everhugging"},
+"eNOzVPQmdnw@196":{"src":"assets/stills/banner-chong-boon.jpg","kind":"banner","credit":"4everhugging"}
 }}
