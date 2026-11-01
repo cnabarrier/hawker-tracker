@@ -4648,7 +4648,8 @@ picBox.addEventListener('click', e=>{
   // Share shares the video that is playing, from where it started
   if(e.target.closest('.pb-share')){ if(!pbVid) return; const it = pbList[pbAt];
     shareIt(`Zumi's Makan or Meh: ${it.title}`, likeHref(pbVid.v, pbVid.at)); return; }
-  if(e.target.closest('.pb-like, .pb-sub')) return;
+  const yl = e.target.closest('.pb-like, .pb-sub');
+  if(yl){ e.preventDefault(); const w = window.open(yl.href, '_blank'); if(w) w.opener = null; else location.assign(yl.href); return; }
   if(e.target.closest('.pb-show')){ pbAutoSet(!pbAuto()); if(pbAuto()) pbShow(pbAt); return; }
   const it = pbList[pbAt];
   if(e.target.closest('.pb-watch')){ if(pbPlaying) pbShow(pbAt); else if(it && it.watch) pbPlay(it.watch); return; }
@@ -4663,6 +4664,8 @@ picBox.addEventListener('keydown', e=>{
 });
 { let sx = null, sy = 0;
   const stage = pbQ('.pb-stage');
+  // a phone swipe ends with no click, so its flag is cleared at the next touch; otherwise it would eat the next tap
+  picBox.addEventListener('pointerdown', ()=>{ pbSwiped = false; });
   stage.addEventListener('pointerdown', e=>{ if(e.pointerType!=='mouse' && !pbPlaying){ sx = e.clientX; sy = e.clientY; } });
   stage.addEventListener('pointerup', e=>{
     if(sx===null) return; const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
@@ -4754,7 +4757,7 @@ async function shareIt(title, url){
   box.querySelector('.sh-url').value = url;
   box.querySelector('.sh-list').innerHTML = `<a href="https://twitter.com/intent/tweet?text=${t}&url=${u}" target="_blank" rel="noopener">Share on X</a>`;
   box.querySelector('.sh-copy').textContent = 'Copy link';
-  box.showModal();
+  try{ box.showModal(); }catch(err){ box.setAttribute('open',''); }
 }
 { const box = document.getElementById('shareBox');
   box.addEventListener('click', async e=>{
