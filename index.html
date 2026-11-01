@@ -1073,6 +1073,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 #picBox .pb-like[hidden],#picBox .pb-sub[hidden]{display:none}
 #picBox .pb-sub{background:#FF0000}#picBox .pb-sub:hover{background:#e00000}
 #shareBox{width:min(92vw,420px);padding:22px;border:0;border-radius:20px;background:var(--paper);color:var(--ink);box-shadow:0 30px 70px -20px rgba(0,0,0,.6)}
+#shareBox.in-pb{position:fixed;left:12px;right:12px;bottom:12px;top:auto;margin:0 auto;z-index:20;width:auto;max-width:420px;box-shadow:0 -10px 50px rgba(0,0,0,.7)}
 #shareBox::backdrop{background:rgba(4,12,10,.6);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .sh-kick{margin:0;font:800 12px/1 var(--fb);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
 .sh-title{margin:6px 32px 16px 0;font-weight:700;font-size:16px;line-height:1.35}
@@ -1084,7 +1085,10 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .sh-url{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line2);border-radius:10px;background:var(--paper2);color:var(--ink);font-size:13px}
 .sh-copy{border:0;border-radius:10px;padding:10px 14px;background:var(--red);color:#fff;font-weight:800;cursor:pointer}
 .sh-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border:0;border-radius:50%;background:var(--paper2);color:var(--ink);font-size:15px;cursor:pointer}
-@media (max-width:640px){#picBox .pb-acts{flex-wrap:wrap}#picBox .pb-acts > *{flex:1;justify-content:center}}
+/* phones: the viewer's buttons in two even columns (Open on YouTube | Share, Subscribe | Back to the photo), Close across the bottom */
+@media (max-width:640px){#picBox .pb-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  #picBox .pb-acts > *{justify-content:center;text-align:center;white-space:nowrap;min-width:0}
+  #picBox .pb-close,#picBox:not(.vid-on) .pb-watch{grid-column:1 / -1}}
 @media (min-width:641px){#picBox.has-strip .pb-img img{height:min(64vh,600px)}#picBox.has-strip .pb-video{--vh:min(64vh,600px)}}
 @media (max-width:640px){.pb-strip{display:none}.pb-video{height:auto;padding:0}.pb-video iframe{width:100%;height:auto}}
 .fg-foot{margin:0;padding:10px 16px 14px;border-top:1px solid var(--line);font-size:13.5px}
@@ -4638,7 +4642,7 @@ function pbAutoSet(on){
 // viewer must not stop a video the viewer has since been reopened with.
 const pbClose = () => { pbStopVideo(); pbAutoSet(false); picBox.close(); };
 picBox.addEventListener('cancel', ()=>{ pbStopVideo(); pbAutoSet(false); });   // Esc
-picBox.addEventListener('close', ()=>{ if(!picBox.open){ pbStopVideo(); pbAutoSet(false); } });
+picBox.addEventListener('close', ()=>{ if(!picBox.open){ pbStopVideo(); pbAutoSet(false); const sb = document.getElementById('shareBox'); if(sb.open && sb.classList.contains('in-pb')) sb.close(); } });
 document.getElementById('foodList').addEventListener('click', e=>{
   const b = e.target.closest('.fd-pic[data-pic]'), s = b && STILLS[b.dataset.pic]; if(!s) return;
   const v = b.dataset.pic.split('@')[0];
@@ -4783,11 +4787,15 @@ async function shareIt(title, url){
   box.querySelector('.sh-url').value = url;
   box.querySelector('.sh-list').innerHTML = `<a href="https://twitter.com/intent/tweet?text=${t}&url=${u}" target="_blank" rel="noopener">Share on X</a>`;
   box.querySelector('.sh-copy').textContent = 'Copy link';
-  try{ box.showModal(); }catch(err){ box.setAttribute('open',''); }
+  // from the photo viewer the panel opens inside it, as a sheet over the buttons, not as a second pop-up on top: on some
+  // phones (Samsung Internet) a second pop-up ends up hidden behind the playing video while still blocking every tap
+  if(picBox.open){ if(box.parentNode!==picBox) picBox.append(box); box.classList.add('in-pb'); if(box.open) box.close(); box.show(); }
+  else { if(box.parentNode!==document.body) document.body.append(box); box.classList.remove('in-pb'); try{ box.showModal(); }catch(err){ box.show(); } }
 }
 { const box = document.getElementById('shareBox');
   box.addEventListener('click', async e=>{
-    if(e.target===box || e.target.closest('.sh-close')){ box.close(); return; }
+    // a tap on the dimmed backdrop closes it (only when it is its own pop-up; inside the viewer that would be the panel's own padding)
+    if((e.target===box && !box.classList.contains('in-pb')) || e.target.closest('.sh-close')){ box.close(); return; }
     const c = e.target.closest('.sh-copy'); if(!c) return;
     const inp = box.querySelector('.sh-url');
     try{ await navigator.clipboard.writeText(inp.value); }catch(err){ inp.select(); document.execCommand && document.execCommand('copy'); }
