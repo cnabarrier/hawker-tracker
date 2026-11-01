@@ -809,7 +809,12 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 @keyframes pbIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 .pb-amb{position:absolute;inset:-60px;background-size:cover;background-position:center;filter:blur(46px) saturate(1.5) brightness(.5);transform:scale(1.1)}
 #picBox figure{position:relative;margin:0}
-.pb-stage{position:relative;touch-action:pan-y}
+/* swipes here are ours (next/previous photo, down to close), so the browser does no panning of its own: its leftover glide
+   would otherwise swallow a tap made straight after a swipe */
+.pb-stage{position:relative;touch-action:none}
+/* no double-tap zoom in the viewer or the share panel: a phone (Samsung Internet especially) would otherwise read two quick
+   taps, e.g. ▶ then Share, as a zoom and drop the second one */
+#picBox,#shareBox{touch-action:manipulation}
 #picBox .pb-img{display:block;position:relative;width:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:default}
 #picBox .pb-img.can{cursor:pointer}
 #picBox .pb-img img{display:block;width:100%;height:min(74vh,664px);object-fit:contain;filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
@@ -4662,6 +4667,27 @@ picBox.addEventListener('keydown', e=>{
   if(e.key==='ArrowLeft'){ e.preventDefault(); pbAutoSet(false); pbShow(pbAt - 1); }
   if(e.key===' ' && !e.target.closest('button')){ e.preventDefault(); pbAutoSet(!pbAuto()); }
 });
+// Phones: a finger lifted on the same control it went down on is a press, even when the browser drops the click (it can,
+// after a swipe or a quick earlier tap, and Samsung Internet does so more often). The press is made here, and the click the
+// browser may still send afterwards is ignored, so nothing happens twice.
+function firmTaps(box, sel){
+  let down = null, done = null, doneAt = 0;
+  box.addEventListener('pointerdown', e=>{ const c = e.pointerType!=='mouse' && e.target.closest(sel);
+    down = c ? {c, x:e.clientX, y:e.clientY, t:Date.now()} : null; });
+  box.addEventListener('pointercancel', ()=>{ down = null; });
+  box.addEventListener('pointerup', e=>{
+    const d = down; down = null; if(!d) return;
+    if(e.target.closest(sel)!==d.c || Math.hypot(e.clientX-d.x, e.clientY-d.y) > 12 || Date.now()-d.t > 700 || d.c.hidden || d.c.disabled) return;
+    done = d.c; doneAt = Date.now(); d.c.click();
+  });
+  // the leftover click can land outside the box, e.g. on the share panel the press has just opened, so it is caught
+  // page-wide: the first real click within a moment of a press made here belongs to that same tap
+  document.addEventListener('click', e=>{
+    if(e.isTrusted && done && Date.now()-doneAt < 800){ e.preventDefault(); e.stopImmediatePropagation(); done = null; }
+  }, true);
+}
+firmTaps(picBox, '.pb-acts > a, .pb-acts > button, .pb-show, .pb-nav, .pb-img, [data-pbi]');
+firmTaps(document.getElementById('shareBox'), '.sh-close, .sh-copy, .sh-list a');
 { let sx = null, sy = 0;
   const stage = pbQ('.pb-stage');
   // a phone swipe ends with no click, so its flag is cleared at the next touch; otherwise it would eat the next tap
