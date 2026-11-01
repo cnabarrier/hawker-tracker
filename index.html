@@ -1176,13 +1176,13 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .fg-photo{margin:0}
 .fg-photo .vid-screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .fg-photo .vid-by span{flex:1 1 auto}
-/* an open centre on the Dishes tab: video on the left, visit insights on the right (stacked on narrow screens) */
+/* an open centre on the Dishes tab: visit insights on the left, the video (or centre photo) on the right (stacked on narrow screens) */
 .fg-top{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;padding:2px 16px 16px}
 @media (min-width:880px){
   .fg-top{grid-template-columns:minmax(0,55fr) minmax(300px,45fr);gap:22px;align-items:start}
   .fg-top.no-vid{grid-template-columns:minmax(0,520px)}
-  .fg-top.has-photo{grid-template-columns:minmax(300px,45fr) minmax(0,55fr)}   /* a centre photo: insights left, photo right */
-  .fg-top.has-photo .fg-photo{order:2}
+  .fg-top:not(.no-vid){grid-template-columns:minmax(300px,45fr) minmax(0,55fr)}   /* insights left, the video or centre photo right */
+  .fg-top:not(.no-vid) .fg-vid{order:2}
   .vi-above{display:none}
 }
 @media (max-width:879px){.vi-left{display:none}}
