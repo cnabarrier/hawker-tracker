@@ -1181,6 +1181,8 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 @media (min-width:880px){
   .fg-top{grid-template-columns:minmax(0,55fr) minmax(300px,45fr);gap:22px;align-items:start}
   .fg-top.no-vid{grid-template-columns:minmax(0,520px)}
+  .fg-top.has-photo{grid-template-columns:minmax(300px,45fr) minmax(0,55fr)}   /* a centre photo: insights left, photo right */
+  .fg-top.has-photo .fg-photo{order:2}
   .vi-above{display:none}
 }
 @media (max-width:879px){.vi-left{display:none}}
@@ -4500,7 +4502,7 @@ function renderFood(){
           <span class="fg-sp"><span class="hs-sr">Spent: </span>${spend}</span></span>
         ${vid ? `<span class="fg-thumb" title="Has a video of the visit"><img src="${ytThumb(vid[0].id, true)}" alt="" loading="lazy" decoding="async"></span>` : ph ? `<span class="fg-thumb ph" aria-hidden="true"><img src="${esc(ph.src)}" alt="" loading="lazy" decoding="async"${phAttr}></span>` : `<span class="fg-thumb none" aria-hidden="true"></span>`}
         <span class="fg-tog" aria-hidden="true"></span></summary>
-      <div class="fg-top${vid || ph ? '' : ' no-vid'}">
+      <div class="fg-top${vid ? '' : ph ? ' has-photo' : ' no-vid'}">
         ${vid ? `<div class="fg-vid">${vidBlock(d.n)}</div>` : ''}
         ${ph ? `<figure class="fg-vid fg-photo"><div class="vid-screen"><img src="${esc(ph.src)}" alt="${esc(d.name)}" loading="lazy" decoding="async"${phAttr}></div>
           <figcaption class="vid-by"><span>📷 Photo by <b>${esc(ph.credit)}</b>${ph.licence ? ` · ${esc(ph.licence)}` : ''}</span>${ph.url ? `<a href="${esc(ph.url)}" target="_blank" rel="noopener">Source ↗</a>` : ''}</figcaption></figure>` : ''}
