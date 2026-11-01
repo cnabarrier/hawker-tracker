@@ -1079,6 +1079,13 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 .sh-title{margin:6px 32px 16px 0;font-weight:700;font-size:16px;line-height:1.35}
 .sh-list{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:12px}
 #picBox .pb-share[hidden]{display:none}
+/* Share in the viewer: the button row turns into the share choices right where the finger is (no pop-up to hide behind the video) */
+.pb-shrow{display:flex;gap:8px;flex:none}
+.pb-shrow[hidden],#picBox.sharing .pb-acts{display:none}
+.pb-shrow > *{border:0;border-radius:999px;padding:10px 16px;background:rgba(255,255,255,.14);color:#fff;font:700 14px/1.2 var(--fb);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.pb-shrow > *:hover{background:rgba(255,255,255,.26)}
+#picBox .pb-shcopy{background:var(--red)}
+@media (max-width:640px){.pb-shrow{display:grid;grid-template-columns:1fr 1fr auto}.pb-shrow[hidden]{display:none}}
 .sh-list a{display:block;padding:12px;border:1px solid var(--line2);border-radius:12px;text-align:center;font-weight:700;color:var(--ink);text-decoration:none;transition:background .2s,border-color .2s}
 .sh-list a:hover{border-color:var(--red);background:color-mix(in srgb,var(--red) 7%,var(--paper))}
 .sh-row{display:flex;gap:8px}
@@ -1958,7 +1965,7 @@ if(!location.hash) document.documentElement.classList.add('wl-first');</script>
     <button type="button" class="pb-show" aria-pressed="false" hidden><span class="pb-show-ic" aria-hidden="true">▶</span> <span class="pb-show-t">Slideshow</span></button>
     <span class="pb-bar" aria-hidden="true"><i></i></span>
   </div>
-  <figcaption><span class="pb-txt"><b></b><small></small></span><span class="pb-acts"><a class="pb-like" target="_blank" rel="noopener" hidden title="Opens this video on YouTube, where you can like and comment">Open on YouTube ↗</a><button type="button" class="pb-share" hidden>↗ Share this video</button><a class="pb-sub" href="" target="_blank" rel="noopener" hidden>Subscribe</a><button type="button" class="pb-watch"></button><button type="button" class="pb-close" autofocus>Close</button></span></figcaption>
+  <figcaption><span class="pb-txt"><b></b><small></small></span><span class="pb-acts"><a class="pb-like" target="_blank" rel="noopener" hidden title="Opens this video on YouTube, where you can like and comment">Open on YouTube ↗</a><button type="button" class="pb-share" hidden>↗ Share this video</button><a class="pb-sub" href="" target="_blank" rel="noopener" hidden>Subscribe</a><button type="button" class="pb-watch"></button><button type="button" class="pb-close" autofocus>Close</button></span><span class="pb-shrow" hidden><a class="pb-shx" target="_blank" rel="noopener">Share on X</a><button type="button" class="pb-shcopy">Copy link</button><button type="button" class="pb-shback" aria-label="Back to the buttons">✕</button></span></figcaption>
   <div class="pb-strip" hidden></div>
 </figure></dialog>
 
@@ -4575,6 +4582,15 @@ const stillStart = (k, s) => { const sec = +k.split('@')[1]; return s.kind==='di
 let pbList = [], pbAt = 0, pbSwiped = false, pbTimer = null, pbPlaying = false, pbVid = null;
 const PB_STEP = 4500;   // slideshow: how long each photo stays up
 const pbQ = s => picBox.querySelector(s);
+// Share in the viewer shares the video that is playing, from where it started: on X, or as a link to copy
+const pbShareUrl = () => pbVid ? likeHref(pbVid.v, pbVid.at) : '';
+function pbShareRow(on){
+  const row = pbQ('.pb-shrow');
+  if(on){ const it = pbList[pbAt], t = `Zumi's Makan or Meh: ${it.title}`;
+    row.querySelector('.pb-shx').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(t)}&url=${encodeURIComponent(pbShareUrl())}`;
+    row.querySelector('.pb-shcopy').textContent = 'Copy link'; }
+  row.hidden = !on; picBox.classList.toggle('sharing', on);
+}
 function pbShow(i){
   pbStopVideo();
   const n = pbList.length; pbAt = pbAuto() ? (i + n) % n : Math.max(0, Math.min(n - 1, i));
@@ -4623,7 +4639,7 @@ function pbPlay(w){
 function pbStopVideo(){
   if(!pbPlaying) return;
   const box = pbQ('.pb-video'); box.innerHTML = ''; box.hidden = true; pbPlaying = false; picBox.classList.remove('vid-on');
-  pbQ('.pb-like').hidden = true; pbQ('.pb-share').hidden = true; pbQ('.pb-sub').hidden = true; pbVid = null;
+  pbQ('.pb-like').hidden = true; pbQ('.pb-share').hidden = true; pbQ('.pb-sub').hidden = true; pbShareRow(false); pbVid = null;
 }
 // the slideshow: steps through on its own, with a thin progress bar; any touch of the photos pauses it
 const pbAuto = () => picBox.classList.contains('auto');
@@ -4655,8 +4671,15 @@ picBox.addEventListener('click', e=>{
   const nav = e.target.closest('.pb-nav'); if(nav){ pbAutoSet(false); pbShow(pbAt + (nav.classList.contains('next') ? 1 : -1)); return; }
   const th = e.target.closest('[data-pbi]'); if(th){ pbAutoSet(false); pbShow(+th.dataset.pbi); return; }
   // Share shares the video that is playing, from where it started
-  if(e.target.closest('.pb-share')){ if(!pbVid) return; const it = pbList[pbAt];
-    shareIt(`Zumi's Makan or Meh: ${it.title}`, likeHref(pbVid.v, pbVid.at)); return; }
+  if(e.target.closest('.pb-share')){ if(!pbVid) return; pbShareRow(true); return; }
+  if(e.target.closest('.pb-shback')){ pbShareRow(false); return; }
+  const sx = e.target.closest('.pb-shx');
+  if(sx){ e.preventDefault(); const w = window.open(sx.href, '_blank'); if(w) w.opener = null; else location.assign(sx.href); return; }
+  const sc = e.target.closest('.pb-shcopy');
+  if(sc){ const u = pbShareUrl(); (async()=>{ try{ await navigator.clipboard.writeText(u); }catch(err){
+      const ta = document.createElement('textarea'); ta.value = u; ta.setAttribute('readonly',''); ta.style.cssText = 'position:fixed;opacity:0';
+      picBox.append(ta); ta.select(); try{ document.execCommand('copy'); }catch(e2){} ta.remove(); }
+    sc.textContent = 'Copied ✓'; })(); return; }
   const yl = e.target.closest('.pb-like, .pb-sub');
   if(yl){ e.preventDefault(); const w = window.open(yl.href, '_blank'); if(w) w.opener = null; else location.assign(yl.href); return; }
   if(e.target.closest('.pb-show')){ pbAutoSet(!pbAuto()); if(pbAuto()) pbShow(pbAt); return; }
@@ -4690,7 +4713,7 @@ function firmTaps(box, sel){
     if(e.isTrusted && done && Date.now()-doneAt < 800){ e.preventDefault(); e.stopImmediatePropagation(); done = null; }
   }, true);
 }
-firmTaps(picBox, '.pb-acts > a, .pb-acts > button, .pb-show, .pb-nav, .pb-img, [data-pbi]');
+firmTaps(picBox, '.pb-acts > a, .pb-acts > button, .pb-shrow > a, .pb-shrow > button, .pb-show, .pb-nav, .pb-img, [data-pbi]');
 firmTaps(document.getElementById('shareBox'), '.sh-close, .sh-copy, .sh-list a');
 { let sx = null, sy = 0;
   const stage = pbQ('.pb-stage');
