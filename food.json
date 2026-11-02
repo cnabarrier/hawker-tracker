@@ -1,4 +1,4 @@
-{"updated":"2026-11-02T17:06:59+00:00","src":"https://docs.google.com/spreadsheets/d/1YlQEw3d4N5i54ooPmlTU5X9K27IdhFfYmvWX7k8ZVgY/edit","dishes":[
+{"updated":"2026-11-02T17:12:23+00:00","src":"https://docs.google.com/spreadsheets/d/1YlQEw3d4N5i54ooPmlTU5X9K27IdhFfYmvWX7k8ZVgY/edit","dishes":[
 {"n":[86],"h":"Red Hill Food Centre","st":"Redhill Pork Porridge #01-46","d":"Pork Porridge","p":4.0,"pt":"$4.00","no":"","w":["q5oVUrCQcs8",295]},
 {"n":[86],"h":"Red Hill Food Centre","st":"西得利 (Xi De Li) #01-14","d":"Youtiao","p":1.1,"pt":"$1.10","no":"","w":["q5oVUrCQcs8",392]},
 {"n":[86],"h":"Red Hill Food Centre","st":"Eng Kee Chicken Wings #01-19","d":"Beehoon with cabbage, chicken wing and ngoh hiang","p":4.8,"pt":"$4.80","no":"","w":["q5oVUrCQcs8",530]},
@@ -94,5 +94,6 @@
 {"n":[20],"h":"North Bridge Road Market & Food Centre","st":"SinWang Xiang #01-96","d":"Sweet & Sour Pork Rice","p":6.0,"pt":"$6.00","no":""},
 {"n":[75],"h":"Kovan 209 Market & Food Centre","st":"Jin Zhan Ji 金斬鷄 #01-19","d":"Chicken Rice","p":4.2,"pt":"$4.20","no":""},
 {"n":[75],"h":"Kovan 209 Market & Food Centre","st":"Fa Ji Minced Meat Fishball Noodle (發記肉胜鱼圆面) #01-05","d":"Laksa","p":5.0,"pt":"$5.00","no":""},
-{"n":[75],"h":"Kovan 209 Market & Food Centre","st":"Yam Mee Teochew Fishball Mee #01-35","d":"Fishball Minced Meat Noodle (Mee Pok Dry)","p":5.0,"pt":"$5.00","no":""}
+{"n":[75],"h":"Kovan 209 Market & Food Centre","st":"Yam Mee Teochew Fishball Mee #01-35","d":"Fishball Minced Meat Noodle (Mee Pok Dry)","p":5.0,"pt":"$5.00","no":""},
+{"n":[75],"h":"Kovan 209 Market & Food Centre","st":"Sun Kee Drinks #01-65","d":"Grass Jelly Drink","p":0.3,"pt":"$0.30","no":""}
 ]}
