@@ -1,6 +1,7 @@
 # Keeps data.json in step with Zumi's Google sheet.
-# Each run polls the sheet every 45 s for 30 min, then queues the next run, so polling is
-# continuous. A change is published once it has been seen on two polls in a row and passes every
+# Each run polls the sheet every 45 s for 15 min, then queues the next run, so polling is
+# continuous; 4ever's playlist is checked once per run, so every 15 min. A change is published
+# once it has been seen on two polls in a row and passes every
 # check in scripts/build_data.py. If the sheet fails a check, nothing is published and an issue
 # titled "Ratings sync paused" explains why (closed automatically once fixed).
 name: Sync ratings from Zumi's sheet
@@ -17,7 +18,7 @@ on:
       minutes:
         description: "How long this run keeps polling"
         type: number
-        default: 30
+        default: 15
 
 permissions:
   contents: write
@@ -31,7 +32,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
 
@@ -48,7 +49,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           FORCE: ${{ inputs.force && '--force' || '' }}
-          MINUTES: ${{ inputs.minutes || 30 }}
+          MINUTES: ${{ inputs.minutes || 15 }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
