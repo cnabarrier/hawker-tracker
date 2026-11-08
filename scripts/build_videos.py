@@ -271,6 +271,20 @@ def update(centres, path=OUT, playlist=PLAYLIST, get=fetch, details=video_detail
             page = parse_page(get(PAGE.format(urllib.parse.quote(playlist))))
             if not page:
                 raise ValueError(f"feed failed ({feed_err}) and the playlist page listed no videos")
+            # The page has no descriptions, so each video's watch page is read every run (as the feed's description
+            # was): 4ever's edited timestamps then still become chapters. A watch page that can't be read leaves
+            # that video's chapters as they were. details() is asked once per video per run.
+            seen = {}
+            ask = details
+
+            def details(vid):  # noqa: F811 (the cached one is what build() gets too)
+                if vid not in seen:
+                    seen[vid] = ask(vid) if ask else {}
+                return seen[vid]
+            for e in page:
+                ds = details(e["id"]).get("ds")
+                if ds:
+                    e["ds"] = ds
             entries += page
     old = load(path)
     videos, warnings = build(entries, centres, old, details=details)

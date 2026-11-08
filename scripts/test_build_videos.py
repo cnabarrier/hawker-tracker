@@ -187,6 +187,37 @@ class Update(unittest.TestCase):
         self.assertEqual((v["t"], v["at"], v["n"], v["len"]), ("Ended up on the news", "2026-11-08T05:43:52+00:00", [106], 1580))
         self.assertEqual(v["c"], [[0, "Intro"], [88, "Fish head bee hoon"], [231, "Duck rice"]])
 
+    def test_edited_timestamps_reach_a_known_video_through_the_page(self):
+        def get(url):
+            if "feeds/" in url:
+                raise OSError("HTTP Error 404: Not Found")
+            return PAGE
+        first = "WHAMPOA FOOD CENTRE\n0:00 Intro\n1:28 Fish head bee hoon\n3:51 Duck rice"
+        edited = "WHAMPOA FOOD CENTRE\n0:00 Arriving\n2:35 Sliced fish bee hoon\n14:44 Dapo braised duck"
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "v.json")
+            update(CENTRES, path, "PL", get=get, details=lambda vid: {"e": True, "len": 1580, "ds": first})
+            asked = []
+            changed, videos, _ = update(CENTRES, path, "PL", get=get,
+                                        details=lambda vid: asked.append(vid) or {"e": True, "len": 1580, "ds": edited})
+            again, _, _ = update(CENTRES, path, "PL", get=get, details=lambda vid: {"e": True, "len": 1580, "ds": edited})
+        v = {x["id"]: x for x in videos}["CCCCCCCCCCC"]
+        self.assertTrue(changed)
+        self.assertEqual(v["c"], [[0, "Arriving"], [155, "Sliced fish bee hoon"], [884, "Dapo braised duck"]])
+        self.assertEqual(sorted(asked), ["AAAAAAAAAAA", "CCCCCCCCCCC"])  # once per video per run
+        self.assertFalse(again)
+
+    def test_an_unreadable_watch_page_keeps_the_chapters(self):
+        def get(url):
+            if "feeds/" in url:
+                raise OSError("404")
+            return PAGE
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "v.json")
+            update(CENTRES, path, "PL", get=get, details=lambda vid: {"ds": "0:00 a\n1:00 b\n2:00 c"})
+            _, videos, _ = update(CENTRES, path, "PL", get=get, details=lambda vid: {"e": True, "len": None})
+        self.assertEqual({x["id"]: x for x in videos}["CCCCCCCCCCC"]["c"], [[0, "a"], [60, "b"], [120, "c"]])
+
     def test_a_page_title_never_replaces_a_known_title(self):
         old, _ = build([entry("CCCCCCCCCCC", "Whampoa Food Centre visit")], CENTRES, overrides={})
         videos, _ = build(parse_page(PAGE), CENTRES, old, overrides={})

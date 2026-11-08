@@ -53,6 +53,10 @@ STALLS = {
         ("mat noh & rose", 107),
         ("dapo", 106),
         ("ming ji", 106),
+        # Liang Zhao Ji is at 90 Whampoa Drive #01-07 (Burpple, Miss Tam Chiak, ieatishootipost; checked 2026-11-08).
+        # Masked's sheet names it "梁照记 Liang Zhao Ji ...", so both spellings are matched.
+        ("梁照记", 106),
+        ("liang zhao ji", 106),
     ],
 }
 
