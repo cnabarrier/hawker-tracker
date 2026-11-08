@@ -1033,7 +1033,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
 /* ---------- viewer extras: video in place, slideshow, thumbnail strip ---------- */
 .pb-video{--vh:min(74vh,664px);position:relative;height:var(--vh);display:flex;align-items:center;justify-content:center;padding:0 clamp(0px,4vw,72px)}
 .pb-video[hidden]{display:none}
-.pb-video iframe{width:min(100%,calc(var(--vh) * 16 / 9));height:auto;aspect-ratio:16/9;border:0;border-radius:14px;background:#000;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+.pb-video iframe,.pb-video video{width:min(100%,calc(var(--vh) * 16 / 9));height:auto;aspect-ratio:16/9;border:0;border-radius:14px;background:#000;box-shadow:0 20px 50px rgba(0,0,0,.6)}
 #picBox.vid-on .pb-img,#picBox.vid-on .pb-show,#picBox.vid-on .pb-count{display:none}
 #picBox.vid-on .pb-watch{background:rgba(255,255,255,.14);box-shadow:none}
 #picBox .pb-show{position:absolute;top:12px;left:14px;display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border:1px solid rgba(255,255,255,.18);border-radius:999px;
@@ -1097,7 +1097,7 @@ td.sn{color:var(--muted);font-variant-numeric:tabular-nums;width:44px}
   #picBox .pb-acts > *{justify-content:center;text-align:center;white-space:nowrap;min-width:0}
   #picBox .pb-close,#picBox:not(.vid-on) .pb-watch{grid-column:1 / -1}}
 @media (min-width:641px){#picBox.has-strip .pb-img img{height:min(64vh,600px)}#picBox.has-strip .pb-video{--vh:min(64vh,600px)}}
-@media (max-width:640px){.pb-strip{display:none}.pb-video{height:auto;padding:0}.pb-video iframe{width:100%;height:auto}}
+@media (max-width:640px){.pb-strip{display:none}.pb-video{height:auto;padding:0}.pb-video iframe,.pb-video video{width:100%;height:auto}}
 .fg-foot{margin:0;padding:10px 16px 14px;border-top:1px solid var(--line);font-size:13.5px}
 .food-none{padding:30px;text-align:center;color:var(--muted)}
 .nw{white-space:nowrap}
@@ -1983,6 +1983,7 @@ const vidReq = fetch('videos.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.
 const photoReq = fetch('photos.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
 // Optional stills from the visit videos (hand-kept): a dish frame filed under that dish's tasting moment, or a frame of Zumi.
 const stillReq = fetch('stills.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
+const clipReq = fetch('clips.json?t='+Date.now(), {cache:'no-store'}).then(r=>r.ok?r.json():null).catch(()=>null);
 // only use records that look like hers (number, name, address); anything else keeps the built-in snapshot
 const okRow = c => c && Number.isInteger(c.n) && typeof c.name==='string' && typeof c.addr==='string' && (!c.s || (Array.isArray(c.s) && c.s.length===5 && typeof c.t==='number' && typeof c.rk==='string'));
 if(true) try{
@@ -2015,6 +2016,10 @@ const okStill = (k,v) => /^[\w-]{11}@\d+$/.test(k) && v && typeof v.src==='strin
   && (v.kind==='dish' || v.kind==='zumi' || v.kind==='banner' || (v.kind==='scene' && typeof v.cap==='string' && v.cap.trim())) && typeof v.credit==='string' && v.credit.trim()
   && (v.dish===undefined || (typeof v.dish==='string' && v.dish.trim()));
 const STILLS = {}; if(STILLJ && STILLJ.stills && typeof STILLJ.stills==='object') Object.entries(STILLJ.stills).forEach(([k,v])=>{ if(okStill(k,v)) STILLS[k]=v; });
+// a short clip per photo (scripts/build_clips.py), played in the photo viewer from the site itself: no YouTube player, no ads
+const CLIPJ = await clipReq, CLIPS = {};
+if(CLIPJ && CLIPJ.clips && typeof CLIPJ.clips==='object') Object.entries(CLIPJ.clips).forEach(([k,v])=>{
+  if(STILLS[k] && v && typeof v.src==='string' && /^assets\/clips\/[\w-]+\.mp4$/.test(v.src)) CLIPS[k] = v.src; });
 const SHORT = {"Beo Crescent Market": "Beo Crescent", "Golden Mile Food Centre": "Golden Mile", "Old Airport Road Food Centre": "Old Airport Road", "Maxwell Food Centre": "Maxwell", "Newton Food Centre": "Newton", "North Bridge Road Market & Food Centre": "North Bridge Road", "Tanglin Halt Market": "Tanglin Halt", "Tiong Bahru Market": "Tiong Bahru", "Chong Boon Market & Food Centre": "Chong Boon", "Bendemeer Market & Food Centre": "Bendemeer", "Changi Village Hawker Centre": "Changi Village", "Chinatown Complex Market & Hawker Centre": "Chinatown Complex", "Geylang Bahru Food Centre": "Geylang Bahru", "Ghim Moh Hawker Centre": "Ghim Moh", "Hougang Hainanese Village Center": "Hougang Hainanese Village", "209 Kovan Market & Food Centre": "209 Kovan", "People's Park Complex Food Centre": "People's Park", "Redhill Food Center": "Redhill Food Centre", "Toa Payoh Lorong 8": "Toa Payoh Lor 8", "Blks 91/92 Whampoa Drive": "Whampoa Dr 91/92", "Havelock Road Cooked Food Center": "Havelock Road", "Hawker Centre @ Our Tampines Hub": "Our Tampines Hub", "Ang Mo Kio Central Market & Food Center": "Ang Mo Kio Central", "Holland Village Market & Food Centre": "Holland Village", "East Coast Lagoon Food Village": "East Coast Lagoon", "Whampoa Food Centre": "Whampoa Food Centre", "Redhill Market": "Redhill Market", "Ang Mo Kio 628": "Ang Mo Kio 628"};
 const autoShort = n => n.replace(/\s+(Market\s*(&|and)\s*(Food|Hawker)\s*Cent(re|er)|Cooked Food Cent(re|er)|Food Cent(re|er)|Hawker Cent(re|er)(\s*(&|and)\s*Market)?|Food Village)$/i,'');
 DATA.forEach(d=>{ d.sh = SHORT[d.name] || autoShort(d.name); });
@@ -4636,7 +4641,14 @@ function pbDropVideo(){
 function pbPlay(w){
   pbAutoSet(false);
   const box = pbQ('.pb-video');
-  if(pbYT && pbYT.v===w.v){
+  if(w.clip){
+    // the photo's own clip, from the site: no YouTube player, so no ads. The full video stays one tap away (Open on YouTube).
+    pbDropVideo();
+    const vd = document.createElement('video');
+    Object.assign(vd, {src:w.clip, controls:true, autoplay:true, playsInline:true, preload:'auto', title:`Zumi's visit video, from ${clock(w.at)}`});
+    vd.setAttribute('playsinline', '');
+    box.replaceChildren(vd); vd.play().catch(()=>{});
+  } else if(pbYT && pbYT.v===w.v){
     pbYT.at = w.at|0; pbYT.want = true;
     if(pbYT.p){ pbYT.p.seekTo(pbYT.at, true); pbYT.p.playVideo(); const f = pbYT.p.getIframe(); if(f) f.title = `Zumi's visit video, from ${clock(w.at)}`; }
   } else {
@@ -4659,7 +4671,7 @@ function pbPlay(w){
   pbQ('.pb-share').hidden = false; const sb = pbQ('.pb-sub'); sb.href = YT_SUB; sb.hidden = false;
   pbVid = w;
   const b = pbQ('.pb-watch'); b.textContent = '🖼 Back to the photo';
-  pbQ('figcaption small').textContent = `Video by 4everhugging · playing from ${clock(w.at)}`;
+  pbQ('figcaption small').textContent = w.clip ? `Clip from 4everhugging's video · from ${clock(w.at)}` : `Video by 4everhugging · playing from ${clock(w.at)}`;
 }
 function pbStopVideo(){
   if(!pbPlaying) return;
@@ -4691,7 +4703,7 @@ document.getElementById('foodList').addEventListener('click', e=>{
   const v = b.dataset.pic.split('@')[0];
   stopListVideos();
   pbOpen([{src:s.src, alt:`${b.dataset.dish} at ${b.dataset.at}, a still from her visit video`, title:`${b.dataset.dish} · ${b.dataset.at}`,
-    sub:`Video still by ${s.credit}`, watch: VID_IDS.has(v) ? {v, at:stillStart(b.dataset.pic, s)} : null}], 0);
+    sub:`Video still by ${s.credit}`, watch: VID_IDS.has(v) ? {v, at:stillStart(b.dataset.pic, s), clip:CLIPS[b.dataset.pic]} : null}], 0);
 });
 picBox.addEventListener('click', e=>{
   if(pbSwiped){ pbSwiped = false; return; }
@@ -4716,7 +4728,7 @@ picBox.addEventListener('click', e=>{
   if(e.target===picBox || e.target.classList.contains('pb-amb') || e.target.closest('.pb-close')) pbClose();
 });
 picBox.addEventListener('keydown', e=>{
-  if(e.target.closest && e.target.closest('iframe')) return;
+  if(e.target.closest && e.target.closest('iframe, video')) return;
   if(e.key==='ArrowRight'){ e.preventDefault(); pbAutoSet(false); pbShow(pbAt + 1); }
   if(e.key==='ArrowLeft'){ e.preventDefault(); pbAutoSet(false); pbShow(pbAt - 1); }
   if(e.key===' ' && !e.target.closest('button')){ e.preventDefault(); pbAutoSet(!pbAuto()); }
@@ -4917,7 +4929,7 @@ function albViewerList(a){
   return a.photos.map((it,i)=>{ const t = itemTitle(it), pr = itemPrice(it), where = BY[it.n] ? BY[it.n].sh : '';
     return {src:it.s.src, link:`photos/${a.v.id}/${i}`, alt:`${t}${where?` at ${where}`:''}, a still from her visit video`,
       title:`${t}${pr?` · ${pr}`:''}${where && it.kind==='dish'?` · ${where}`:''}`, sub:`${where ? `${where} · ` : ''}Video still by ${it.s.credit}`,
-      watch: embeddable ? {v:a.v.id, at:stillStart(it.k, it.s)} : null}; });
+      watch: embeddable ? {v:a.v.id, at:stillStart(it.k, it.s), clip:CLIPS[it.k]} : null}; });
 }
 function renderAlbums(){
   const el = document.getElementById('albums'); if(!el) return;
