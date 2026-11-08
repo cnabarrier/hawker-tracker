@@ -4671,7 +4671,7 @@ function pbPlay(w){
   pbQ('.pb-share').hidden = false; const sb = pbQ('.pb-sub'); sb.href = YT_SUB; sb.hidden = false;
   pbVid = w;
   const b = pbQ('.pb-watch'); b.textContent = '🖼 Back to the photo';
-  pbQ('figcaption small').textContent = w.clip ? `Clip from 4everhugging's video · from ${clock(w.at)}` : `Video by 4everhugging · playing from ${clock(w.at)}`;
+  pbQ('figcaption small').textContent = w.clip ? `Clip from 4everhugging's edit · from ${clock(w.at)}` : `Video edit by 4everhugging · playing from ${clock(w.at)}`;
 }
 function pbStopVideo(){
   if(!pbPlaying) return;
