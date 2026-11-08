@@ -4624,11 +4624,36 @@ function pbOpen(list, i, opts){
   if(opts && opts.auto) pbAutoSet(true);
   if(opts && opts.play && list[i].watch) pbPlay(list[i].watch);
 }
-// ▶ plays the moment right here in the viewer; it stops on Close, on the next photo, or on "Back to the photo"
+// ▶ plays the moment right here in the viewer; it pauses on the next photo or on "Back to the photo", and goes on Close.
+// Each video is loaded once per viewing and then only jumps to the asked-for second: every fresh load of a YouTube
+// video can bring a new ad, a jump in the same player doesn't. If the player API can't load, a plain embed is used.
+let pbYT = null;   // {v, at, want, p}: the video loaded in the viewer (p is the player once it is ready)
+const pbEmbed = w => `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(w.v)}?autoplay=1&rel=0&playsinline=1&modestbranding=1&start=${w.at|0}" title="Zumi's visit video, from ${clock(w.at)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+function pbDropVideo(){
+  if(pbYT && pbYT.p && pbYT.p.destroy){ try{ pbYT.p.destroy(); }catch(e){} }
+  pbYT = null; pbQ('.pb-video').innerHTML = '';
+}
 function pbPlay(w){
   pbAutoSet(false);
   const box = pbQ('.pb-video');
-  box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(w.v)}?autoplay=1&rel=0&playsinline=1&modestbranding=1&start=${w.at|0}" title="Zumi's visit video, from ${clock(w.at)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  if(pbYT && pbYT.v===w.v){
+    pbYT.at = w.at|0; pbYT.want = true;
+    if(pbYT.p){ pbYT.p.seekTo(pbYT.at, true); pbYT.p.playVideo(); const f = pbYT.p.getIframe(); if(f) f.title = `Zumi's visit video, from ${clock(w.at)}`; }
+  } else {
+    pbDropVideo();
+    const me = pbYT = {v:w.v, at:w.at|0, want:true, p:null}, host = document.createElement('div');
+    box.replaceChildren(host);
+    ytReady().then(YT=>{
+      if(pbYT!==me) return;
+      new YT.Player(host, {host:'https://www.youtube-nocookie.com', videoId:w.v, width:'100%', height:'100%',
+        playerVars:{autoplay:1, start:me.at, rel:0, playsinline:1, modestbranding:1},
+        events:{onReady:ev=>{
+          if(pbYT!==me){ try{ ev.target.destroy(); }catch(e){} return; }
+          me.p = ev.target; const f = ev.target.getIframe(); if(f) f.title = `Zumi's visit video, from ${clock(me.at)}`;
+          if(me.want){ ev.target.seekTo(me.at, true); ev.target.playVideo(); } else ev.target.pauseVideo();
+        }}});
+    }).catch(()=>{ if(pbYT!==me) return; pbYT = null; box.innerHTML = pbPlaying ? pbEmbed({v:me.v, at:me.at}) : ''; });
+  }
   box.hidden = false; pbPlaying = true; picBox.classList.add('vid-on');
   const lk = pbQ('.pb-like'); lk.href = likeHref(w.v, w.at); lk.hidden = false;
   pbQ('.pb-share').hidden = false; const sb = pbQ('.pb-sub'); sb.href = YT_SUB; sb.hidden = false;
@@ -4638,7 +4663,9 @@ function pbPlay(w){
 }
 function pbStopVideo(){
   if(!pbPlaying) return;
-  const box = pbQ('.pb-video'); box.innerHTML = ''; box.hidden = true; pbPlaying = false; picBox.classList.remove('vid-on');
+  // the loaded video only pauses and hides, so going back to it later doesn't load it (and an ad) again
+  const box = pbQ('.pb-video'); box.hidden = true; pbPlaying = false; picBox.classList.remove('vid-on');
+  if(pbYT){ pbYT.want = false; if(pbYT.p){ try{ pbYT.p.pauseVideo(); }catch(e){} } } else box.innerHTML = '';
   pbQ('.pb-like').hidden = true; pbQ('.pb-share').hidden = true; pbQ('.pb-sub').hidden = true; pbShareRow(false); pbVid = null;
 }
 // the slideshow: steps through on its own, with a thin progress bar; any touch of the photos pauses it
@@ -4656,9 +4683,9 @@ function pbAutoSet(on){
 }
 // closing stops the video at once (Close, a tap outside, swipe down); Esc lands here too. A late 'close' from an earlier
 // viewer must not stop a video the viewer has since been reopened with.
-const pbClose = () => { pbStopVideo(); pbAutoSet(false); picBox.close(); };
-picBox.addEventListener('cancel', ()=>{ pbStopVideo(); pbAutoSet(false); });   // Esc
-picBox.addEventListener('close', ()=>{ if(!picBox.open){ pbStopVideo(); pbAutoSet(false); const sb = document.getElementById('shareBox'); if(sb.open && sb.classList.contains('in-pb')) sb.close(); } });
+const pbClose = () => { pbStopVideo(); pbDropVideo(); pbAutoSet(false); picBox.close(); };
+picBox.addEventListener('cancel', ()=>{ pbStopVideo(); pbDropVideo(); pbAutoSet(false); });   // Esc
+picBox.addEventListener('close', ()=>{ if(!picBox.open){ pbStopVideo(); pbDropVideo(); pbAutoSet(false); const sb = document.getElementById('shareBox'); if(sb.open && sb.classList.contains('in-pb')) sb.close(); } });
 document.getElementById('foodList').addEventListener('click', e=>{
   const b = e.target.closest('.fd-pic[data-pic]'), s = b && STILLS[b.dataset.pic]; if(!s) return;
   const v = b.dataset.pic.split('@')[0];
@@ -4685,6 +4712,8 @@ picBox.addEventListener('click', e=>{
   if(e.target.closest('.pb-show')){ pbAutoSet(!pbAuto()); if(pbAuto()) pbShow(pbAt); return; }
   const it = pbList[pbAt];
   if(e.target.closest('.pb-watch')){ if(pbPlaying) pbShow(pbAt); else if(it && it.watch) pbPlay(it.watch); return; }
+  // a touch of the photo while the slideshow runs only pauses it; a video (and its ad) starts only when asked for
+  if(pbAuto() && e.target.closest('.pb-img')){ pbAutoSet(false); return; }
   if(it && it.watch && e.target.closest('.pb-img')){ pbPlay(it.watch); return; }
   if(e.target===picBox || e.target.classList.contains('pb-amb') || e.target.closest('.pb-close')) pbClose();
 });
