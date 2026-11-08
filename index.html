@@ -4712,8 +4712,6 @@ picBox.addEventListener('click', e=>{
   if(e.target.closest('.pb-show')){ pbAutoSet(!pbAuto()); if(pbAuto()) pbShow(pbAt); return; }
   const it = pbList[pbAt];
   if(e.target.closest('.pb-watch')){ if(pbPlaying) pbShow(pbAt); else if(it && it.watch) pbPlay(it.watch); return; }
-  // a touch of the photo while the slideshow runs only pauses it; a video (and its ad) starts only when asked for
-  if(pbAuto() && e.target.closest('.pb-img')){ pbAutoSet(false); return; }
   if(it && it.watch && e.target.closest('.pb-img')){ pbPlay(it.watch); return; }
   if(e.target===picBox || e.target.classList.contains('pb-amb') || e.target.closest('.pb-close')) pbClose();
 });
