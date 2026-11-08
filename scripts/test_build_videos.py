@@ -5,7 +5,9 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tempfile  # noqa: E402
-from build_videos import build, chapters, describe, load, match, names, parse_feed, parse_seed, update  # noqa: E402
+import json  # noqa: E402
+from build_videos import (build, chapters, describe, load, match, names, parse_feed, parse_page, parse_seed,  # noqa: E402
+                          update, utc)
 
 CENTRES = [
     {"n": 3, "name": "Bedok Food Centre"},
@@ -32,6 +34,17 @@ FEED = """<?xml version="1.0" encoding="UTF-8"?>
 1:05 Biryani
 10:43 Final rating</media:description></media:group></entry>
 </feed>"""
+
+
+def lockup(vid, title, kind="LOCKUP_CONTENT_TYPE_VIDEO"):
+    return {"lockupViewModel": {"contentId": vid, "contentType": kind,
+                                "metadata": {"lockupMetadataViewModel": {"title": {"content": title}}}}}
+
+
+# the public playlist page, cut down: its ytInitialData holds one lockup per video (and other kinds of lockup)
+PAGE = "<html><script>var ytInitialData = " + json.dumps({"contents": [
+    lockup("CCCCCCCCCCC", "Ended up on the news"), lockup("PLAYLIST123", "More", "LOCKUP_CONTENT_TYPE_PLAYLIST"),
+    {"x": [lockup("AAAAAAAAAAA", "Zumi at Maxwell Food Centre")]}, lockup("CCCCCCCCCCC", "Ended up on the news")]}) + ";</script>"
 
 
 def entry(vid, title, at="2026-09-01T00:00:00+00:00", ds=""):
@@ -160,6 +173,42 @@ class Update(unittest.TestCase):
             self.assertIn("2 new edits", describe(None, videos))
             changed, _, _ = update(CENTRES, path, "PL", get=lambda url: FEED, details=no_details)
             self.assertFalse(changed)
+
+    def test_a_dead_feed_falls_back_to_the_playlist_page(self):
+        def get(url):
+            if "feeds/" in url:
+                raise OSError("HTTP Error 404: Not Found")
+            return PAGE
+        details = lambda vid: {"e": True, "len": 1580, "ds": "HAWKER NO. 9 - WHAMPOA FOOD CENTRE\n0:00 Intro\n1:28 Fish head bee hoon\n3:51 Duck rice",
+                               "at": "2026-11-08T05:43:52+00:00"}
+        with tempfile.TemporaryDirectory() as d:
+            _, videos, _ = update(CENTRES, os.path.join(d, "v.json"), "PL", get=get, details=details)
+        v = {x["id"]: x for x in videos}["CCCCCCCCCCC"]
+        self.assertEqual((v["t"], v["at"], v["n"], v["len"]), ("Ended up on the news", "2026-11-08T05:43:52+00:00", [106], 1580))
+        self.assertEqual(v["c"], [[0, "Intro"], [88, "Fish head bee hoon"], [231, "Duck rice"]])
+
+    def test_a_page_title_never_replaces_a_known_title(self):
+        old, _ = build([entry("CCCCCCCCCCC", "Whampoa Food Centre visit")], CENTRES, overrides={})
+        videos, _ = build(parse_page(PAGE), CENTRES, old, overrides={})
+        self.assertEqual({x["id"]: x for x in videos}["CCCCCCCCCCC"]["t"], "Whampoa Food Centre visit")
+
+    def test_a_page_with_no_videos_is_an_error(self):
+        def get(url):
+            if "feeds/" in url:
+                raise OSError("404")
+            return "<html>var ytInitialData = {};</html>"
+        with tempfile.TemporaryDirectory() as d, self.assertRaises(ValueError):
+            update(CENTRES, os.path.join(d, "v.json"), "PL", get=get, details=lambda vid: {})
+
+
+class Page(unittest.TestCase):
+    def test_videos_in_order_skipping_other_lockups_and_repeats(self):
+        self.assertEqual([(e["id"], e["t"]) for e in parse_page(PAGE)],
+                         [("CCCCCCCCCCC", "Ended up on the news"), ("AAAAAAAAAAA", "Zumi at Maxwell Food Centre")])
+
+    def test_dates_become_utc(self):
+        self.assertEqual(utc("2026-11-07T21:43:52-08:00"), "2026-11-08T05:43:52+00:00")
+        self.assertEqual(utc(None), "")
 
 
 if __name__ == "__main__":

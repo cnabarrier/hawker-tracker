@@ -35,6 +35,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "videos.json")
 PLAYLIST = "PLgqiNTVlXYeLT0UIF-S5i_HlePEf7fqhj"  # sent by 4ever on 2026-10-10
 FEED = "https://www.youtube.com/feeds/videos.xml?playlist_id={}"
+# YouTube's feeds started answering 404 in Nov 2026; the public playlist page lists the same videos
+PAGE = "https://www.youtube.com/playlist?list={}"
 WATCH = "https://www.youtube.com/watch?v={}"
 
 # How 4ever asked to be credited ("Video edits by 4everhugging").
@@ -45,6 +47,9 @@ VIDEO_CENTRES = {
     # "Red Hill Hawker Center" covers both places Zumi rated that day: Redhill Food Centre (#86) to 12:37, then
     # Redhill Market (#85) next door from 12:50 (checked against the video's captions on 2026-10-10).
     "q5oVUrCQcs8": [85, 86],
+    # Whampoa: one visit to both centres, rated together on 2026-07-09 ("HAWKER NO. 9 & 10"); its chapters don't
+    # split the video by centre, so it has no VIDEO_STARTS.
+    "vDB2xcX4q7w": [106, 107],
 }
 
 # Where a video's part about a centre starts, when one video covers more than one: id -> {S/N: seconds}.
@@ -119,6 +124,43 @@ def parse_feed(xml_text):
             for e in root.findall("a:entry", NS)]
 
 
+def parse_page(html):
+    """Videos on the public playlist page (its ytInitialData), newest first: ids and titles only. Titles from
+    here are "soft": YouTube may be testing two titles, so they never replace a title we already have."""
+    i = html.find("ytInitialData = ")
+    if i < 0:
+        raise ValueError("playlist page has no ytInitialData")
+    data = json.JSONDecoder().raw_decode(html, i + len("ytInitialData = "))[0]
+    out, seen = [], set()
+
+    def walk(o):
+        if isinstance(o, dict):
+            lv = o.get("lockupViewModel")
+            if isinstance(lv, dict) and lv.get("contentType") == "LOCKUP_CONTENT_TYPE_VIDEO":
+                vid = lv.get("contentId", "")
+                title = (((lv.get("metadata") or {}).get("lockupMetadataViewModel") or {}).get("title") or {}).get("content", "")
+                if re.fullmatch(r"[A-Za-z0-9_-]{11}", vid) and vid not in seen:
+                    seen.add(vid)
+                    out.append({"id": vid, "t": title, "at": "", "ds": "", "soft": True})
+                return
+            for v in o.values():
+                walk(v)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v)
+
+    walk(data)
+    return out
+
+
+def utc(stamp):
+    """'2026-11-07T21:43:52-08:00' -> '2026-11-08T05:43:52+00:00', like the feed's dates; '' if unreadable."""
+    try:
+        return dt.datetime.fromisoformat(stamp).astimezone(dt.timezone.utc).isoformat()
+    except (TypeError, ValueError):
+        return ""
+
+
 def parse_seed(text):
     out = []
     for line in text.splitlines():
@@ -129,7 +171,8 @@ def parse_seed(text):
 
 
 def build(entries, centres, old=None, overrides=None, details=None):
-    """details(id) -> {"e": bool, "len": int or None}, asked only for videos not seen before."""
+    """details(id) -> {"e": bool, "len": int or None, and maybe "ds" (description), "at" (published)}, asked only
+    for videos not seen before. Its description and date fill in what the entry lacks (the playlist page has neither)."""
     overrides = VIDEO_CENTRES if overrides is None else overrides
     known, valid = names(centres), {c["n"] for c in centres}
     videos = {v["id"]: {"len": None, "c": [], **v} for v in old or []}
@@ -140,7 +183,9 @@ def build(entries, centres, old=None, overrides=None, details=None):
             d = details(e["id"]) if details else {}
             v = videos[e["id"]] = {"id": e["id"], "t": "", "at": "", "n": [],
                                    "e": d.get("e", True), "len": d.get("len"), "c": []}
-        v["t"] = e["t"] or v["t"]
+            e = {**e, "ds": e.get("ds") or d.get("ds", ""), "at": e.get("at") or d.get("at", "")}
+        if not (e.get("soft") and v["t"]):
+            v["t"] = e["t"] or v["t"]
         v["at"] = e["at"] or v["at"]
         if e.get("ds"):
             desc[e["id"]] = e["ds"]
@@ -188,14 +233,16 @@ def page_field(html, name):
 
 
 def video_details(vid):
-    """Length and whether the owner allows playing it on other sites, from the public watch page."""
+    """Length, whether the owner allows playing it on other sites, its description and publish date, from the
+    public watch page."""
     try:
         html = fetch(WATCH.format(urllib.parse.quote(vid)))
     except Exception:
         return {"e": True, "len": None}  # can't tell; the site always offers "Watch on YouTube" as well
-    secs = page_field(html, "lengthSeconds")
+    secs, ds = page_field(html, "lengthSeconds"), page_field(html, "shortDescription")
     return {"e": page_field(html, "playableInEmbed") is not False,
-            "len": int(secs) if str(secs or "").isdigit() else None}
+            "len": int(secs) if str(secs or "").isdigit() else None,
+            "ds": ds if isinstance(ds, str) else "", "at": utc(page_field(html, "publishDate"))}
 
 
 def load(path=OUT):
@@ -218,7 +265,13 @@ def update(centres, path=OUT, playlist=PLAYLIST, get=fetch, details=video_detail
     """Fetch the playlist, merge into videos.json. -> (changed, videos, warnings). Writes only on change."""
     entries = parse_seed(seed) if seed else []
     if playlist:
-        entries += parse_feed(get(FEED.format(urllib.parse.quote(playlist))))
+        try:
+            entries += parse_feed(get(FEED.format(urllib.parse.quote(playlist))))
+        except Exception as feed_err:  # the feed is gone or broken: the playlist page instead
+            page = parse_page(get(PAGE.format(urllib.parse.quote(playlist))))
+            if not page:
+                raise ValueError(f"feed failed ({feed_err}) and the playlist page listed no videos")
+            entries += page
     old = load(path)
     videos, warnings = build(entries, centres, old, details=details)
     changed = videos != old
