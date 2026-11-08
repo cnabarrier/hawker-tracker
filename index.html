@@ -4931,6 +4931,13 @@ function albViewerList(a){
       title:`${t}${pr?` · ${pr}`:''}${where && it.kind==='dish'?` · ${where}`:''}`, sub:`${where ? `${where} · ` : ''}Video still by ${it.s.credit}`,
       watch: embeddable ? {v:a.v.id, at:stillStart(it.k, it.s), clip:CLIPS[it.k]} : null}; });
 }
+// one grade badge per centre in the visit; when they all share a grade (Whampoa: D and D) it shows once, naming both
+function albGrades(cs){
+  const ns = cs.filter(n=>BY[n].rk), same = ns.length > 1 && ns.every(n=>BY[n].rk===BY[ns[0]].rk);
+  const badge = (ms, rk) => { const who = ms.map(n=>esc(BY[n].sh)).join(' & ');
+    return `<span class="st t${rk}" title="${who}: ${TIER_WORD[rk]}"><span class="hs-sr">${who} grade </span>${rk}</span>`; };
+  return same ? badge(ns, BY[ns[0]].rk) : ns.map(n=>badge([n], BY[n].rk)).join('');
+}
 function renderAlbums(){
   const el = document.getElementById('albums'); if(!el) return;
   const words = albWords(), filtered = words.length || foodState.kind!=='all';
@@ -4955,7 +4962,7 @@ function renderAlbums(){
       <div class="alb-cover">
         <img class="alb-cv" src="${esc(a.banner.src)}" alt="" ${ai ? 'loading="lazy" ' : ''}decoding="async"${stillAt(a.banner)}>
         <div class="alb-meta">
-          <span class="alb-grades">${a.cs.filter(n=>BY[n].rk).map(n=>`<span class="st t${BY[n].rk}" title="${esc(BY[n].sh)}: ${TIER_WORD[BY[n].rk]}"><span class="hs-sr">${esc(BY[n].sh)} grade </span>${BY[n].rk}</span>`).join('')}</span>
+          <span class="alb-grades">${albGrades(a.cs)}</span>
           <h3 id="alb-${a.v.id}">${a.cs.map(n=>esc(BY[n].name)).join(' <span class="alb-amp">&amp;</span> ')}</h3>
           <p>${d && d.d ? `${fmtD(d.d)} · ` : ''}${a.photos.length} photos · ${nDish} ${nDish===1?'dish':'dishes'}</p>
         </div>
