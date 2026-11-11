@@ -219,6 +219,43 @@ class Structure(unittest.TestCase):
         self.assertEqual(run(rows)[0][-1]["name"], "Brand New Hawker Centre")
 
 
+class PostalCodes(unittest.TestCase):
+    """Her sheet gives Old Airport Road Food Centre the postal code of Kallang Estate Market, 200 m away."""
+
+    def rows(self, addr14="Blk 51, Old Airport Road, S(397972)"):
+        rows = make_rows()
+        rows[13][1:3] = ["Old Airport Road Food Centre", addr14]
+        rows[81][1:3] = ["Kallang Estate Market and Food Centre", "Blk 17, Old Airport Road S(397972)"]
+        return rows
+
+    def test_old_airport_road_gets_its_own_postal_code(self):
+        centres, warnings = run(self.rows())
+        self.assertEqual(centre(centres, 14)["addr"], "Blk 51, Old Airport Road, S(390051)")
+        self.assertEqual(centre(centres, 14)["t"], 42)  # nothing else about the row changes
+        self.assertEqual(warnings, [])
+
+    def test_kallang_estate_keeps_the_code_that_is_really_its_own(self):
+        self.assertEqual(centre(run(self.rows())[0], 82)["addr"], "Blk 17, Old Airport Road S(397972)")
+
+    def test_her_own_correction_is_left_alone(self):
+        centres, warnings = run(self.rows("Blk 51, Old Airport Road, S(390051)"))
+        self.assertEqual(centre(centres, 14)["addr"], "Blk 51, Old Airport Road, S(390051)")
+        self.assertEqual(warnings, [])
+
+    def test_follows_the_name_if_the_row_moves_and_ignores_case_and_spacing(self):
+        rows = make_rows()
+        rows[29][1:3] = ["old  Airport Road Food Centre ", "Blk 51, Old Airport Road, S(397972)"]
+        self.assertEqual(centre(run(rows)[0], 30)["addr"], "Blk 51, Old Airport Road, S(390051)")
+
+    def test_two_centres_on_one_postal_code_are_noted_but_still_published(self):
+        rows = make_rows()
+        rows[4][2] = rows[8][2] = "1, Shared Road, S(123456)"
+        centres, warnings = run(rows)
+        self.assertEqual(len(centres), 110)
+        self.assertEqual(len(warnings), 1)
+        self.assertRegex(warnings[0], r"postal code 123456 is on 2 centres \(S/N 5 Centre 5; S/N 9 Centre 9\)")
+
+
 class SyncGuards(unittest.TestCase):
     def test_large_drop_in_rated_blocks(self):
         old = [{"n": i, "s": [1] * 5} for i in range(10)]

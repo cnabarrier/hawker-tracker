@@ -45,6 +45,15 @@ MONTHS["sept"] = 9
 MIN_CENTRES = 100
 EPS = 1e-9
 
+# A postal code on her sheet that belongs to a different centre, which would pin this one on that centre's spot.
+# (her name for the centre in lower case, the postal code her sheet gives it) -> the postal code its address really has.
+# Matched by name, not row, and only while her sheet still reads this way, so her own correction takes over untouched.
+POSTAL_FIXES = {
+    # Blk 51 Old Airport Road is 390051; 397972 is Kallang Estate Market, 200 m down the road (OneMap, NEA's list)
+    ("old airport road food centre", "397972"): "390051",
+}
+POSTAL_RE = re.compile(r"S\((\d{6})")  # same rule as postal() in build_geo.py and geoKey() in index.html
+
 
 class SheetError(Exception):
     pass
@@ -55,6 +64,13 @@ def tier(total):
         if total >= floor:
             return rk
     return "F"
+
+
+def fix_postal(name, addr):
+    """Her address with a postal code listed in POSTAL_FIXES put right; anything else comes back as she typed it."""
+    m = POSTAL_RE.search(addr)
+    right = POSTAL_FIXES.get((" ".join(name.lower().split()), m[1])) if m else None
+    return addr[:m.start(1)] + right + addr[m.end(1):] if right else addr
 
 
 def num(v):
@@ -171,7 +187,7 @@ def build(workbook_bytes, today=None):
         seen_n.add(n)
         seen_name.add(name.lower())
 
-        c = {"n": n, "name": name, "addr": clean_text(get("addr"))}
+        c = {"n": n, "name": name, "addr": fix_postal(name, clean_text(get("addr")))}
         s = [score(get(f), where, f) for f in SCORES]
         best, note = clean_text(get("best")), clean_text(get("note"))
         d = parse_date(get("d"), where, today)
@@ -206,4 +222,14 @@ def build(workbook_bytes, today=None):
 
     if len(centres) < MIN_CENTRES:
         raise SheetError(f"only {len(centres)} centres found (expected at least {MIN_CENTRES})")
+
+    # The map places a centre by its postal code, so two centres with the same one land on a single spot.
+    by_postal = {}
+    for c in centres:
+        m = POSTAL_RE.search(c["addr"])
+        if m:
+            by_postal.setdefault(m[1], []).append(f"S/N {c['n']} {c['name']}")
+    for pc, who in by_postal.items():
+        if len(who) > 1:
+            warnings.append(f"postal code {pc} is on {len(who)} centres ({'; '.join(who)}); the map shows them on one spot")
     return centres, warnings
