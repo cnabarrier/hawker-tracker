@@ -1,6 +1,6 @@
-{"updated":"2026-11-11T12:17:03+00:00","centres":[
+{"updated":"2026-11-11T12:19:22+00:00","centres":[
 {"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},
-{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)"},
+{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)","s":[10,8.5,7.5,7.5,7],"t":40.5,"rk":"A","best":"Before 11 am. Most stall closed after 2:30 pm","note":""},
 {"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},
 {"n":4,"name":"Beo Crescent Market","addr":"38A, Beo Crescent, S(169982)","s":[6,7.5,10,9,5],"t":37.5,"rk":"B","best":"AM to 5pm","note":"DYSON DRYER IN TOILET - WOW","d":"2026-04-20"},
 {"n":5,"name":"Berseh Food Centre","addr":"166, Jalan Besar, S(208877)"},
