@@ -1,6 +1,6 @@
-{"updated":"2026-11-11T12:19:22+00:00","centres":[
+{"updated":"2026-11-11T12:58:42+00:00","centres":[
 {"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},
-{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)","s":[10,8.5,7.5,7.5,7],"t":40.5,"rk":"A","best":"Before 11 am. Most stall closed after 2:30 pm","note":""},
+{"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)","s":[10,8.5,7.5,7.5,7],"t":40.5,"rk":"A","best":"Before 11 am. Most stall closed after 2:30 pm","note":"AVOID LUNCH CROWD - everyone is battling for a table from 11 - 1.30 pm . S tier toilet","d":"2026-11-11"},
 {"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},
 {"n":4,"name":"Beo Crescent Market","addr":"38A, Beo Crescent, S(169982)","s":[6,7.5,10,9,5],"t":37.5,"rk":"B","best":"AM to 5pm","note":"DYSON DRYER IN TOILET - WOW","d":"2026-04-20"},
 {"n":5,"name":"Berseh Food Centre","addr":"166, Jalan Besar, S(208877)"},
@@ -12,7 +12,7 @@
 {"n":11,"name":"Geylang Serai Market","addr":"Geylang Serai, S(402001)"},
 {"n":12,"name":"Golden Mile Food Centre","addr":"505, Beach Road, S(199583)","s":[10,8,7.5,8,8],"t":41.5,"rk":"A","best":"morning + lunch","note":"huge variety! highly recommend to visit","d":"2026-07-23"},
 {"n":13,"name":"Holland Village Market & Food Centre","addr":"1, Lorong Mambong, S(277700)"},
-{"n":14,"name":"Old Airport Road Food Centre","addr":"Blk 51, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},
+{"n":14,"name":"Old Airport Road Food Centre","addr":"Blk 51, Old Airport Road, S(390051)","s":[10,9,8,8.5,6.5],"t":42,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},
 {"n":15,"name":"Margaret Drive Hawker Centre","addr":"38A, Margaret Drive, S(142038)"},
 {"n":16,"name":"Market Street Hawker Centre","addr":"86, Market Street, CapitaSpring Building, S(048947)"},
 {"n":17,"name":"Marsiling Mall Hawker Centre","addr":"4, Woodlands Street 12, S(738623)"},
