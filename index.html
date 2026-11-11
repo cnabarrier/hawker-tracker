@@ -633,9 +633,12 @@ td.sc{text-align:center;font-family:var(--fd);font-weight:800;font-size:17px;wid
 td.tt{font-family:var(--fd);font-weight:900;font-size:20px;text-align:center}
 td.nm{font-weight:600;color:var(--ink);min-width:190px;max-width:260px}
 td.nm .ad{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
-td.nt{min-width:200px}
+/* her notes and best-time text wrap into lines of even length, so no row ends on a stray word or two */
+td.nt{min-width:260px;text-wrap:balance}
 td.vd{white-space:nowrap}
-td.bt{min-width:110px;max-width:160px}
+td.bt{min-width:140px;max-width:220px;text-wrap:balance}
+/* at full width the table has room to spare: give it to these two columns so most rows sit on one or two lines */
+@media (min-width:1480px){td.nm{min-width:228px} td.bt{min-width:165px} td.nt{min-width:380px}}
 th.ctr{text-align:center}
 th .hd{display:inline-flex;flex-direction:column;align-items:center;line-height:1.15}
 th .hd em{font-style:normal;font-size:16px}
