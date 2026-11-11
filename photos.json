@@ -12,5 +12,6 @@
 "75":{"src":"assets/photos/75.jpg","hero":"assets/photos/hero/75.jpg","credit":"Kbseah","licence":"CC BY-SA 4.0","url":"https://commons.wikimedia.org/wiki/File:Kovan_Hougang_Market_and_Food_Centre.jpg"},
 "14":{"src":"assets/photos/14.jpg","hero":"assets/photos/hero/14.jpg","credit":"Orderinchaos","licence":"CC BY-SA 4.0","url":"https://commons.wikimedia.org/wiki/File:Old_Airport_Road_FC_front_sign_and_garden.jpg","pos":"34% 50%"},
 "62":{"src":"assets/photos/62.jpg","hero":"assets/photos/hero/62.jpg","credit":"Kbseah","licence":"CC BY-SA 4.0","url":"https://commons.wikimedia.org/wiki/File:Blk_69_Geylang_Bahru_Market_and_Food_Centre.jpg","pos":"30% 50%","light":1.6},
-"25":{"src":"assets/photos/25.jpg","credit":"Myna Bird","licence":"CC BY-NC 2.0","url":"https://www.flickr.com/photos/myna_bird/5868250985/","pos":"42% 50%"}
+"25":{"src":"assets/photos/25.jpg","credit":"Myna Bird","licence":"CC BY-NC 2.0","url":"https://www.flickr.com/photos/myna_bird/5868250985/","pos":"42% 50%"},
+"2":{"src":"assets/photos/2.jpg","hero":"assets/photos/hero/2.jpg","credit":"Sengkang","licence":"Copyrighted free use","url":"https://commons.wikimedia.org/wiki/File:MND_Building,_Annexe_B,_Amoy_Street_Food_Centre,_Dec_05.JPG","pos":"55% 62%"}
 }}
