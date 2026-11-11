@@ -90,6 +90,10 @@ class Publish(unittest.TestCase):
         self.assertEqual(sh(self.run, "rev-parse", "HEAD"), sh(self.run, "rev-parse", "origin/main"))
         self.assertTrue(any("NOT PUBLISHED" in m for m in self.logged))
 
+    def test_a_file_github_already_has_is_not_an_error(self):
+        self.assertTrue(sync.commit("data.json", "Ratings: nothing changed"))
+        self.assertEqual(sh(self.run, "rev-parse", "HEAD"), sh(self.run, "rev-parse", "origin/main"))
+
     def test_the_run_can_publish_again_after_a_clash(self):
         self.other_publishes("data.json", "theirs\n")
         self.write(self.run, "data.json", "ours\n")

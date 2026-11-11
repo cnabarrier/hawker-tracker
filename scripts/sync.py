@@ -293,7 +293,9 @@ def commit(path, message):
     GitHub; this returns False and the caller compares the sheet with what is published again on its next poll.
     It never raises for that, so one clash can't end the run and break the chain of runs (11 Nov 2026)."""
     git("add", path)
-    git("commit", "-m", message)
+    if git("commit", "-m", message, check=False).returncode != 0:
+        log(f"nothing new to publish in {path} (GitHub already has it): {message}")
+        return True
     for attempt in range(4):
         if git("push", check=False).returncode == 0:
             log(f"published: {message}")
