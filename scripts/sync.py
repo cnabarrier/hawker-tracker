@@ -277,32 +277,49 @@ def git(*args, check=True):
 
 def publish(centres, message):
     write_data(centres)
-    commit("data.json", message)
+    return commit("data.json", message)
 
 
 def publish_food(dishes, message):
     write_food(dishes)
-    commit("food.json", message)
+    return commit("food.json", message)
 
 
 def commit(path, message):
+    """Commit one file and push it. True once it is on GitHub.
+
+    A push is refused when something else was published first (the run before this one in its last seconds, or a
+    deploy). If our commit can't be placed on top of that, it is dropped and the checkout is put back in step with
+    GitHub; this returns False and the caller compares the sheet with what is published again on its next poll.
+    It never raises for that, so one clash can't end the run and break the chain of runs (11 Nov 2026)."""
     git("add", path)
     git("commit", "-m", message)
     for attempt in range(4):
         if git("push", check=False).returncode == 0:
             log(f"published: {message}")
-            return
-        git("pull", "--rebase", "--autostash", check=False)
+            return True
+        if git("pull", "--rebase", "--autostash", check=False).returncode != 0:
+            break  # both sides changed the same lines: retrying can't help, and the rebase is left half done
         time.sleep(5 * (attempt + 1))
-    raise RuntimeError(f"could not push {path}")
+    git("rebase", "--abort", check=False)
+    branch = git("rev-parse", "--abbrev-ref", "HEAD", check=False).stdout.strip()
+    if branch in ("", "HEAD"):  # not on a branch (shouldn't happen on the runner): the live site is main
+        branch = "main"
+    git("fetch", "origin", branch, check=False)
+    git("reset", "--hard", f"origin/{branch}", check=False)
+    log(f"NOT PUBLISHED this time (GitHub had newer changes; looking again on the next poll): {path}: {message}")
+    return False
 
 
 def keepalive():
     last = int(git("log", "-1", "--format=%ct").stdout.strip() or 0)
     if time.time() - last > KEEPALIVE_DAYS * 86400:
         git("commit", "--allow-empty", "-m", "Keep scheduled sync alive (no sheet changes)")
-        git("push")
-        log("pushed keepalive commit")
+        if git("push", check=False).returncode == 0:
+            log("pushed keepalive commit")
+        else:
+            git("reset", "--hard", "HEAD~1", check=False)
+            log("keepalive commit not pushed this run")
 
 
 class Alerts:
@@ -366,6 +383,9 @@ def main():
     moment_alerts = Alerts(enabled=not a.no_git, title=MOMENTS_ISSUE, sheet="the video moments sheet",
                            lead="Something in the video moments sheet needs a look, so the dishes it covers show no "
                                 "\"watch\" button (or keep their last one). Masked's dishes are published as normal.")
+    if not a.no_git:
+        # a run queued in the same seconds as a publish can start one commit behind; catch up before comparing
+        git("pull", "--ff-only", check=False)
     published = load_published()
     pending = None
     downloads_ok = 0
@@ -411,8 +431,8 @@ def main():
                     if a.no_git:
                         write_data(centres)
                         log(f"wrote data.json: {msg}")
-                    else:
-                        publish(centres, msg)
+                    elif not publish(centres, msg):
+                        centres = load_published()  # what GitHub has now; the next poll compares against that
                     published, pending = centres, None
                     check_photos(published, photo_alerts)
                 else:
@@ -444,8 +464,8 @@ def main():
                     if a.no_git:
                         write_food(dishes)
                         log(f"wrote food.json: {msg}")
-                    else:
-                        publish_food(dishes, msg)
+                    elif not publish_food(dishes, msg):
+                        dishes = load_food()  # what GitHub has now; the next poll compares against that
                     food_published, food_pending = dishes, None
                 else:
                     log(f"change seen, confirming on next poll: {describe_food(food_published, dishes)}")

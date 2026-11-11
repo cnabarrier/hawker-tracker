@@ -58,7 +58,14 @@ jobs:
       # GitHub's cron can be delayed or skipped under load, so each run queues the next one
       # itself; the schedule above is only a backup that restarts the chain if it ever breaks.
       # To stop syncing, disable this workflow in the repo's Actions tab.
+      # This also runs when a step above failed, so one bad run can't end the chain (on 11 Nov 2026 a failed
+      # publish did, and the schedule took hours to fire). After a failure it waits first, so a fault that
+      # lasts can't start run after run.
       - name: Queue the next run
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run sync-sheet.yml --ref main
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          if [ "$JOB_STATUS" != "success" ]; then sleep 300; fi
+          gh workflow run sync-sheet.yml --ref main
