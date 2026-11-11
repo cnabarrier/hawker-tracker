@@ -1,4 +1,4 @@
-{"updated":"2026-09-23T15:32:47+00:00","centres":[
+{"updated":"2026-11-11T12:17:03+00:00","centres":[
 {"n":1,"name":"Adam Food Centre","addr":"2, Adam Road, S(289876)"},
 {"n":2,"name":"Amoy Street Food Centre","addr":"National Development Building, Annex B, Telok Ayer Street, S(069111)"},
 {"n":3,"name":"Bedok Food Centre","addr":"1, Bedok Road, S(469572)"},
@@ -12,7 +12,7 @@
 {"n":11,"name":"Geylang Serai Market","addr":"Geylang Serai, S(402001)"},
 {"n":12,"name":"Golden Mile Food Centre","addr":"505, Beach Road, S(199583)","s":[10,8,7.5,8,8],"t":41.5,"rk":"A","best":"morning + lunch","note":"huge variety! highly recommend to visit","d":"2026-07-23"},
 {"n":13,"name":"Holland Village Market & Food Centre","addr":"1, Lorong Mambong, S(277700)"},
-{"n":14,"name":"Old Airport Road Food Centre","addr":"17, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},
+{"n":14,"name":"Old Airport Road Food Centre","addr":"Blk 51, Old Airport Road, S(397972)","s":[10,9,8,8.5,6.5],"t":42,"rk":"A","best":"All Day","note":"Salt chicken wings BOMB #01-128 · Cho Kee Noodles #01-04 - SPINACH Noodles was yum","d":"2026-09-02"},
 {"n":15,"name":"Margaret Drive Hawker Centre","addr":"38A, Margaret Drive, S(142038)"},
 {"n":16,"name":"Market Street Hawker Centre","addr":"86, Market Street, CapitaSpring Building, S(048947)"},
 {"n":17,"name":"Marsiling Mall Hawker Centre","addr":"4, Woodlands Street 12, S(738623)"},
@@ -80,7 +80,7 @@
 {"n":79,"name":"Blk 159 Mei Chin Road","addr":"Blk 159, Mei Chin Road, S(140159)"},
 {"n":80,"name":"Blk 58 New Upper Changi Road","addr":"Blk 58, New Upper Changi Road, S(461058)"},
 {"n":81,"name":"Blk 208B New Upper Changi Road","addr":"Blk 208B, New Upper Changi Road, S(462208)"},
-{"n":82,"name":"Blk 51 Old Airport Road","addr":"Blk 51, Old Airport Road, S(390051)"},
+{"n":82,"name":"Kallang Estate Market and Food Centre","addr":"Blk 17, Old Airport Road S(397972)"},
 {"n":83,"name":"Pek Kio Market & Food Centre","addr":"Blk 41A, Cambridge Road, S(211041)"},
 {"n":84,"name":"People's Park Complex Food Centre","addr":"Blk 32, New Market Road, S(050032)","s":[6,8,9.5,7.5,7.5],"t":38.5,"rk":"B","best":"Lunch & Dinner","note":"Duck rice is famous (didnt try) very affordable place","d":"2026-07-23"},
 {"n":85,"name":"Redhill Market","addr":"Blk 79, Redhill Lane, S(150079)","s":[4,6.5,6.5,6,4],"t":27,"rk":"D","best":"AM to 2 pm","note":"Feels like a kopitiam rather than hawker","d":"2026-04-20"},
